@@ -1,0 +1,352 @@
+[
+  {
+    "name": "Senatsverwaltung für Wirtschaft, Energie und Betriebe",
+    "type": "Senatsverwaltung",
+    "homepage": "https://www.berlin.de/sen/wirtschaft/",
+    "address": "Martin-Luther-Straße 105,10825 Berlin",
+    "email": "post@senweb.berlin.de", 
+    "de_mail": "post@senweb-berlin.de-mail.de",
+    "relationship_to_parent": "Parent",
+    "suborganizations": [
+      {
+        "name": "Senator(in)",
+        "type": "Senator",
+        "employee_name": "Ramona Pop",
+        "telephone": "9013 - 8100 / - 8101",
+        "fax": "9013 - 7541",
+        "relationship_to_parent": "Direct subordinate",
+        "suborganizations": [
+          {
+            "name": "Leitung des Büros des/der Senators/Senatorin)",
+            "type": "Büroleiter",
+            "employee_name": "Thomas Krause",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 8118",
+            "fax": "9013 - 7541"
+          },
+          {
+            "name": "Persönlicher Referent des/der Senators/Senatorin",
+            "type": "Referent",
+            "employee_name": "Christian Schwöbel",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 -   7486",
+            "fax": "9013 - 7541"
+          },
+          {
+            "name": "Pressesprecher(in)",
+            "type": "Pressesprecher",
+            "employee_name": "Svenja Fritz",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 7418",
+            "fax": "9013 - 8281"
+          },
+          {
+            "name": "Referent(in) für Presse- und Öffenetlichkeits Arbeit",
+            "type": "Referent",
+            "employee_name": "Matthias Borowski",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 8112",
+            "fax": "9013 - 8281"
+          },
+          {
+            "name": "Bundesratsreferent(in)",
+            "type": "Referent",
+            "employee_name": "Uwe Engelking",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 8163",
+            "fax": "9013 - 7597"
+          },
+          {
+            "name": "Referent(in) für die pol. Koordinierung des Bundesrates und des Abgeordnetenhauses",
+            "type": "Referent",
+            "employee_name": "Ronald Wenke",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 8207",
+            "fax": "9013 - 7541"
+          },
+          {
+            "name": "Angelegenheiten des Wirtschaftsausschusses des Abgeordnetenhauses und des Rats der Bürgermeister",
+            "type": "Other",
+            "employee_name": "Thomas Bialkowski",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 8292",
+            "fax": "9013 - 8113"
+          },
+          {
+            "name": "Verbindungsstelle",
+            "type": "Other",
+            "employee_name": "Sabine Michel",
+            "relationship_to_parent": "Peripheral",
+            "telephone": "9013 - 7023",
+            "fax": "9013 - 8125"
+          },
+          {
+            "name": "Staatssekretär(in) R (Abteilung II und III)",
+            "type": "Staatssekretär",
+            "employee_name": "Christian Rickerts",
+            "relationship_to_parent": "Direct subordinate",
+            "telephone": "9013 - 7431",
+            "fax": "9013 - 8170",
+            "suborganizations": [
+              {
+                "name": "Persönliche(r) Referent(in) des Staatssekretärs",
+                "type": "Referent",
+                "employee_name": "Anja Engelmohr",
+                "relationship_to_parent": "Peripheral",
+                "telephone": "9013 - 8346",
+                "fax": "9013 - 8170"
+              },
+              {
+                "name": "Wirtschaftspolitik und Wirtschaftsordnung",
+                "type": "Abteilung",
+                "code": "II",
+                "employee_name": "Anna Hochreuter",
+                "employee_title": "Dr.",
+                "relationship_to_parent": "Direct subordinate",
+                "telephone": "9013 - 8300",
+                "fax": "9013 - 7597",
+                "suborganizations": [
+                  {
+                    "name": "Grundsatzangelegenheiten der Wirtschaftspolitik",
+                    "type": "Referat",
+                    "code": "II A",
+                    "employee_name": "David Weißert",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8309",
+                    "fax": "9013 - 7597"
+                  },
+                  {
+                    "name": "Unternehmensservice, Dienstleistungen, Handwerk, Handel, Tourismus",
+                    "type": "Referat",
+                    "code": "II B",
+                    "employee_name": "Dietrich Kalkum",
+                    "employee_title": "Dr.",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8251",
+                    "fax": "9013 - 8050"
+                  },
+                  {
+                    "name": "Staatsaufsicht, Kammern und Finanzdienstleistungen, Gewerberecht, Einheitlicher Ansprechpartner",
+                    "type": "Referat",
+                    "code": "II C",
+                    "employee_name": "Renate Hinsken",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8355",
+                    "fax": "9013 - 8650"
+                  },
+                  {
+                    "name": "Landeskartellbehörde, Preisprüfungen, Öffentliches Auftragswesen, Notfallvorsorge",
+                    "type": "Referat",
+                    "code": "II D",
+                    "employee_name": "Elke Zeise",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8317",
+                    "fax": "9013 - 7613"
+                  },
+                  {
+                    "name": "Geschäftsstelle der Vergabekammer",
+                    "type": "Other",
+                    "employee_name": "Bogdan Kazimirek",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8316",
+                    "fax": "9013 - 7613"
+                  }
+                ]
+              },
+              {
+                "name": "Energie, Digitalisierung, Innovation",
+                "type": "Abteilung",
+                "code": "III",
+                "employee_name": "Jürgen Varnhorn",
+                "employee_title": "Dr.",
+                "relationship_to_parent": "Direct subordinate",
+                "telephone": "9013 - 8169",
+                "fax": "9013 - 7107",
+                "suborganizations": [
+                  {
+                    "name": "Energie",
+                    "type": "Referat",
+                    "code": "III A",
+                    "employee_name": "Felix Groba",
+                    "employee_title": "Dr.",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8272",
+                    "fax": "9013 - 7107"
+                  },
+                  {
+                    "name": "Innovation, Cluster, Industrie, Smart City, Digitalisierung, Kreativwirtschaft",
+                    "type": "Referat",
+                    "code": "III B",
+                    "employee_name": "Jürgen Varnhorn",
+                    "employee_title": "Dr.",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8169",
+                    "fax": "9013 - 7107"
+
+                  },
+                  {
+                    "name": "Außenwirtschaft, Europäische Wirtschaftspolitik, Entwicklungszusammenarbeit",
+                    "type": "Referat",
+                    "code": "III C",
+                    "employee_name": "Rainer Seider",
+                    "employee_title": "Dr.",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8270",
+                    "fax": "9013 - 8528"
+                  }
+                ],
+                "secondary_organizations": [
+                  {
+                    "name": "Landesamt für Mess- und Eichwesen BerlinBrandenburg (LME BE-BB) ",
+                    "type": "Landesamt",
+                    "address": "Lentzeallee 100, 14195 Berlin",
+                    "fax": "(030) 90 259 – 6 19",
+                    "email": "Poststelle@lme.berlin-brandenburg.de",
+                    "relationship_to_parent": "Peripheral",
+                    "homepage": "http://lme.berlin-brandenburg.de/"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Staatssekretär(in) B (Abteilung I und IV)",
+            "type": "Staatssekretär",
+            "employee_name": "Henner Bunde",
+            "relationship_to_parent": "Direct subordinate",
+            "telephone": "9013 - 7431",
+            "fax": "9013 - 7566",
+            "suborganizations": [
+              {
+                "name": "Persönliche(r) Referent(in) des Staatssekretärs",
+                "type": "Referent",
+                "employee_name": "Sabine Menz",
+                "relationship_to_parent": "Peripheral",
+                "telephone": "9013 - 7420",
+                "fax": "9013 - 7566"
+              },
+              {
+                "name": "Prüfbehörde, EU-Finanzkontrolle, Antikorruption",
+                "type": "Other",
+                "employee_name": "Barbara Krull",
+                "relationship_to_parent": "Peripheral",
+                "telephone": "9013 - 8142",
+                "fax": "9013 - 7609"
+              },
+              {
+                "name": "Energiewirtschaftsstelle",
+                "type": "Other",
+                "employee_name": "Kerstin Pannoscha",
+                "relationship_to_parent": "Peripheral",
+                "telephone": "9013 - 8175",
+                "fax": "9013 - 7566"
+              },
+              {
+                "name": "Zentraler Service",
+                "type": "Abteilung",
+                "code": "I",
+                "employee_name": "Dagmar Schmitz",  
+                "relationship_to_parent": "Direct subordinate",
+                "telephone": "9013-8442",
+                "fax": " 9013 - 7999",
+                "suborganizations": [
+                  {
+                    "name": "Organisation, Personal",
+                    "type": "Referat",
+                    "code": "I A",
+                    "employee_name": "Irene Hentschke",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8149",
+                    "fax": "9013 - 8455"
+                  },
+                  {
+                    "name": "Finanzwirtschaft",
+                    "type": "Referat",
+                    "code": "I B",
+                    "employee_name": "Dagmar Schmitz",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8442",
+                    "fax": "9013 - 7999" 
+                  },
+                  {
+                    "name": "IT, Innerer Dienst, Controlling",
+                    "type": "Referat",
+                    "code": "I C",
+                    "employee_name": "Ralf Jürgens",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 7433",
+                    "fax": "9013 - 7480"
+                  },
+                  {
+                    "name": "Justitiariat",
+                    "type": "Other",
+                    "employee_name": "Denise Queckenstedt",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8363",
+                    "fax": "9013 - 8650"
+                  }
+                ]
+              },
+              {
+                "name": "Betriebe und Strukturpolitik",
+                "type": "Abteilung",
+                "code": "IV",
+                "employee_name": "Heidrun Rhode-Mühlenhoff",
+                "relationship_to_parent": "Direct subordinate",
+                "telephone": "9013 - 8400",
+                "fax": "9013 - 7567",
+                "suborganizations": [
+                  {
+                    "name": "Liegenschaften, Zukunftsorte",
+                    "type": "Referat",
+                    "code": "IV A",
+                    "employee_name": "Katrin Kanzler-Tullio",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 7355",
+                    "fax": "9013 - 8253"
+                  },
+                  {
+                    "name": "Unternehmensbeteiligungen, Anstalten öffentlichen Rechts",
+                    "type": "Referat",
+                    "code": "IV B",
+                    "employee_name": "Tobias Kraft",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8387",
+                    "fax": "9013 - 8466"
+                  },
+                  {
+                    "name": "Europäische Strukturfonds",
+                    "type": "Referat",
+                    "code": "IV C",
+                    "employee_name": "Pierre Triantaphyllides",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8334",
+                    "fax": "9013 - 7520"
+                  },
+                  {
+                    "name": "Regionale Strukturpolitik, Wirtschaftsförderung",
+                    "type": "Referat",
+                    "code": "IV D",
+                    "employee_name": "Michael Knieß",
+                    "employee_title": "Dr.",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8367",
+                    "fax": "9013 - 7900"
+                  },
+                  {
+                    "name": "EU-Bescheinigungsbehörde des Landes Berlin für die EU-Strukturfonds",
+                    "type": "Other",
+                    "employee_name": "Petra Dittmeyer",
+                    "relationship_to_parent": "Direct subordinate",
+                    "telephone": "9013 - 8157",
+                    "fax": "9013 - 8384"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

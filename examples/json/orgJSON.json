@@ -1,0 +1,117 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "OrgJSON",
+    "type": "array",
+    "items": {
+        "$ref": "#/definitions/organization"
+    },
+    "definitions": {
+        "organization": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "The short, internal name of the organization or position. E.g., for 'Senatsverwaltung für Wirtschaft, Energie und Betriebe, Referat III B', the name is 'Innovation, Cluster, Industrie, Smart City, Digitalisierung, Kreativwirtschaft'.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "The type of organization, sub-organization or position.",
+                    "enum": [
+                        "Abteilung",
+                        "Amt",
+                        "Bezirksamt",
+                        "Büro",
+                        "Büroleiter",
+                        "Fachbereich",
+                        "Fachdienst",
+                        "Landesamt",
+                        "Landesstelle",
+                        "Museum",
+                        "Other",
+                        "Pressesprecher",
+                        "Referat",
+                        "Referent",
+                        "Senatskanzlei",
+                        "Senator",
+                        "Senatsverwaltung",
+                        "Serviceeinheit",
+                        "Staatssekretär",
+                        "Öffentliches Unternehmen",
+                        "Unternehmen"
+                    ]
+                },
+                "code": {
+                    "description": "A code that usually identifies a sub-organization within the larger parent organization. Together with @name and @type, it can be used to constrcut the full name. E.g., for 'Senatsverwaltung für Wirtschaft, Energie und Betriebe, Referat III B', the code is 'III B'.",
+                    "type": "string"
+                },
+                "altNames": {
+                    "description": "A list of alternative names for the organization, such as acronyms. E.g., for 'Senatsverwaltung für Wirtschaft, Energie und Betriebe', the alternative names could be 'SenWiEnBe' and 'SenWEB'.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "homepage": {
+                    "description": "The homepage URL of the organization.",
+                    "type": "string",
+                    "format": "uri"
+                },
+                "telephone": {
+                    "description": "The phone number for the organization.",
+                    "type": "string"
+                },
+                "fax": {
+                    "description": "The fax number for the organization.",
+                    "type": "string"
+                },
+                "suborganizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/organization"
+                    },
+                    "minItems": 1
+                },
+                "secondary_organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/organization"
+                    },
+                    "minItems": 1
+                },
+                "relationship_to_parent": {
+                    "description": "The type of relationship of a given organization or position relative to the parent organization or position.",
+                    "enum": [
+                        "Parent",
+                        "Peripheral",
+                        "Direct subordinate"
+                    ]
+                },
+                
+                "employee_name": {
+                    "description": "The name of the individual currently heading that department or position.",
+                    "type": "string"
+                },
+                "employee_title": {
+                    "description": "The title of the employee, if relevant (e.g., Dr.)",
+                    "type": "string"
+                },
+                "address": {
+                    "description": "The address of the organization.",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "The e-mail address of the organization.",
+                    "type": "string"
+                },
+                "de_mail": {
+                    "description": "The DE-mail address of the organization.",
+                    "type": "string"
+                }
+                
+            },
+            "required": [
+                "name",
+                "type"
+            ]
+        }
+    }
+}
