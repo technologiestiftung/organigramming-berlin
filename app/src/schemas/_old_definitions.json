@@ -1,0 +1,192 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Document",
+    "title": "Organization chart",
+    "description": "Organization chart for Berlin's administration",
+    "type": "object",
+    "definitions": {
+      "Document": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Dateiname"
+          },
+          "logo": {
+            "title": "Logo",
+            "type": "string",
+            "format": "data-url"
+          },
+          "version": {
+            "type": "string",
+            "format": "date",
+            "title": "Stand"
+          },
+          "creator": {
+            "type": "string",
+            "title": "Verfasser"
+          },
+          "note": {
+            "type": "string",
+            "title": "Notiz"
+          },
+          "organisations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Organisation"
+            }
+          }
+        },
+        "required": ["state", "title"],
+        "title": "Document"
+      },
+      "Organisation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "examples": [
+              "Abteilung",
+              "Amt",
+              "Bezirksamt",
+              "Büro",
+              "Büroleiter",
+              "Fachbereich",
+              "Fachdienst",
+              "Landesamt",
+              "Landesstelle",
+              "Museum",
+              "Other",
+              "Pressesprecher",
+              "Referat",
+              "Referent",
+              "Senatskanzlei",
+              "Senator",
+              "Senatsverwaltung",
+              "Serviceeinheit",
+              "Staatssekretär",
+              "Öffentliches Unternehmen",
+              "Unternehmen"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "qt-uri-protocols": ["https"]
+          },
+          "email": {
+            "type": "string"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "employees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Employee"
+            }
+          },
+          "position": {
+            "type": "string"
+          },
+          "altNames": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string"
+          },
+          "style": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "type"],
+        "title": "Organisation"
+      },
+      "Employee": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "salutation": {
+            "type": "string",
+            "enum": ["Frau", "Herr"]
+          },
+          "title": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "contact": {
+            "$ref": "#/definitions/Contact"
+          }
+        },
+        "required": [],
+        "title": "Employee"
+      },
+      "Contact": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "telephone": {
+            "type": "string",
+            "format": "integer"
+          },
+          "fax": {
+            "type": "string",
+            "format": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/definitions/Address"
+          }
+        },
+        "required": ["address", "email", "fax", "telephone"],
+        "title": "Contact"
+      },
+      "Address": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "housenumber": {
+            "type": "string",
+            "format": "integer"
+          },
+          "building": {
+            "type": "string"
+          },
+          "room": {
+            "type": "string",
+            "format": "integer"
+          },
+          "zipCode": {
+            "type": "string",
+            "format": "integer"
+          },
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": ["city", "room", "street", "zipCode"],
+        "title": "Address"
+      }
+    }
+  }

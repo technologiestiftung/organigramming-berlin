@@ -1,0 +1,209 @@
+@import "../../../node_modules/bootstrap/scss/functions";
+@import "../../theme";
+
+/* global styles for orgchart */
+
+.view-container {
+  box-sizing: border-box;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  /* margin: 10px; */
+  min-height: 700px;
+  height: 100vh;
+  width: 100vw;
+  background-color: $gray-300;
+  overflow: hidden;
+  cursor: default;
+
+  .navigation-container {
+    position: fixed;
+    bottom: 0.25rem;
+    right: 0.25rem;
+    z-index: 1000;
+  }
+
+  .editor {
+    box-sizing: border-box;
+    display: block;
+    text-align: center;
+    transition-delay: 0;
+    transition-duration: 200ms;
+    transition-property: transform;
+    transition-timing-function: ease-out;
+    overflow: visable;
+    padding: 0;
+    flex: 1 0 auto;
+    .paper {
+      cursor: -webkit-grab;
+      cursor: grab;
+
+      padding: 1rem;
+      background-size: 1rem 1rem;
+      background-image: radial-gradient($gray-600 0.01rem, $gray-100 1px);
+      box-shadow: rgba($gray-700, 0.2) 0px 1px 2px;
+
+      display: flex;
+      flex-basis: auto;
+      flex-direction: column;
+      width: 297mm;
+      height: 210mm;
+      position: relative;
+      z-index: 50;
+
+      &.A2 {
+        width: 594mm;
+        height: 420mm;
+        &.portrait {
+          height: 594mm;
+          width: 420mm;
+        }
+      }
+      &.A3 {
+        width: 420mm;
+        height: 297mm;
+        &.portrait {
+          height: 420mm;
+          width: 297mm;
+        }
+      }
+      &.A4 {
+        width: 297mm;
+        height: 210mm;
+        &.portrait {
+          height: 297mm;
+          width: 210mm;
+        }
+      }
+      &.A5 {
+        width: 210mm;
+        height: 148mm;
+        &.portrait {
+          height: 210mm;
+          width: 148mm;
+        }
+      }
+      .paper-size-lable {
+        position: absolute;
+        bottom: 100%;
+        left: 0.5rem;
+        padding: 0.1rem 1rem;
+        font-size: $font-size-sm * 0.875;
+        border-top-right-radius: 0.2rem;
+        border-top-left-radius: 0.2rem;
+        background-color: $gray-400;
+        color: $gray-600;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .title-container {
+        text-align: right;
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        img {
+          display: block;
+          flex: 0 0 auto;
+          margin: 0 1rem;
+        }
+        .title-content {
+          flex: 0 0 auto;
+        }
+      }
+      .node-container {
+        text-align: right;
+        flex: 0 1 auto;
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .chart-container {
+        flex: 1 1 1px;
+        max-height: 100%;
+        min-height: 0;
+        display: block;
+        .chart {
+          transition: transform 150ms ease-out;
+          width: fit-content;
+          height: fit-content;
+        }
+      }
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  &.dragging {
+    .editor {
+      ul li .oc-node {
+        cursor: grabbing !important;
+      }
+      ul li .oc-node.allowedDrop:hover {
+        cursor: copy !important;
+      }
+    }
+  }
+  &.panning {
+    .editor {
+      transition-delay: 0;
+      transition-duration: 0ms;
+      transition-timing-function: ease-out;
+      cursor: grabbing;
+      .paper {
+        cursor: grabbing;
+      }
+    }
+  }
+}
+
+.oc-mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: background-color 300ms ease-out;
+  &.hidden {
+    background-color: rgba(0, 0, 0, 0);
+    display: none;
+  }
+  .spinner {
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+    &::before {
+      width: 100px;
+      height: 100px;
+      border-width: 10px;
+      border-radius: 50px;
+      border-top-color: rgba($primary, 0.8);
+      border-bottom-color: rgba($primary, 0.8);
+      border-left-color: rgba($primary, 0.8);
+    }
+  }
+}

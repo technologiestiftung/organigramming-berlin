@@ -1,0 +1,35 @@
+{
+  "document": {
+    "title": "Neues Dokument",
+    "paperSize": "A4",
+    "paperOrientation": "landscape",
+    "schemaVersion": "1.0.0"
+  },
+  "organisations": [
+    { "id": "n2", "name": "0" },
+    {
+      "id": "n3",
+      "name": "1",
+      "organisations": [
+        { "id": "n4", "name": "2" },
+        {
+          "id": "n5",
+          "name": "3",
+
+          "organisations": [
+            { "id": "n6", "name": "4" },
+            { "id": "n7", "name": "5" }
+          ]
+        },
+        { "id": "n8", "name": "6" }
+      ]
+    },
+    { "id": "n9", "name": "7" },
+    {
+      "id": "n10",
+      "name": "8",
+
+      "organisations": [{ "id": "n11", "name": "9" }]
+    }
+  ]
+}
