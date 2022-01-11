@@ -135,20 +135,24 @@ export default class JSONDigger {
 
               break;
             }
+            default:{ // Just to make the linter happy
+              flag = false;
+              return true
+            }
           }
+          return false// Just to make the linter happy
         });
 
         if (!flag) {
           return false;
         }
       }
+      return false// Just to make the linter happy
     });
     return flag;
   }
 
   async findorganisations(id) {
-    const _this = this;
-
     if (!id) {
       throw new Error("Parameter id is invalid.");
     }
@@ -373,7 +377,6 @@ export default class JSONDigger {
   }
 
   addRoot(data) {
-    const _this = this;
 
     if (
       !data ||

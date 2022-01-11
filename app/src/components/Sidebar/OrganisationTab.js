@@ -1,4 +1,4 @@
-import definitions from "../../schemas/definitions.json";
+import definitions from "../../schemas/organization_chart";
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
@@ -10,8 +10,6 @@ import AlertModal from "./AlertModal";
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
-import TitleField from "../From/TitleField";
-import DescriptionField from "../From/DescriptionField";
 
 const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
   const [formData, setFormData] = useState({ current: selected });
@@ -28,8 +26,6 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
 
   const fields = {
     CollapsibleField: CollapsibleField,
-    TitleField: TitleField,
-    DescriptionField: DescriptionField,
     ArrayFieldTemplate: ArrayFieldTemplate,
   };
 
@@ -58,6 +54,9 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           field: "ObjectField",
         },
       },
+      style:{
+        title: "Stil"
+      },
       organisations: {
         "ui:headless": true,
         "ui:widget": "hidden"
@@ -83,10 +82,11 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
     if (selected != null) {
       setFormData({ current: { ...selected } });
     }
-  }, [data, selected]);
+  }, [selected]);
 
   const onChange =  async(e) => {
-    setFormData(e.formData);
+    setFormData({...e.formData});
+    // await dsDigger.updateNode(formData.current);
   };
 
   const onBlur = async () =>{

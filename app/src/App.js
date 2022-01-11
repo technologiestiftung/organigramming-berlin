@@ -1,15 +1,12 @@
 import "./global.scss";
 import { Container } from "react-bootstrap";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import useUndo from "use-undo";
 
 import Chart from "./components/Chart/Chart";
 import Sidebar from "./components/Sidebar/Sidebar";
 import initDocument from "./data/initDocument";
-// import {structuredClone} from "./services/StructuredCloner"
-
-
-
+import { toSnakeCase } from "./services/service";
 
 const initdata = () => {
   if (localStorage.getItem("data") !== null) {
@@ -33,7 +30,7 @@ const App = () => {
     dataState,
     {
       set: setData,
-      reset: resetData,
+      // reset: resetData,
       undo: setUndo,
       redo: setRedo,
       canUndo,
@@ -41,22 +38,32 @@ const App = () => {
     },
   ] = useUndo(initdata());
   const { present: data } = dataState;
-  
+
   const onChange = (e) => {
-    const dataSting = JSON.stringify(e)
-    console.log("APP new Data", e);
+    const dataSting = JSON.stringify(e);
     setData(JSON.parse(dataSting));
     setUpdate(!update);
     localStorage.setItem("data", JSON.stringify(e));
   };
 
-  const exportTo = (fileextension) => {
-    chart.current.exportTo(fileextension);
+  const handleKeyDown = (e) => {
+    // e.preDefault();
+    let charCode = String.fromCharCode(e.which).toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && charCode === "z") {
+      if (e.shiftKey) {
+        onRedo();
+      } else {
+        onUndo();
+      }
+    }
   };
 
-  const onSave = async () => {
-    const fileName = data.document.title;
-    const json = JSON.stringify(data);
+  const onSave = async (includeLogo = true) => {
+    const fileName = data.export.filename || toSnakeCase(data.document.title);
+    const exportData = includeLogo
+      ? { ...data }
+      : { ...data, document: { ...data.document, logo: "" } };
+    const json = JSON.stringify(exportData);
     const blob = new Blob([json], { type: "application/json" });
     const href = await URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -67,25 +74,30 @@ const App = () => {
     document.body.removeChild(link);
   };
 
-  const onUndo = () =>{
+  const exportTo = (fileextension, includeLogo= true, vectorPdf = true) => {
+    const fileName = data.export.filename || toSnakeCase(data.document.title);
+    chart.current.exportTo(fileName, fileextension, includeLogo, vectorPdf);
+  };
+
+  const onUndo = () => {
     setUndo();
     setUpdate(!update);
-  }
-  
-  const onRedo = () =>{
+  };
+
+  const onRedo = () => {
     setRedo();
     setUpdate(!update);
-  }
+  };
 
   return (
-    <div className="App">
+    <div className="App" onKeyDown={handleKeyDown}>
       <Container className="control-layer" fluid>
         <Sidebar
           data={data}
           sendDataUp={onChange}
           selected={selected}
           setSelected={(e) => setSelected(e)}
-          onExport={(e) => exportTo(e)}
+          onExport={exportTo}
           onSave={onSave}
           onUndo={onUndo}
           onRedo={onRedo}

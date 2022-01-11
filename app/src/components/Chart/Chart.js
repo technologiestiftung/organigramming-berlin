@@ -7,77 +7,56 @@ import React, {
 } from "react";
 import { Button } from "react-bootstrap";
 import OrganizationChart from "./ChartContainer";
-import JSONDigger from "json-digger";
+import JSONDigger from "../../services/jsonDigger";
 import { v4 as uuidv4 } from "uuid";
 
 const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const orgchart = useRef();
 
-  useImperativeHandle(ref, (exportFileextension) => ({
-    exportTo: (exportFileextension) => {
-      orgchart.current.exportTo(
-        ds.document.title || "organization_chart",
-        exportFileextension
-      );
+  useImperativeHandle(ref, (fileName, fileextension, includeLogo, vectorPdf) => ({
+    exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
+      orgchart.current.exportTo(fileName, fileextension, includeLogo, vectorPdf);
     },
   }));
 
 
-  // const [filename, setFilename] = useState("organization_chart");
-  // const [fileextension, setFileextension] = useState("png");
-
-  // const onNameChangeFilename = (event) => {
-  //   setFilename(event.target.value);
-  // };
-
-  // const onExtensionChange = event => {
-  //   setFileextension(event.target.value);
-  // };
-
   const [ds, setDS] = useState(data);
-  // const dsDigger = new JSONDigger(ds, "id", "children");
-  const [selectedNodes, setSelectedNodes] = useState(new Set());
+  // const [selectedNodes, setSelectedNodes] = useState(new Set());
   const [selectedNode, setSelectedNode] = useState(null);
-  // const [newNodeName, setNewNodeName] = useState("");
-  // const [newNodeTitle, setNewNodeTitle] = useState("");
-  // const [isEditMode, setIsEditMode] = useState(true);
-  const [isMultipleSelect, setIsMultipleSelect] = useState(false);
+  // const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [contextMenuStyle, setContextMenuStyle] = useState("");
   const [clipBoard, setClipBoard] = useState({});
 
-  let dsDigger = new JSONDigger(data, "id", "organisations");
+  const dsDigger = new JSONDigger(data, "id", "organisations");
 
 
   useEffect(() => {
     setDS({...data});
-    console.log("Chart", ds);
   }, [data, update]);
 
   const readSelectedNode = (nodeData) => {
-    if (isMultipleSelect) {
-      setSelectedNodes((prev) => new Set(prev.add(nodeData)));
-    } else {
-      setSelectedNodes(new Set([nodeData]));
+    // if (isMultipleSelect) {
+    //   // setSelectedNodes((prev) => new Set(prev.add(nodeData)));
+    // } else {
+      // setSelectedNodes(new Set([nodeData]));
       setSelected(nodeData);
       setSelectedNode(nodeData);
-    }
+    // }
   };
 
   const clearSelectedNode = () => {
-    setSelectedNodes(new Set());
+    // setSelectedNodes(new Set());
     setSelected(null);
     setSelectedNode(null);
   };
 
   const onChanged = (e) => {
-    // setDS(e);
-    console.log("Chart-> Send Data UP")
     sendDataUp(e);
   };
 
-  const onMultipleSelectChange = (e) => {
-    setIsMultipleSelect(e.target.checked);
-  };
+  // const onMultipleSelectChange = (e) => {
+  //   setIsMultipleSelect(e.target.checked);
+  // };
 
   const onCloseContextMenu = () => {
     setContextMenuStyle({});
@@ -91,7 +70,6 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
       left: e.clientX,
     });
   };
-
 
 
   const getNewNode = () => {
@@ -133,12 +111,10 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
 
   const assignNewIds = (node) => {
     const _node = { ...node, id: "n" + uuidv4() };
-    console.log("assignNewIds", node);
     if (node.organisations) {
       _node.organisations = node.organisations.map((child) => {
         return assignNewIds(child);
       });
-      console.log("assignNewIds", _node.organisations);
     }
     return _node;
   };
@@ -151,32 +127,27 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const handleKeyDown = (e) => {
-    console.log(e);
     // e.preDefault();
-    let charCode = String.fromCharCode(e.which).toLowerCase();
-    if ((e.ctrlKey || e.metaKey) && charCode === "s") {
-      alert("CTRL+S Pressed");
-    } else if ((e.ctrlKey || e.metaKey) && charCode === "c") {
-      alert("CTRL+C Pressed");
-    } else if ((e.ctrlKey || e.metaKey) && charCode === "v") {
-      alert("CTRL+V Pressed");
+    if(e.code === "Backspace" && selectedNode){
+      removeNode()
     }
   };
 
   return (
-    <div tabIndex="0" onCopy={copyNode} onPaste={paseNode} onCut={cutNode}>
+    <div tabIndex="0" onCopy={copyNode} onPaste={paseNode} onCut={cutNode} onKeyDown={handleKeyDown}>
       <OrganizationChart
         tabIndex="0"
         ref={orgchart}
         data={ds}
         update={update}
         collapsible={false}
-        multipleSelect={isMultipleSelect}
+        // multipleSelect={isMultipleSelect}
         onClickNode={readSelectedNode}
         onClickChart={clearSelectedNode}
         sendDataUp={onChanged}
         onContextMenu={onContextMenu}
         onCloseContextMenu={onCloseContextMenu}
+     
         pan={true}
         zoom={true}
         draggable={true}

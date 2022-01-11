@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import { dragNodeService, selectNodeService } from "./Service";
+import { dragNodeService, selectNodeService } from "../../services/service";
 import "./ChartNode.scss";
 
 const propTypes = {
@@ -30,6 +30,7 @@ const ChartNode = ({
   onClickNode,
   onContextMenu,
   onDragNode,
+  level,
 }) => {
   const node = useRef();
   // const [isChildrenCollapsed, setIsChildrenCollapsed] = useState(false);
@@ -91,7 +92,7 @@ const ChartNode = ({
       subs1.unsubscribe();
       subs2.unsubscribe();
     };
-  }, [multipleSelect]);
+  }, [multipleSelect, data.id]);
 
   const filterAllowedDropNodes = (id) => {
     dragNodeService.sendDragInfo(id);
@@ -146,14 +147,13 @@ const ChartNode = ({
   };
 
   return (
-    <li className={"oc-hierarchy"}>
+    <li className={"oc-hierarchy level-" + level}>
       <div
         ref={node}
         id={ds.id}
         className={
           nodeClass +
-          " " +
-          (ds.style ? ds.style : "") +
+          (ds.style ? " " + ds.style : "") +
           (ds.organisations && ds.organisations.length > 0
             ? ds.organisations.length > 1
               ? " has-children"
@@ -469,6 +469,7 @@ const ChartNode = ({
           {ds.organisations.map((node) => (
             <ChartNode
               data={node}
+              level={level + 1}
               update={update}
               id={node.id}
               key={node.id}

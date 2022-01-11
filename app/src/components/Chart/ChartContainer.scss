@@ -123,18 +123,32 @@
         }
       }
       .node-container {
-        text-align: right;
-        flex: 0 1 auto;
+        text-align: start;
         flex: 0 1 auto;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: flex-end;
+        // justify-content: flex-end;
         pointer-events: none;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        .wmde-markdown {
+          font-size: 12px;
+          h2,
+          h3,
+          h4 {
+            margin-top: 0.5em;
+            margin-bottom: 0.2em;
+          }
+          p {
+            margin-bottom: 0.5em;
+          }
+          ul {
+            list-style-position: inside;
+          }
+        }
       }
 
       .chart-container {
@@ -159,6 +173,12 @@
     .editor {
       ul li .oc-node {
         cursor: grabbing !important;
+        &.root {
+          display: inline-block;
+          &.has-child > .oc-node::before {
+            display: block;
+          }
+        }
       }
       ul li .oc-node.allowedDrop:hover {
         cursor: copy !important;

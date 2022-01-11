@@ -12,6 +12,7 @@ const FilePreview = (props) => {
     <div>
       <img
         src={props.value}
+        alt="pload Preview"
         style={Object.assign(
           {
             maxHeight: "10rem",
@@ -60,10 +61,9 @@ const FilePreviewWidget = (props) => {
       } // Built the Uint8Array Blob parameter from the base64 string.
       setSelected(name);
     }
-  }, []);
+  }, [props.value]);
 
   const onSelect = (e) => {
-    console.log(e);
     if (e !== "upload") {
       const _file = props.uiSchema.preuploads.find((s) => s.filename === e),
         base64String = _file.base64String;
@@ -78,11 +78,11 @@ const FilePreviewWidget = (props) => {
     } else {
       setSelected("");
     }
-    console.log("onSelect", selected);
   };
 
   return (
-    <>
+    <div className="mb-0">
+    <label className="form-label">{props.label}</label>
       {props.value && <FilePreview key="preview" {...props} />}
       {props.uiSchema.preuploads && (
         <SelectWidget
@@ -113,7 +113,7 @@ const FilePreviewWidget = (props) => {
           }}
         />
       )}
-    </>
+    </div>
   );
 };
 

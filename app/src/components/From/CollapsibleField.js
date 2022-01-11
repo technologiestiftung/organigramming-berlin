@@ -6,7 +6,6 @@ const CollapsibleField = (_ref) => {
   var title = _ref.schema.title ? _ref.schema.title : "";
   const uiSchema = _ref.uiSchema,
     fields = _ref.registry.fields,
-    $id = _ref.idSchema,
     name = _ref.name;
   const field = uiSchema.collapse.field;
   const CollapseElement = fields[field];

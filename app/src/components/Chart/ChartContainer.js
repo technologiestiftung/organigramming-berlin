@@ -8,7 +8,9 @@ import React, {
 
 import { Button, ButtonGroup } from "react-bootstrap";
 import PropTypes from "prop-types";
-import { selectNodeService } from "./Service";
+import MDEditor from "@uiw/react-md-editor";
+import rehypeSanitize from "rehype-sanitize";
+import { selectNodeService } from "../../services/service";
 import JSONDigger from "../../services/jsonDigger";
 import html2canvas from "html2canvas";
 import { elementToSVG, inlineResources } from "dom-to-svg";
@@ -16,7 +18,7 @@ import jsPDF from "jspdf";
 import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
 
-import "./RegisterFiles";
+import "../../services/registerFiles";
 import SVGtoPDF from "svg-to-pdfkit";
 
 const PDFDocument = require("pdfkit").default;
@@ -30,7 +32,6 @@ const propTypes = {
   zoominLimit: PropTypes.number,
   containerClass: PropTypes.string,
   chartClass: PropTypes.string,
-  NodeTemplate: PropTypes.elementType,
   draggable: PropTypes.bool,
   collapsible: PropTypes.bool,
   multipleSelect: PropTypes.bool,
@@ -61,7 +62,6 @@ const ChartContainer = forwardRef(
       zoominLimit,
       containerClass,
       chartClass,
-      NodeTemplate,
       draggable,
       collapsible,
       multipleSelect,
@@ -86,40 +86,32 @@ const ChartContainer = forwardRef(
     const [exporting, setExporting] = useState(false);
     const [sizeWarning, setSizeWarning] = useState(false);
 
-    const rootNode = {
+    const [node, setNode] = useState({
       id: "n-root",
-      name: "",
+      name: "TOP LEVEL",
       style: "root",
-      organisations: [],
-    };
-    // const [ds, setDS] = useState({rootNode, organisations: [...data.organisations]});
-    const [node, setNode] = useState({});
+      organisations: JSON.parse(JSON.stringify(data.organisations)),
+    });
 
-    let dsDigger = new JSONDigger(node, "id", "organisations");
-
-    const attachRel = (data, flags) => {
-      data.relationship =
-        flags + (data.organisations && data.organisations.length > 0 ? 1 : 0);
-      if (data.organisations) {
-        data.organisations.forEach(function (item) {
-          attachRel(item, "1" + (data.organisations.length > 1 ? 1 : 0));
-        });
-      }
-      return data;
-    };
+    const dsDigger = new JSONDigger(node, "id", "organisations");
 
     useEffect(() => {
       resetViewHandler();
+      setTimeout(() => {
+        updateChartHandler();
+      }, 50);
     }, []);
 
     useEffect(() => {
       setNode({
-        ...rootNode,
+        id: "n-root",
+        name: "TOP LEVEL",
+        style: "root",
         organisations: JSON.parse(JSON.stringify(data.organisations)),
       });
       setTimeout(() => {
         updateChartHandler();
-      }, 100);
+      }, 50);
     }, [update, data]);
 
     const changeHierarchy = async (draggedItemData, dropTargetId) => {
@@ -278,6 +270,12 @@ const ChartContainer = forwardRef(
     };
 
     const updateChartHandler = () => {
+      const rootNode = chart.current.querySelector("#n-root");
+      let rootNodeHeight = 57;
+      if (rootNodeHeight) {
+        rootNodeHeight = rootNode.clientHeight;
+      }
+
       const paperWidth = chart.current.querySelector(".chart-container")
           .clientWidth,
         paperHeight = chart.current.querySelector(".chart-container")
@@ -286,7 +284,7 @@ const ChartContainer = forwardRef(
         chartHeight = chart.current.querySelector(".chart").clientHeight;
       let newScale = Math.min(
         paperWidth / chartWidth,
-        paperHeight / chartHeight
+        paperHeight / (chartHeight - rootNodeHeight)
       );
 
       //Minimum Scale
@@ -309,15 +307,14 @@ const ChartContainer = forwardRef(
           ", " +
           (paperWidth - chartWidth) / 2 +
           ", " +
-          (paperHeight - chartHeight) / 2 +
+          (paperHeight - chartHeight - rootNodeHeight) / 2 +
           ")"
       );
     };
 
     const exportSVG = async (canvas, exportFilename, save = false) => {
       resetViewHandler();
-      selectNodeService.clearSelectedNodeInfo();
-      // await timeout(600);
+
       const svgDocument = elementToSVG(canvas, true);
       await inlineResources(svgDocument.documentElement);
       const svgString = new XMLSerializer().serializeToString(svgDocument);
@@ -330,18 +327,14 @@ const ChartContainer = forwardRef(
     };
 
     const exportSVG2PDF = async (canvas, exportFilename) => {
-      const canvasWidth = Math.floor(canvas.width);
-      const canvasHeight = Math.floor(canvas.height);
-      exportSVG(canvas, exportFilename).then((e) => {
+      await exportSVG(canvas, exportFilename).then((svg) => {
         // eslint-disable-next-line no-new-func
         let doc = new PDFDocument({
           size: data.document.paperSize,
-          layout: data.document.pageOrientation,
+          layout: data.document.paperOrientation,
           compress: true,
         }); // It's easier to find bugs with uncompressed files
-        SVGtoPDF(doc, e, 0, 0, {
-          width: canvasWidth,
-          height: canvasHeight,
+        SVGtoPDF(doc, svg, 0, 0, {
           useCSS: false,
         });
         let stream = doc.pipe(blobStream());
@@ -356,19 +349,31 @@ const ChartContainer = forwardRef(
     const exportPDF = (canvas, exportFilename) => {
       const canvasWidth = Math.floor(canvas.width);
       const canvasHeight = Math.floor(canvas.height);
-      const doc =
-        canvasWidth > canvasHeight
-          ? new jsPDF({
-              orientation: "landscape",
-              unit: "px",
-              format: [canvasWidth, canvasHeight],
-            })
-          : new jsPDF({
-              orientation: "portrait",
-              unit: "px",
-              format: [canvasHeight, canvasWidth],
-            });
-      doc.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0);
+      // const doc =
+      //   canvasWidth > canvasHeight
+      //     ? new jsPDF({
+      //         orientation: "landscape",
+      //         unit: "px",
+      //         format: [canvasWidth, canvasHeight],
+      //       })
+      //     : new jsPDF({
+      //         orientation: "portrait",
+      //         unit: "px",
+      //         format: [canvasHeight, canvasWidth],
+      //       });
+      const doc = new jsPDF({
+        orientation: data.document.paperOrientation,
+        unit: "px",
+        format: [canvasWidth, canvasHeight],
+      });
+      doc.addImage(
+        canvas.toDataURL("image/jpeg", 1.0),
+        "JPEG",
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
       doc.save(exportFilename + ".pdf");
     };
 
@@ -377,7 +382,6 @@ const ChartContainer = forwardRef(
       link.href = href;
       link.download = exportFilename + "." + exportFileextension;
       document.body.appendChild(link);
-      // window.open(link, "_blank");
       link.click();
       document.body.removeChild(link);
     };
@@ -393,42 +397,47 @@ const ChartContainer = forwardRef(
       if ((!isWebkit && !isFf) || isEdge) {
         window.navigator.msSaveBlob(canvas.msToBlob(), exportFilename + ".png");
       } else {
-        console.log(canvas.toDataURL("image/png"));
         download(canvas.toDataURL("image/png"), exportFilename, "png");
       }
     };
 
     useImperativeHandle(ref, () => ({
-      exportTo: (exportFilename, exportFileextension) => {
-        exportFilename = exportFilename || "OrgChart";
-        exportFileextension = exportFileextension || "png";
+      exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
         setExporting(true);
+        selectNodeService.clearSelectedNodeInfo();
+        const exportFilename = fileName || "OrgChart";
+        const exportFileextension = fileextension || "png";
+
         const originalScrollLeft = container.current.scrollLeft;
         container.current.scrollLeft = 0;
         const originalScrollTop = container.current.scrollTop;
         container.current.scrollTop = 0;
-        if (exportFileextension.toLowerCase() === "svg") {
-          const canvas = chart.current.querySelector(".paper");
-          console.log(canvas);
+        const canvas = chart.current.querySelector(".paper");
+        if (!includeLogo && data.document.logo) {
+          const logo = canvas.querySelector("#logo");
+          if (logo) {
+            logo.style.display = "none";
+          }
+        }
+        if (exportFileextension === "svg") {
           exportSVG(canvas, exportFilename, true).then(() => {
             setExporting(false);
           });
-        } else if (exportFileextension.toLowerCase() === "pdf") {
-          const canvas = chart.current.querySelector(".paper");
+        } else if (exportFileextension === "pdf" && vectorPdf) {
           exportSVG2PDF(canvas, exportFilename).then(() => {
             setExporting(false);
           });
         } else {
-          html2canvas(chart.current.querySelector(".paper"), {
-            width: chart.current.querySelector(".paper").clientWidth,
-            height: chart.current.querySelector(".paper").clientHeight,
+          html2canvas(canvas, {
+            width: canvas.clientWidth,
+            height: canvas.clientHeight,
             onclone: function (clonedDoc) {
               clonedDoc.querySelector(".paper").style.background = "none";
               clonedDoc.querySelector(".paper").style.transform = "";
             },
           }).then(
             (canvas) => {
-              if (exportFileextension.toLowerCase() === "pdf") {
+              if (exportFileextension === "pdf") {
                 exportPDF(canvas, exportFilename);
               } else {
                 exportPNG(canvas, exportFilename);
@@ -441,6 +450,12 @@ const ChartContainer = forwardRef(
               setExporting(false);
               container.current.scrollLeft = originalScrollLeft;
               container.current.scrollTop = originalScrollTop;
+              if (!includeLogo && data.document.logo) {
+                const logo = canvas.querySelector("#logo");
+                if (logo) {
+                  logo.style.display = "none";
+                }
+              }
             }
           );
         }
@@ -476,7 +491,7 @@ const ChartContainer = forwardRef(
         >
           <div className="navigation-container">
             <ButtonGroup aria-label="navigation" vertical>
-              <Button onClick={zoomInHandler}>
+              <Button onClick={zoomInHandler} title="Herein zoomen">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -496,7 +511,7 @@ const ChartContainer = forwardRef(
                   />
                 </svg>
               </Button>
-              <Button onClick={zoomOutHandler}>
+              <Button onClick={zoomOutHandler} title="Heraus zoomen">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -517,7 +532,7 @@ const ChartContainer = forwardRef(
                 </svg>
               </Button>
 
-              <Button onClick={resetViewHandler}>
+              <Button onClick={resetViewHandler} title="Übersicht">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -542,7 +557,7 @@ const ChartContainer = forwardRef(
             onMouseMove={enablePan && panning ? panHandler : undefined}
           >
             <div
-              className={`paper ${data.document.paperSize} ${data.document.pageOrientation}`}
+              className={`paper ${data.document.paperSize} ${data.document.paperOrientation}`}
               style={{ transform: transform }}
             >
               <span className="paper-size-lable">
@@ -561,7 +576,7 @@ const ChartContainer = forwardRef(
                   </svg>
                 )}
                 {data.document.paperSize}
-                {data.document.pageOrientation === "landscape" && (
+                {data.document.paperOrientation === "landscape" && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="1em"
@@ -573,7 +588,7 @@ const ChartContainer = forwardRef(
                     <path d="M4.5,2H14c1.1,0,2,0.9,2,2v8c0,1.1-0.9,2-2,2H2c-1.1,0-2-0.9-2-2V6.5L4.5,2z M4.5,5c0,0.8-0.7,1.5-1.5,1.5H1V12c0,0.6,0.4,1,1,1h12c0.6,0,1-0.4,1-1V4c0-0.6-0.4-1-1-1H4.5V5z" />
                   </svg>
                 )}
-                {data.document.pageOrientation === "portrait" && (
+                {data.document.paperOrientation === "portrait" && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="1em"
@@ -590,6 +605,8 @@ const ChartContainer = forwardRef(
                 <div className="title-container">
                   {data.document.logo && (
                     <img
+                      id="logo"
+                      alt="logo"
                       style={{ height: "5rem", width: "auto" }}
                       src={data.document.logo}
                     />
@@ -612,8 +629,8 @@ const ChartContainer = forwardRef(
                 <ul className="chart" style={{ transform: chartTransform }}>
                   <ChartNode
                     data={node}
+                    level={0}
                     update={update}
-                    NodeTemplate={NodeTemplate}
                     draggable={draggable}
                     collapsible={collapsible}
                     multipleSelect={multipleSelect}
@@ -625,7 +642,12 @@ const ChartContainer = forwardRef(
                 </ul>
               </div>
               {data.document.note && (
-                <div className="node-container">{data.document.note}</div>
+                <div className="node-container">
+                  <MDEditor.Markdown
+                    source={data.document.note}
+                    rehypePlugins={[[rehypeSanitize]]}
+                  />
+                </div>
               )}
             </div>
           </div>

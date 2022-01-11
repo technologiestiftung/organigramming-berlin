@@ -2,22 +2,26 @@ import React, { useState } from "react";
 import { Button, Modal, Row, Col, Form, Alert } from "react-bootstrap";
 import initDocument from "../../data/initDocument";
 import AlertModal from "./AlertModal";
-import definitions from "../../schemas/definitions.json";
+import definitions from "../../schemas/organization_chart";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
-const NewDocumentTab = (props) => {
+const NewDocumetModal = (props) => {
   const [alertModalShow, setAlertModalShow] = useState(false);
+  const [hideModal, setHideModal] = useState(false);
   const [importError, setImportError] = useState(null);
   const [importData, setImportData] = useState(null);
 
   const onCreateNew = () => {
+    setHideModal(true);
     setAlertModalShow(true);
     setImportData(initDocument)
   };
 
   const onFileImpotChange = (e) => {
     const ajv = new Ajv();
+    
+    //add custom formats to validate against
     addFormats(ajv);
     ajv.addFormat(
       "data-url",
@@ -28,6 +32,7 @@ const NewDocumentTab = (props) => {
       "color",
       /^(#?([0-9A-Fa-f]{3}){1,2}\b|aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow|(rgb\(\s*\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b\s*,\s*\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b\s*,\s*\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b\s*\))|(rgb\(\s*(\d?\d%|100%)+\s*,\s*(\d?\d%|100%)+\s*,\s*(\d?\d%|100%)+\s*\)))$/
     );
+    ajv.addVocabulary(["version", "enumNames"])
 
     const validate = ajv.compile(definitions);
     e.preventDefault();
@@ -36,7 +41,6 @@ const NewDocumentTab = (props) => {
       const text = e.target.result;
       const data = JSON.parse(text);
       const valid = validate(data);
-      console.log(valid);
       if (!valid) {
         setImportError(validate.errors);
       } else {
@@ -57,12 +61,13 @@ const NewDocumentTab = (props) => {
           props.onHide();
         }}
         show={alertModalShow}
-        onHide={() => setAlertModalShow(false)}
+        onHide={() => {setHideModal(false); setAlertModalShow(false)}}
+        onSave={props.openExport}
         title="Aktuelles Änderungen Verwerfen"
       >
         Sollen die aktuellen Änderungen verworfen werden?
       </AlertModal>
-      <Modal
+      {!hideModal && <Modal
         {...props}
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
@@ -104,9 +109,9 @@ const NewDocumentTab = (props) => {
         <Modal.Footer>
           <Button onClick={props.onHide}>Abbrechen</Button>
         </Modal.Footer>
-      </Modal>
+      </Modal>}
     </>
   );
 };
 
-export default NewDocumentTab;
+export default NewDocumetModal;

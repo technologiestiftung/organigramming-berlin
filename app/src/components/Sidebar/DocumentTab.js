@@ -1,7 +1,9 @@
-import definitions from "../../schemas/definitions.json";
+import definitions from "../../schemas/organization_chart";
 import Form from "@rjsf/bootstrap-4";
 import React, { useState } from "react";
 import FileSelect from "../From/FileSelect";
+import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
+import MDEditorWidget from "../From/MDEditor";
 
 const importAll = (r) => {
   let images = [];
@@ -18,16 +20,26 @@ const importAll = (r) => {
         type = "image/jpeg";
         break;
     }
-    const base64String = "data:"+type+";name="+fileName+";base64,"+ btoa(
-      new Uint8Array(arrayBuffer)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
+    const base64String =
+      "data:" +
+      type +
+      ";name=" +
+      fileName +
+      ";base64," +
+      btoa(
+        new Uint8Array(arrayBuffer).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          ""
+        )
+      );
 
     images.push({
       filename: fileName,
       extension: extension,
       base64String: base64String,
     });
+
+    return item;
   });
   return images;
 };
@@ -50,11 +62,12 @@ const DocumentTab = ({ data, sendDataUp }) => {
   const schema = { ...definitions, ...properties };
 
   const uiSchema = {
-    "ui:title": " ",
-    "ui:description": " ",
+    "ui:headless": true,
     document: {
+      "ui:headless": true,
       note: {
-        "ui:widget": "textarea",
+        title: "Fußzeile",
+        "ui:widget": MDEditorWidget,
       },
       logo: {
         "ui:widget": FileSelect,
@@ -63,7 +76,7 @@ const DocumentTab = ({ data, sendDataUp }) => {
       schemaVersion: {
         "ui:widget": "hidden",
       },
-      pageOrientation: {
+      paperOrientation: {
         "ui:widget": "radio",
         "ui:options": {
           inline: true,
@@ -77,16 +90,16 @@ const DocumentTab = ({ data, sendDataUp }) => {
   };
   const onChange = (e) => {
     setFormData(e.formData);
-    console.log(e);
   };
 
   return (
     <div className="tab">
-      <h1>Organigramm</h1>
+      <h2>Dokument</h2>
       <Form
         schema={schema}
         uiSchema={uiSchema}
         formData={formData}
+        ObjectFieldTemplate={ObjectFieldTemplate}
         onChange={onChange}
         onBlur={onBlur}
         liveValidate

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 
 const ArrayFieldTemplate = (props) => {
   return (
@@ -35,7 +34,6 @@ const ArrayFieldTemplate = (props) => {
                   className="btn btn-danger btn-sm m-1 btn-light"
                   onClick={element.onDropIndexClick(element.index)}
                 >
-                  {console.log("content", element)}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
