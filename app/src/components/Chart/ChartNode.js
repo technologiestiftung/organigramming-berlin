@@ -180,9 +180,9 @@ const ChartNode = ({
             <h2>{ds.type}</h2>
             <h1>{ds.name}</h1>
             {ds.altName && (
-              <div className="text-end fst-italic">
+              <h3 className="text-end">
                 <span>{ds.altName}</span>
-              </div>
+              </h3>
             )}
           </div>
           {(ds.departments || ds.contact || ds.address) && (
@@ -398,7 +398,9 @@ const ChartNode = ({
                   {ds.address.housenumber}
                   {ds.address.building && " "}
                   {ds.address.building}
-                  {ds.address.zipCode && <br />}
+                  {ds.address.room && "-"}
+                  {ds.address.room}
+                  {ds.address.zipCode && ", "}
                   {ds.address.zipCode}
                   {ds.address.city && " "}
                   {ds.address.city}

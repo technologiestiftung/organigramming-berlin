@@ -96,7 +96,14 @@
         },
         "style": {
           "type": "string",
-          "title": "Stil"
+          "title": "Stil",
+          "default": "default",
+          "enum":[
+            "default",
+            "emphasized",
+            "light"
+          ],
+          "enumNames":["Standard","Hervorgehoben", "Zurückgenommen"]
         },
         "contact": {
           "$ref": "#/definitions/contact"

@@ -26,7 +26,12 @@ const ExportModal = (props) => {
     if (!formData.export || !formData.export.filename) {
       setFormData({
         ...formData,
-        export: { ...formData.export, filename: toSnakeCase(formData.document.title + (formData.document.version || "")) },
+        export: {
+          ...formData.export,
+          filename: toSnakeCase(
+            formData.document.title + ("_" + formData.document.version || "")
+          ),
+        },
       });
     }
   }, [formData]);
@@ -46,7 +51,7 @@ const ExportModal = (props) => {
   };
 
   const onExport = () => {
-   
+    onBlur();
     if (formData.export.saveExport === "save") {
       props.onSave(true);
     } else {
@@ -110,7 +115,11 @@ const ExportModal = (props) => {
           Abbrechen
         </Button>
         <Button onClick={onExport}>
-          {(formData && formData.export && formData.export.saveExport === "export") ? "Exportieren" : "Speichern"}
+          {formData &&
+          formData.export &&
+          formData.export.saveExport === "export"
+            ? "Exportieren"
+            : "Speichern"}
         </Button>
       </Modal.Footer>
     </Modal>

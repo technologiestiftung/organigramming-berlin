@@ -32,6 +32,7 @@
       }
 
       .oc-node {
+        $currentColor: $primary;
         box-sizing: border-box;
         display: inline-block;
         position: relative;
@@ -50,7 +51,7 @@
             left: calc(50% - 1px);
             width: 2px;
             height: 9px;
-            background-color: $primary;
+            background-color: $currentColor;
           }
         }
         &.end-node {
@@ -60,8 +61,9 @@
         }
 
         .oc-container {
+          font-size: 1rem;
           width: 15rem;
-          background-color: $primary;
+          background-color: $currentColor;
           padding: 2px;
           border-radius: $border-radius;
           outline-width: 3;
@@ -78,24 +80,28 @@
             padding: 0.5rem;
             margin: 0;
             min-height: 20px;
-            font-size: 0.75rem;
+            font-size: 0.75em;
             font-weight: bold;
             overflow: hidden;
             text-align: left;
-            background-color: $primary;
+            background-color: $currentColor;
             color: #fff;
-            background-color: $primary;
             h1 {
-              font-size: 1rem;
+              font-size: 1em;
             }
             h2 {
-              font-size: 0.75rem;
+              font-size: 0.75em;
+            }
+            h3 {
+              font-size: 0.70em;
+              font-style: italic;
+              margin-bottom: 0;
             }
           }
           .oc-content {
             padding: 0.5rem;
-            max-width: 15rem;
-            width: auto;
+            width: 100%;
+            max-width: 100%;
             font-size: 0.625rem;
             color: $body-color;
             text-overflow: ellipsis;
@@ -111,12 +117,12 @@
                   display: none;
                 }
                 h3 {
-                  font-size: 0.75rem;
+                  font-size: 0.75em;
                   font-weight: bold;
                 }
                 .name {
                   display: inline-block;
-                  font-size: 0.7rem;
+                  font-size: 0.7em;
                   font-weight: bold;
                   margin-bottom: 0;
                 }
@@ -134,16 +140,17 @@
                   display: none;
                 }
                 h3 {
-                  font-size: 0.75rem;
+                  font-size: 0.75em;
                   font-weight: bold;
                 }
                 .name {
                   display: inline-block;
-                  font-size: 0.7rem;
+                  font-size: 1.1em;
                   font-weight: bold;
                   margin-bottom: 0;
                 }
                 .position {
+                  font-size: 0.75em;
                   display: block;
                 }
               }
@@ -156,15 +163,13 @@
                 &::before {
                   display: none;
                 }
-                h3 {
-                  font-size: 0.75rem;
-                  font-weight: bold;
+                svg{
+                  width: auto;
+                  height: 1em;
                 }
-                .name {
-                  display: inline-block;
-                  font-size: 0.7rem;
+                h3 {
+                  font-size: 0.5em;
                   font-weight: bold;
-                  margin-bottom: 0;
                 }
                 .position {
                   display: block;
@@ -173,76 +178,99 @@
             }
           }
         }
-      }
-      .oc-node.root {
-        margin-bottom: 28px;
-        opacity: 0;
-        width: 100%;
-        padding-right: 2rem;
-        padding-left: 2rem;
-        transition: opacity 300ms ease-in-out, box-shadow 300ms ease-in-out;
-        .oc-container {
-          width: 100%;
-          background: transparent;
-          box-shadow: none;
+        &.emphasized {
+          $supCurrentColor: lighten($currentColor, 5%);
+          .oc-container {
+            width: 17rem;
+            font-size: 1.5rem;
+            background-color: $supCurrentColor;
+            .oc-heading {
+              background-color: $supCurrentColor;
+            }
+          }
+        }
+        &.light {
+          font-size: 0.75rem;
+          $supCurrentColor: $gray-500;
+          .oc-container {
+            background-color: $supCurrentColor;
+            .oc-heading {
+              background-color: $supCurrentColor;
+            }
+            .oc-content{
+              font-size: 1rem;
+            }
+          }
+        }
 
-          // border: $gray-400 solid 1px;
-          &:hover {
-            transform: none;
-            box-shadow: inset 0 0 24px $gray-300;
+        &.root {
+          margin-bottom: 28px;
+          opacity: 0;
+          width: 100%;
+          padding-right: 2rem;
+          padding-left: 2rem;
+          transition: opacity 300ms ease-in-out, box-shadow 300ms ease-in-out;
+          .oc-container {
+            width: 100%;
+            background: transparent;
+            box-shadow: none;
+
+            // border: $gray-400 solid 1px;
+            &:hover {
+              transform: none;
+              box-shadow: inset 0 0 24px $gray-300;
+            }
+            .oc-heading {
+              text-align: center;
+              color: $gray-300;
+              border-radius: $border-radius;
+              background-color: transparent;
+            }
+            // border-radius: 50%;
+            // .oc-heading,
+            .oc-content {
+              display: none;
+            }
           }
-          .oc-heading {
-            text-align: center;
-            color: $gray-300;
-            border-radius: $border-radius;
-            background-color: transparent;
-          }
-          // border-radius: 50%;
-          // .oc-heading,
-          .oc-content {
+          &::after {
             display: none;
           }
         }
-        &::after {
-          display: none;
-        }
-      }
-      .oc-node.allowedDrop {
-        .oc-container {
-          opacity: 0.5;
-          background-color: $green;
-          .oc-heading {
+        &.allowedDrop {
+          .oc-container {
+            opacity: 0.5;
             background-color: $green;
-            color: $white;
-          }
-          .oc-content{
-            box-shadow: inset 0 0 1rem rgba($green, 0.5);
-          }
-        }
-
-      }
-      .oc-node.root.allowedDrop {
-        opacity: 1;
-        .oc-container {
-          background:$white;
-          .oc-heading {
-            box-shadow: inset 0 0 1rem rgba($green, 0.5);
-            border: $green solid 2px;
-            color: $green;
-            background: transparent;
+            .oc-heading {
+              background-color: $green;
+              color: $white;
+            }
+            .oc-content {
+              box-shadow: inset 0 0 1rem rgba($green, 0.5);
+            }
           }
         }
-      }
-      .oc-node.selected .oc-container {
-        outline: 3px solid $input-btn-focus-color;
-        transform: translateY(-1px);
-        box-shadow: rgba($gray-600, 0.8) 0px 8px 24px;
-      }
-
-      .oc-node.isChildrenCollapsed {
-        &:not(:only-child) {
-          &::after {
-            content: none;
+        &.root.allowedDrop {
+          opacity: 1;
+          .oc-container {
+            background: $white;
+            .oc-heading {
+              box-shadow: inset 0 0 1rem rgba($green, 0.5);
+              border: $green solid 2px;
+              color: $green;
+              background: transparent;
+            }
+          }
+        }
+        &selected .oc-container {
+          outline: 3px solid $input-btn-focus-color;
+          transform: translateY(-1px);
+          box-shadow: rgba($gray-600, 0.8) 0px 8px 24px;
+        }
+        &.isChildrenCollapsed {
+          &:not(:only-child) {
+            &::after {
+              content: none;
+            }
           }
         }
       }
@@ -430,185 +458,6 @@
     }
   }
 }
-// .oci {
-//   display: inline-block;
-//   position: relative;
-//   font-style: normal;
-//   font-family: Arial;
-// }
-// .oci-chevron-up {
-//   &::before {
-//     content: "";
-//     display: inline-block;
-//     box-sizing: border-box;
-//     vertical-align: text-bottom;
-//     width: 0.625rem;
-//     height: 0.625rem;
-//     border-width: 0 0.2rem 0.2rem 0;
-//     border-style: solid;
-//     border-color: #000;
-//     background: transparent;
-//     transform: rotate(-135deg);
-//   }
-// }
-// .oci-chevron-right {
-//   &::before {
-//     content: "";
-//     display: inline-block;
-//     box-sizing: border-box;
-//     width: 0.625rem;
-//     height: 0.625rem;
-//     border-width: 0 0.2rem 0.2rem 0;
-//     border-style: solid;
-//     border-color: #000;
-//     background: transparent;
-//     transform: rotate(-45deg);
-//   }
-// }
-// .oci-chevron-down {
-//   &::before {
-//     content: "";
-//     display: inline-block;
-//     box-sizing: border-box;
-//     width: 0.625rem;
-//     height: 0.625rem;
-//     border-width: 0 0.2rem 0.2rem 0;
-//     border-style: solid;
-//     border-color: #000;
-//     background: transparent;
-//     transform: rotate(45deg);
-//   }
-// }
-// .oci-chevron-left {
-//   &::before {
-//     content: "";
-//     display: inline-block;
-//     box-sizing: border-box;
-//     width: 0.625rem;
-//     height: 0.625rem;
-//     border-width: 0 0.2rem 0.2rem 0;
-//     border-style: solid;
-//     border-color: #000;
-//     background: transparent;
-//     transform: rotate(135deg);
-//   }
-// }
-// .oci-leader {
-//   &::before {
-//     position: absolute;
-//     content: "";
-//     display: inline-block;
-//     width: 0.4rem;
-//     height: 0.4rem;
-//     border-radius: $border-radius;
-//     background: #000;
-//     top: -0.75rem;
-//     left: 0.125rem;
-//   }
-//   &::after {
-//     position: absolute;
-//     content: "";
-//     display: inline-block;
-//     width: 0.875rem;
-//     height: 0.375rem;
-//     border-radius: 0.25rem 0.25rem 0 0;
-//     background: #000;
-//     top: -0.3rem;
-//     left: -0.125rem;
-//   }
-// }
-// .oci-plus-square {
-//   &::before {
-//     content: "+";
-//     display: inline-block;
-//     vertical-align: text-bottom;
-//     text-align: center;
-//     width: 1rem;
-//     height: 1rem;
-//     background-color: #000;
-//     color: #fff;
-//   }
-// }
-// .oci-plus-circle {
-//   &::before {
-//     content: "+";
-//     display: inline-block;
-//     vertical-align: text-bottom;
-//     text-align: center;
-//     width: 1rem;
-//     height: 1rem;
-//     border-radius: 0.5rem;
-//     background-color: #000;
-//     color: #fff;
-//   }
-// }
-// .oci-minus-square {
-//   &::before {
-//     content: "−";
-//     display: inline-block;
-//     vertical-align: text-bottom;
-//     text-align: center;
-//     width: 1rem;
-//     height: 1rem;
-//     background-color: #000;
-//     color: #fff;
-//   }
-// }
-// .oci-minus-circle {
-//   &::before {
-//     content: "−";
-//     display: inline-block;
-//     vertical-align: text-bottom;
-//     text-align: center;
-//     width: 1rem;
-//     height: 1rem;
-//     border-radius: 0.5rem;
-//     background-color: #000;
-//     color: #fff;
-//   }
-// }
-// .oci-arrow-circle-up {
-//   &::before {
-//     content: "▲";
-//     display: inline-block;
-//     text-align: center;
-//     vertical-align: text-bottom;
-//     width: 1rem;
-//     height: 1rem;
-//     border-radius: 0.5rem;
-//     background-color: #000;
-//     color: #fff;
-//     font-size: 0.875rem;
-//   }
-// }
-// .oci-arrow-circle-down {
-//   &::before {
-//     content: "▼";
-//     text-align: center;
-//     display: inline-block;
-//     vertical-align: text-bottom;
-//     width: 1rem;
-//     height: 1rem;
-//     border-radius: 0.5rem;
-//     background-color: #000;
-//     color: #fff;
-//     font-size: 0.875rem;
-//   }
-// }
-// .oci-info-circle {
-//   &::before {
-//     content: "i";
-//     display: inline-block;
-//     vertical-align: text-bottom;
-//     width: 1rem;
-//     height: 1rem;
-//     border-radius: 0.5rem;
-//     background-color: #000;
-//     color: #fff;
-//     text-align: center;
-//     font-weight: bold;
-//   }
-// }
 .oci-spinner {
   &::before {
     content: "";

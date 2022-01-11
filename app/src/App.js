@@ -47,7 +47,6 @@ const App = () => {
   };
 
   const handleKeyDown = (e) => {
-    // e.preDefault();
     let charCode = String.fromCharCode(e.which).toLowerCase();
     if ((e.ctrlKey || e.metaKey) && charCode === "z") {
       if (e.shiftKey) {
