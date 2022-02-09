@@ -23,7 +23,6 @@ const initdata = () => {
 
 const App = () => {
   const chart = useRef();
-  // const [data, setData] = useState(initDocument);
   const [selected, setSelected] = useState(null);
   const [update, setUpdate] = useState(false);
   const [
@@ -73,7 +72,7 @@ const App = () => {
     document.body.removeChild(link);
   };
 
-  const exportTo = (fileextension, includeLogo= true, vectorPdf = true) => {
+  const exportTo = (fileextension, includeLogo = true, vectorPdf = true) => {
     const fileName = data.export.filename || toSnakeCase(data.document.title);
     chart.current.exportTo(fileName, fileextension, includeLogo, vectorPdf);
   };
@@ -110,7 +109,9 @@ const App = () => {
         data={data}
         update={update}
         sendDataUp={onChange}
-        setSelected={(e) => setSelected(e)}
+        setSelected={(e) => {
+          setSelected(e);
+        }}
       />
     </div>
   );

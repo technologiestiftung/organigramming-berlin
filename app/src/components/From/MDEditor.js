@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import MDEditor, { commands } from "@uiw/react-md-editor";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import rehypeSanitize from "rehype-sanitize";
 import PropTypes from "prop-types";
 
@@ -38,39 +39,125 @@ const MDEditorWidget = (props) => {
     onBlur = props.onBlur,
     onFocus = props.onFocus;
 
+  const [isChanged, setIsChanged] = useState(false);
+
   const _onChange = (value) => {
     // var value = _ref.target.value;
+    setIsChanged(true);
     return onChange(value === "" ? options.emptyValue : value);
+  };
+  const _onBlur = (value) => {
+    // var value = _ref.target.value;
+    setIsChanged(false);
+    onBlur();
   };
 
   return (
     <div className="mb-0">
       <label className="form-label">{props.label}</label>
-      {/* <button className="btn align-baseline float-end">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          className="bi bi-info-circle"
-          viewBox="0 0 16 16"
-        >
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-          <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-        </svg>
-      </button> */}
+      <OverlayTrigger
+        trigger="click"
+        placement="right"
+        overlay={
+          <Popover
+            id="markdownhelp"
+            style={{ maxWidth: "none", fontSize: "0.8em" }}
+          >
+            <Popover.Header as="h3">Markdown</Popover.Header>
+            <Popover.Body>
+              <table>
+                <tbody>
+                <tr>
+                  <td>#&nbsp;Überschrift&nbsp;1</td>
+                  <td>
+                    <h1 style={{ fontSize: "1.2rem" }}>Überschrift&nbsp;1</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td>##&nbsp;Überschrift&nbsp;2</td>
+                  <td>
+                    <h2 style={{ fontSize: "1rem" }}>Überschrift&nbsp;2</h2>
+                  </td>
+                </tr>
+                <tr>
+                  <td>###&nbsp;Überschrift&nbsp;3</td>
+                  <td>
+                    <h3 style={{ fontSize: "0.8rem" }}>Überschrift&nbsp;3</h3>
+                  </td>
+                </tr>
+                <tr>
+                  <td>**Fett**</td>
+                  <td>
+                    <b>Fett</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td>*kursiv*</td>
+                  <td>
+                    <i>kursiv</i>
+                  </td>
+                </tr>
+                <tr>
+                  <td>[link](url)</td>
+                  <td>
+                    <a href="#section">Link</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>`code`</td>
+                  <td>
+                    <code>code</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    - Liste
+                    <br />- Liste
+                    <br />- Liste
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Liste</li>
+                      <li>Liste</li>
+                      <li>Liste</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    1. Liste
+                    <br />2. Liste
+                    <br />3. Liste
+                  </td>
+                  <td>
+                    <ol>
+                      <li>Liste</li>
+                      <li>Liste</li>
+                      <li>Liste</li>
+                    </ol>
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    Um einen Zeilenumbruch oder eine neue Zeile zu erzeugen,
+                    <br />beenden Sie eine Zeile mit zwei Leerzeichen.
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </Popover.Body>
+          </Popover>
+        }
+      >
+        <button className="btn btn-sm float-end btn-link">Hilfe</button>
+      </OverlayTrigger>
       <MDEditor
         className="form-control"
         style={{ overflow: "hidden" }}
         id={id}
         value={typeof value === "undefined" ? "" : value}
         onChange={_onChange}
-        onBlur={
-          onBlur &&
-          ((e) => {
-            return onBlur(id, value);
-          })
-        }
+        preview="edit"
         onFocus={
           onFocus &&
           ((e) => {
@@ -80,14 +167,12 @@ const MDEditorWidget = (props) => {
         previewOptions={{
           rehypePlugins: [[rehypeSanitize]],
         }}
-        highlightEnable={false}
+        highlightEnable={true}
         commandsFilter={(cmd) => {
           if (
             cmd &&
             cmd.name &&
-            /(live|edit|quote|strikethrough|image|preview|checked-list)/.test(
-              cmd.name
-            )
+            /(quote|strikethrough|image|preview|checked-list)/.test(cmd.name)
           ) {
             return false;
           }
@@ -117,6 +202,16 @@ const MDEditorWidget = (props) => {
         autoFocus={autofocus}
         rows={options.rows}
       />
+      <button
+        className={
+          "btn mt-2 btn-sm float-end " +
+          (isChanged ? "btn-primary" : "btn-light")
+        }
+        disabled={!isChanged}
+        onClick={_onBlur}
+      >
+        Übernehmen
+      </button>
     </div>
   );
 };

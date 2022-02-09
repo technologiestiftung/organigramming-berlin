@@ -97,7 +97,7 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
   }
 
   const getNewNode = () => {
-    return { type: "Neue", name: "Organisation", id: uuidv4() };
+    return { type: "Neue", name: "Organisation", id: "n" + uuidv4() };
   };
 
   const addSiblingNode = async () => {

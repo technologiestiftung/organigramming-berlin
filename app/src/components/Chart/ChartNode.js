@@ -284,12 +284,12 @@ const ChartNode = ({
                                           >
                                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
                                           </svg>
-                                          ‬{employee.contact.email}
+                                         {employee.contact.email}
                                         </li>
                                       )}
                                       {employee.contact.website && (
                                         <li>
-                                          ‭
+                                          
                                           <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="16"
@@ -301,7 +301,7 @@ const ChartNode = ({
                                             <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />
                                             <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" />
                                           </svg>
-                                          ‬{employee.contact.website}
+                                          {employee.contact.website}
                                         </li>
                                       )}
                                     </ul>
@@ -349,7 +349,7 @@ const ChartNode = ({
                   )}
                   {ds.contact.email && (
                     <li>
-                      ‭
+                      
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -365,7 +365,7 @@ const ChartNode = ({
                   )}
                   {ds.contact.website && (
                     <li>
-                      ‭
+                      
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"

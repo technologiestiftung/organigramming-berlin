@@ -13,12 +13,19 @@ import { v4 as uuidv4 } from "uuid";
 const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const orgchart = useRef();
 
-  useImperativeHandle(ref, (fileName, fileextension, includeLogo, vectorPdf) => ({
-    exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
-      orgchart.current.exportTo(fileName, fileextension, includeLogo, vectorPdf);
-    },
-  }));
-
+  useImperativeHandle(
+    ref,
+    (fileName, fileextension, includeLogo, vectorPdf) => ({
+      exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
+        orgchart.current.exportTo(
+          fileName,
+          fileextension,
+          includeLogo,
+          vectorPdf
+        );
+      },
+    })
+  );
 
   const [ds, setDS] = useState(data);
   // const [selectedNodes, setSelectedNodes] = useState(new Set());
@@ -29,18 +36,17 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
 
   const dsDigger = new JSONDigger(data, "id", "organisations");
 
-
   useEffect(() => {
-    setDS({...data});
+    setDS({ ...data });
   }, [data, update]);
 
   const readSelectedNode = (nodeData) => {
     // if (isMultipleSelect) {
     //   // setSelectedNodes((prev) => new Set(prev.add(nodeData)));
     // } else {
-      // setSelectedNodes(new Set([nodeData]));
-      setSelected(nodeData);
-      setSelectedNode(nodeData);
+    // setSelectedNodes(new Set([nodeData]));
+    setSelected(nodeData);
+    setSelectedNode(nodeData);
     // }
   };
 
@@ -70,7 +76,6 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
       left: e.clientX,
     });
   };
-
 
   const getNewNode = () => {
     return { type: "Neue", name: "Organisation", id: "n" + uuidv4() };
@@ -128,13 +133,19 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
 
   const handleKeyDown = (e) => {
     // e.preDefault();
-    if(e.code === "Backspace" && selectedNode){
-      removeNode()
+    if (e.code === "Backspace" && selectedNode) {
+      removeNode();
     }
   };
 
   return (
-    <div tabIndex="0" onCopy={copyNode} onPaste={paseNode} onCut={cutNode} onKeyDown={handleKeyDown}>
+    <div
+      tabIndex="0"
+      onCopy={copyNode}
+      onPaste={paseNode}
+      onCut={cutNode}
+      onKeyDown={handleKeyDown}
+    >
       <OrganizationChart
         tabIndex="0"
         ref={orgchart}
@@ -147,7 +158,9 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
         sendDataUp={onChanged}
         onContextMenu={onContextMenu}
         onCloseContextMenu={onCloseContextMenu}
-     
+        onOpenDocument={(e) => {
+          setSelected("document");
+        }}
         pan={true}
         zoom={true}
         draggable={true}

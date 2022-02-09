@@ -181,7 +181,6 @@
           "$ref": "#/definitions/contact"
         }
       },
-      "required": ["lastName"],
       "title": "Person"
     },
     "contact": {
@@ -202,7 +201,6 @@
         },
         "website": {
           "type": "string",
-          "format": "uri",
           "title": "Website"
         }
       },
