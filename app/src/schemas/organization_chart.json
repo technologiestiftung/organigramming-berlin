@@ -113,7 +113,7 @@
         },
         "departments": {
           "type": "array",
-          "title": "Abteilungen",
+          "title": "Zugehörige Organisationseinheit",
           "items": {
             "$ref": "#/definitions/department"
           }
@@ -135,13 +135,13 @@
     "department": {
       "type": "object",
       "additionalProperties": false,
-      "title": "Abteilung",
+      "title": "Zugehörige Organisationseinheit",
       "required": ["name"],
       "properties": {
         "name": {
           "type": "string",
-          "title": "Bezeichung",
-          "default": "Neue Abteilung"
+          "title": "Abteilung/Stellenbezeichnung",
+          "default": "Neue Organisationsuntereinheit"
         },
         "employees": {
           "title": "Personen",
