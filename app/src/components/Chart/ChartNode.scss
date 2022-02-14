@@ -202,7 +202,25 @@
             }
           }
         }
-
+        &.hide {
+          font-size: 0.75rem;
+          $supCurrentColor: $currentColor;
+          .oc-container {
+          background-color: $supCurrentColor;
+          height: 1rem;
+          width: 1rem;
+          border-radius: 10px;
+            .oc-heading {
+              display: none;
+            }
+            .oc-content{
+              display: none;
+              //font-size: 1rem;
+              font-color: $supCurrentColor;
+            }
+          }
+        }
+        
         &.root {
           margin-bottom: 28px;
           opacity: 0;

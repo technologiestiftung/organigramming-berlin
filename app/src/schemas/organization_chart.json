@@ -101,9 +101,15 @@
           "enum":[
             "default",
             "emphasized",
-            "light"
-          ],
-          "enumNames":["Standard","Hervorgehoben", "Zurückgenommen"]
+            "light",
+          "hide"
+                  ],
+          "enumNames":["Standard","Hervorgehoben", "Zurückgenommen","Verbindungspunkt"]
+        },
+        
+          "person": {
+            "$ref": "#/definitions/employee"
+          
         },
         "contact": {
           "$ref": "#/definitions/contact"
