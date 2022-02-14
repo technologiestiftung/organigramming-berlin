@@ -40,6 +40,13 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
       relationship:{
         "ui:widget": "hidden"
       },
+      person: {
+        "ui:headless": true,
+        "ui:field": "CollapsibleField",
+        collapse: {
+          field: "ObjectField",
+        },
+      },
       contact: {
         "ui:headless": true,
         "ui:field": "CollapsibleField",

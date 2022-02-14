@@ -106,20 +106,15 @@
                   ],
           "enumNames":["Standard","Hervorgehoben", "Zurückgenommen","Verbindungspunkt"]
         },
-        
-          "person": {
-            "$ref": "#/definitions/employee"
-          
-        },
-        "contact": {
-          "$ref": "#/definitions/contact"
-        },
         "address": {
           "$ref": "#/definitions/address"
         },
+        "person": {
+          "$ref": "#/definitions/employee"
+        },
         "departments": {
           "type": "array",
-          "title": "Zugehörige Organisationseinheit",
+          "title": "Zugehörige Organisationseinheiten",
           "items": {
             "$ref": "#/definitions/department"
           }
