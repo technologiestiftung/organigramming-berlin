@@ -278,7 +278,7 @@
         },
         "saveExport": {
           "type": "string",
-          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung sichern oder zur Weiterverwendung exponieren?",
+          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung sichern oder zur Weiterverwendung exportieren?",
           "default": "save",
           "enum": ["save", "export"],
           "enumNames": ["Sichern", "Exportieren"]
