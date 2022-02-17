@@ -62,7 +62,7 @@
 
         .oc-container {
           font-size: 1rem;
-          width: 15rem;
+          width: 14rem;
           background-color: $currentColor;
           padding: 2px;
           border-radius: $border-radius;
@@ -111,7 +111,7 @@
             ul.departments {
               display: block;
               padding: 0.4rem 0.7rem;
-              margin-top: 0.5rem;
+              //margin-top: 0.0rem;
               li {
                 width: 100%;
                 display: block;
@@ -165,7 +165,7 @@
                 &::before {
                   display: none;
                 }
-                h3 {
+                h4 {
                   font-size: 0.75em;
                   font-weight: bold;
                 }
@@ -206,6 +206,11 @@
         }
         &.emphasized {
           $supCurrentColor: lighten($currentColor, 5%);
+          h4.person {
+            font-size: 1.55em;
+            font-weight: bold;
+            margin-bottom: 0.15em;
+          }
           .oc-container {
             width: 17rem;
             font-size: 1.5rem;
@@ -527,4 +532,9 @@
 }
 .mt-2 {
   margin-top: 2rem;
+}
+h4.person {
+  font-size: 1.35em;
+  font-weight: bold;
+  margin-bottom: 0.15em;
 }

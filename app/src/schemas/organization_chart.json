@@ -109,8 +109,15 @@
         "address": {
           "$ref": "#/definitions/address"
         },
-        "person": {
-          "$ref": "#/definitions/employee"
+        "contact": {
+          "$ref": "#/definitions/contact"
+        },
+        "employees": {
+          "title": "Personen",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/employee"
+          }
         },
         "departments": {
           "type": "array",
