@@ -10,7 +10,7 @@
       "properties": {
         "title": {
           "type": "string",
-          "title": "Title"
+          "title": "Titel"
         },
         "paperSize": {
           "type": "string",
@@ -42,7 +42,7 @@
         },
         "creator": {
           "type": "string",
-          "title": "Verfasser"
+          "title": "Verfasser:in"
         },
         "note": {
           "type": "string",
@@ -66,21 +66,21 @@
             "Amt",
             "Bezirksamt",
             "Büro",
-            "Büroleiter",
+            "Büroleiter:in",
             "Fachbereich",
             "Fachdienst",
             "Landesamt",
             "Landesstelle",
             "Museum",
             "Other",
-            "Pressesprecher",
+            "Pressesprecher:in",
             "Referat",
-            "Referent",
+            "Referent:in",
             "Senatskanzlei",
-            "Senator",
+            "Senator:in",
             "Senatsverwaltung",
             "Serviceeinheit",
-            "Staatssekretär",
+            "Staatssekretär:in",
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],
@@ -166,12 +166,11 @@
       "properties": {
         "salutation": {
           "type": "string",
-          "examples": ["Frau", "Herr"],
           "title": "Anrede"
         },
         "title": {
           "type": "string",
-          "title": "Title"
+          "title": "Titel"
         },
         "firstName": {
           "type": "string",
@@ -302,7 +301,7 @@
                 },
                 "includeLogo": {
                   "type": "boolean",
-                  "title": "Logo in beim Exportieren einbetten",
+                  "title": "Logo beim Exportieren einbetten",
                   "default": true
                 },
                 "exportType": {

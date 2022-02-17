@@ -80,7 +80,7 @@ const NewDocumetModal = (props) => {
         <Modal.Body>
           <Row>
             <Col className="mb-3">
-              <Button onClick={onCreateNew}>Neu Erstellen</Button>
+              <Button onClick={onCreateNew}>Neues Dokument erstellen</Button>
             </Col>
           </Row>
           <Row>
