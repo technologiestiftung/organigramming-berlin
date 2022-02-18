@@ -500,8 +500,8 @@ const ChartNode = ({
                             <div className="address">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width="10"
+                                height="10"
                                 fill="currentColor"
                                 className="me-1 bi bi-signpost"
                                 viewBox="0 0 16 16"
