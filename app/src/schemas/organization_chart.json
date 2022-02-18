@@ -88,11 +88,11 @@
         },
         "name": {
           "type": "string",
-          "title": "Bezeichung"
+          "title": "Bezeichnung"
         },
         "altName": {
           "type": "string",
-          "title": "Alternative Bezeichung"
+          "title": "Alternative Bezeichnung"
         },
         "style": {
           "type": "string",
@@ -278,7 +278,7 @@
         },
         "saveExport": {
           "type": "string",
-          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung sichern oder zur Weiterverwendung exportieren?",
+          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung in einem maschinenlesbaren Format sichern oder das fertige Organigramm exportieren?",
           "default": "save",
           "enum": ["save", "export"],
           "enumNames": ["Sichern", "Exportieren"]

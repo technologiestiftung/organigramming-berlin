@@ -32,7 +32,7 @@ const FilePreviewWidget = (props) => {
   const [file, setFile] = useState(props.value || undefined);
 
   const enumOptions = [
-    { label: "Datei hochlanden", value: "upload" },
+    { label: "Datei hochladen", value: "upload" },
     ...props.uiSchema.preuploads.map((e) => {
       return {
         label: e.filename,
