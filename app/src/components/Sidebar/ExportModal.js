@@ -89,7 +89,7 @@ const ExportModal = (props) => {
     <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Dokument speichern/Exportieren
+          Dokument speichern/exportieren
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
