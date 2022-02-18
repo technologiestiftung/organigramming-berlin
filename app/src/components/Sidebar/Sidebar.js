@@ -88,7 +88,7 @@ const Sidebar = ({
                 variant="light"
                 className={activeTap === "document" ? "active" : ""}
                 onClick={() => setActiveTap("document")}
-                title="Dokument Informationen"
+                title="Dokumentinformationen"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@ const Sidebar = ({
                     selected != null ? setActiveTap("organisation") : undefined
                   }
                   disabled={selected === null ? true : false}
-                  title="Organisations Informationen"
+                  title="Organisationsinformationen"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

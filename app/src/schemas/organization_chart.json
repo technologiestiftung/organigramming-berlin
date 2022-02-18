@@ -251,7 +251,7 @@
           "title": "Möchten Sie das Dokument sichern oder als Bild oder Dokument expotieren?",
           "default": "save",
           "enum": ["save", "export"],
-          "enumNames": ["Sichern", "Exportieren"]
+          "enumNames": ["Speichern", "Exportieren"]
         },
         "exportType": {
           "type": "string",
@@ -274,7 +274,7 @@
           "title": "Möchten Sie das Dokument zur erneuten Bearbeitung sichern oder zur Weiterverwendung exponieren?",
           "default": "save",
           "enum": ["save", "export"],
-          "enumNames": ["Sichern", "Exportieren"]
+          "enumNames": ["Speichern", "Exportieren"]
         }
       },
       "dependencies": {
