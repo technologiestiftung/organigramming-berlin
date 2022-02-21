@@ -255,10 +255,10 @@
         },
         "saveExport": {
           "type": "string",
-          "title": "Möchten Sie das Dokument sichern oder als Bild oder Dokument expotieren?",
+          "title": "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
           "default": "save",
           "enum": ["save", "export"],
-          "enumNames": ["Sichern", "Exportieren"]
+          "enumNames": ["Speichern", "Exportieren"]
         },
         "exportType": {
           "type": "string",
@@ -278,10 +278,10 @@
         },
         "saveExport": {
           "type": "string",
-          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung in einem maschinenlesbaren Format sichern oder das fertige Organigramm exportieren?",
+          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung in einem maschinenlesbaren Format speichern oder das fertige Organigramm exportieren?",
           "default": "save",
           "enum": ["save", "export"],
-          "enumNames": ["Sichern", "Exportieren"]
+          "enumNames": ["Speichern", "Exportieren"]
         }
       },
       "dependencies": {

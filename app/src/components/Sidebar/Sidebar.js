@@ -70,7 +70,7 @@ const Sidebar = ({
                   setActiveTap(null);
                   setNewDocumentModalShow(true);
                 }}
-                title="Neues Dokument erstellen/öffnen"
+                title="Neues Dokument erstellen oder öffnen"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +88,7 @@ const Sidebar = ({
                 variant="light"
                 className={activeTap === "document" ? "active" : ""}
                 onClick={() => setActiveTap("document")}
-                title="Dokument Informationen"
+                title="Dokumentinformationen"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +131,7 @@ const Sidebar = ({
                   setActiveTap(null);
                   setExportModalShow(true);
                 }}
-                title="Dokument speichern/exportieren"
+                title="Dokument speichern oder exportieren"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

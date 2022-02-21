@@ -63,9 +63,9 @@ const NewDocumetModal = (props) => {
         show={alertModalShow}
         onHide={() => {setHideModal(false); setAlertModalShow(false)}}
         onSave={props.openExport}
-        title="Aktuelles Änderungen Verwerfen"
+        title="Aktuelles Dokument verwerfen"
       >
-        Sollen die aktuellen Änderungen verworfen werden?
+        Wenn Sie ein neues Dokument öffnen, gehen ungespeicherte Änderungen an ihrem aktuellen Dokument verloren. Wollen Sie das aktuelle Dokument speichern?
       </AlertModal>
       {!hideModal && <Modal
         {...props}
