@@ -44,7 +44,7 @@ const ExportModal = (props) => {
       "ui:headless": true,
       saveExport: {
         title:
-          "Möchten Sie das Dokument sichern oder als Bild oder Dokument expotieren?",
+          "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
         "ui:widget": "radio",
       },
     },
@@ -89,7 +89,7 @@ const ExportModal = (props) => {
     <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Dokument speichern/exportieren
+          Dokument speichern oder exportieren
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>

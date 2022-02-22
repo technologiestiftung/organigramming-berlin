@@ -10,7 +10,7 @@
       "properties": {
         "title": {
           "type": "string",
-          "title": "Title"
+          "title": "Titel"
         },
         "paperSize": {
           "type": "string",
@@ -42,7 +42,7 @@
         },
         "creator": {
           "type": "string",
-          "title": "Verfasser"
+          "title": "Verfasser:in"
         },
         "note": {
           "type": "string",
@@ -66,21 +66,21 @@
             "Amt",
             "Bezirksamt",
             "Büro",
-            "Büroleiter",
+            "Büroleiter:in",
             "Fachbereich",
             "Fachdienst",
             "Landesamt",
             "Landesstelle",
             "Museum",
             "Other",
-            "Pressesprecher",
+            "Pressesprecher:in",
             "Referat",
-            "Referent",
+            "Referent:in",
             "Senatskanzlei",
-            "Senator",
+            "Senator:in",
             "Senatsverwaltung",
             "Serviceeinheit",
-            "Staatssekretär",
+            "Staatssekretär:in",
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],
@@ -88,11 +88,11 @@
         },
         "name": {
           "type": "string",
-          "title": "Bezeichung"
+          "title": "Bezeichnung"
         },
         "altName": {
           "type": "string",
-          "title": "Alternative Bezeichung"
+          "title": "Alternative Bezeichnung"
         },
         "style": {
           "type": "string",
@@ -101,19 +101,27 @@
           "enum":[
             "default",
             "emphasized",
-            "light"
-          ],
-          "enumNames":["Standard","Hervorgehoben", "Zurückgenommen"]
-        },
-        "contact": {
-          "$ref": "#/definitions/contact"
+            "light",
+          "hide"
+                  ],
+          "enumNames":["Standard","Hervorgehoben", "Zurückgenommen","Verbindungspunkt"]
         },
         "address": {
           "$ref": "#/definitions/address"
         },
+        "contact": {
+          "$ref": "#/definitions/contact"
+        },
+        "employees": {
+          "title": "Personen",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/employee"
+          }
+        },
         "departments": {
           "type": "array",
-          "title": "Abteilungen",
+          "title": "Zugehörige Organisationseinheiten",
           "items": {
             "$ref": "#/definitions/department"
           }
@@ -135,13 +143,13 @@
     "department": {
       "type": "object",
       "additionalProperties": false,
-      "title": "Abteilung",
+      "title": "Zugehörige Organisationseinheit",
       "required": ["name"],
       "properties": {
         "name": {
           "type": "string",
-          "title": "Bezeichung",
-          "default": "Neue Abteilung"
+          "title": "Abteilung/Stellenbezeichnung",
+          "default": "Neue Organisationsuntereinheit"
         },
         "employees": {
           "title": "Personen",
@@ -158,12 +166,11 @@
       "properties": {
         "salutation": {
           "type": "string",
-          "examples": ["Frau", "Herr"],
           "title": "Anrede"
         },
         "title": {
           "type": "string",
-          "title": "Title"
+          "title": "Titel"
         },
         "firstName": {
           "type": "string",
@@ -248,7 +255,7 @@
         },
         "saveExport": {
           "type": "string",
-          "title": "Möchten Sie das Dokument sichern oder als Bild oder Dokument expotieren?",
+          "title": "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
           "default": "save",
           "enum": ["save", "export"],
           "enumNames": ["Speichern", "Exportieren"]
@@ -271,7 +278,7 @@
         },
         "saveExport": {
           "type": "string",
-          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung sichern oder zur Weiterverwendung exponieren?",
+          "title": "Möchten Sie das Dokument zur erneuten Bearbeitung in einem maschinenlesbaren Format speichern oder das fertige Organigramm exportieren?",
           "default": "save",
           "enum": ["save", "export"],
           "enumNames": ["Speichern", "Exportieren"]
@@ -294,7 +301,7 @@
                 },
                 "includeLogo": {
                   "type": "boolean",
-                  "title": "Logo in beim Exportieren einbetten",
+                  "title": "Logo beim Exportieren einbetten",
                   "default": true
                 },
                 "exportType": {

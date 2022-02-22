@@ -62,7 +62,7 @@
 
         .oc-container {
           font-size: 1rem;
-          width: 15rem;
+          width: 14rem;
           background-color: $currentColor;
           padding: 2px;
           border-radius: $border-radius;
@@ -99,7 +99,7 @@
             }
           }
           .oc-content {
-            padding: 0.5rem;
+            padding: 0.75rem;
             width: 100%;
             max-width: 100%;
             font-size: 0.625rem;
@@ -110,6 +110,10 @@
             background-color: $white;
             ul.departments {
               display: block;
+              padding-top: 0.3rem;
+              padding-bottom: 0.2rem;  
+              padding-left: 0.7rem;
+              padding-right: 0.7rem;
               li {
                 width: 100%;
                 display: block;
@@ -117,7 +121,7 @@
                   display: none;
                 }
                 h3 {
-                  font-size: 0.75em;
+                  font-size: 1.15em;
                   font-weight: bold;
                 }
                 .name {
@@ -145,7 +149,31 @@
                 }
                 .name {
                   display: inline-block;
-                  font-size: 1.1em;
+                  font-size: 1em;
+                  font-weight: normal;
+                  margin-bottom: 0;
+                }
+                .position {
+                  font-size: 0.75em;
+                  display: block;
+                }
+              }
+            }
+            ul.person {
+              display: block;
+              li {
+                width: 100%;
+                display: block;
+                &::before {
+                  display: none;
+                }
+                h4 {
+                  font-size: 0.75em;
+                  font-weight: bold;
+                }
+                .name {
+                  display: inline-block;
+                  font-size: 1.15em;
                   font-weight: bold;
                   margin-bottom: 0;
                 }
@@ -180,6 +208,11 @@
         }
         &.emphasized {
           $supCurrentColor: lighten($currentColor, 5%);
+          h4.person {
+            font-size: 1.55em;
+            font-weight: bold;
+            margin-bottom: 0.15em;
+          }
           .oc-container {
             width: 17rem;
             font-size: 1.5rem;
@@ -187,18 +220,45 @@
             .oc-heading {
               background-color: $supCurrentColor;
             }
+            .oc-content {
+              ul.person {
+                  .name {
+                    font-size: 1.35em;
+                  }
+              }
+            }
           }
         }
+         
         &.light {
           font-size: 0.75rem;
-          $supCurrentColor: $gray-500;
+          $supCurrentColor: rgb(95, 99, 109);
           .oc-container {
             background-color: $supCurrentColor;
             .oc-heading {
               background-color: $supCurrentColor;
             }
             .oc-content{
-              font-size: 1rem;
+              //font-size: 1rem;
+              font-color: $supCurrentColor;
+            }
+          }
+        }
+        &.hide {
+          font-size: 0.75rem;
+          $supCurrentColor: $currentColor;
+          .oc-container {
+          background-color: $supCurrentColor;
+          height: 1rem;
+          width: 1rem;
+          border-radius: 10px;
+            .oc-heading {
+              display: none;
+            }
+            .oc-content{
+              display: none;
+              //font-size: 1rem;
+              font-color: $supCurrentColor;
             }
           }
         }
@@ -471,4 +531,12 @@
     border-radius: 0.625rem;
     animation: oci-infinite-spinning 0.75s linear infinite;
   }
+}
+.mt-2 {
+  margin-top: 2rem;
+}
+h4.person {
+  font-size: 1.15em;
+  font-weight: bold;
+  margin-bottom: 0.15em;
 }

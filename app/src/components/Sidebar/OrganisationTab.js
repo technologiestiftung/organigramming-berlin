@@ -40,6 +40,15 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
       relationship:{
         "ui:widget": "hidden"
       },
+      employees: {
+        "ui:headless": true,
+        items: {
+          "ui:field": "CollapsibleField",
+          collapse: {
+            field: "ObjectField",
+          },
+        },
+      },
       contact: {
         "ui:headless": true,
         "ui:field": "CollapsibleField",
@@ -97,7 +106,7 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
   }
 
   const getNewNode = () => {
-    return { type: "Neue", name: "Organisation", id: "n" + uuidv4() };
+    return { type: "", name: "Organisation", id: "n" + uuidv4() };
   };
 
   const addSiblingNode = async () => {

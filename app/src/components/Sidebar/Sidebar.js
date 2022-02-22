@@ -5,6 +5,7 @@ import DocumentTab from "./DocumentTab";
 import NewDocumentModal from "./NewDocumetModal";
 import OrganisationTab from "./OrganisationTab";
 import ExportModal from "./ExportModal";
+import InfoModal from "./InfoModal";
 import Split from "react-split";
 
 const Sidebar = ({
@@ -22,6 +23,7 @@ const Sidebar = ({
   const [activeTap, setActiveTap] = useState(null);
   const [newDocumentModalShow, setNewDocumentModalShow] = useState(false);
   const [exportModalShow, setExportModalShow] = useState(false);
+  const [infoModalShow, setInfoModalShow] = useState(false);
 
   const onChange = (e) => {
     sendDataUp(e);
@@ -59,6 +61,12 @@ const Sidebar = ({
           onHide={() => setExportModalShow(false)}
         />
       )}
+      {infoModalShow && (
+        <InfoModal
+          show={infoModalShow}
+          onHide={() => setInfoModalShow(false)}
+        />
+      )}
       <Row>
         <Navbar bg="transperent" expand="lg">
           <Nav className="me-auto">
@@ -70,7 +78,7 @@ const Sidebar = ({
                   setActiveTap(null);
                   setNewDocumentModalShow(true);
                 }}
-                title="Neues Dokument erstellen/öffnen"
+                title="Neues Dokument erstellen oder öffnen"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +139,7 @@ const Sidebar = ({
                   setActiveTap(null);
                   setExportModalShow(true);
                 }}
-                title="Dokument speichern/exportieren"
+                title="Dokument speichern oder exportieren"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -143,6 +151,26 @@ const Sidebar = ({
                 >
                   <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
                   <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                </svg>
+              </Button>
+              <Button
+                variant="light"
+                className={infoModalShow ? "active" : ""}
+                onClick={() => {
+                  setActiveTap(null);
+                  setInfoModalShow(true);
+                }}
+                title="Info und Anleitung"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-download"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8.91,11.75c0,.42.39.63,1.22.63v.79H5.79v-.79q1.2,0,1.2-.63V7.49c0-.43-.4-.64-1.2-.64v-.8H8.91Zm.17-8a1.17,1.17,0,0,1-.34.84,1.13,1.13,0,0,1-.85.36,1,1,0,0,1-.47-.1A1.22,1.22,0,0,1,7,4.54a1.34,1.34,0,0,1-.26-.38,1.18,1.18,0,0,1-.09-.46A1.12,1.12,0,0,1,7,2.85a1.18,1.18,0,0,1,.85-.34,1.11,1.11,0,0,1,.84.35A1.15,1.15,0,0,1,9.08,3.7Z"/>
                 </svg>
               </Button>
             </ButtonGroup>

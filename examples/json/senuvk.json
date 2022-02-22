@@ -9,8 +9,8 @@
     "relationship_to_parent": "Parent",
     "suborganizations": [
       {
-        "name": "Senator(in)",
-        "type": "Senator",
+        "name": "Senator:in",
+        "type": "Senator:in",
         "employee_name": "Günther",
         "employee_title": "Frau",
         "telephone": "9025 - 1000",
@@ -18,23 +18,23 @@
         "suborganizations": [
           {
             "name": "Leiter(in) des Büros",
-            "type": "Büroleiter",
+            "type": "Büroleiter:in",
             "employee_name": "Franzius",
             "employee_title": "Frau",
             "relationship_to_parent": "Peripheral",
             "telephone": "9025 - 1006"
           },
           {
-            "name": "Persönliche Referent(in)",
-            "type": "Referent",
+            "name": "Persönliche Referent:in",
+            "type": "Referent:in",
             "employee_name": "Bahramsari",
             "employee_title": "Frau Dr.",
             "relationship_to_parent": "Peripheral",
             "telephone": "9025 - 1018"
           },
           {
-            "name": "Pressesprecher(in)",
-            "type": "Pressesprecher",
+            "name": "Pressesprecher:in",
+            "type": "Pressesprecher:in",
             "employee_name": "Tang",
             "employee_title": "Herr",
             "relationship_to_parent": "Peripheral",
@@ -42,7 +42,7 @@
           },
           {
             "name": "Umwelt und Klimaschutz",
-            "type": "Staatssekretär(in)",
+            "type": "Staatssekretär:in",
             "employee_name": "Tidow",
             "employee_title": "Herr",
             "telephone": "9025 - 1009",
@@ -50,7 +50,7 @@
             "suborganizations": [
               {
                 "name": "StS UK Ref",
-                "type": "Referent",
+                "type": "Referent:in",
                 "employee_name": "Kaul",
                 "employee_title": "Frau",
                 "relationship_to_parent": "Peripheral",
@@ -301,7 +301,7 @@
           },
           {
             "name": "Verkehr",
-            "type": "Staatssekretär(in)",
+            "type": "Staatssekretär:in",
             "employee_name": "Kirchner",
             "employee_title": "Herr",
             "relationship_to_parent": "Direct subordinate",
@@ -309,7 +309,7 @@
             "suborganizations": [
               {
                 "name": "StS V Ref",
-                "type": "Referent",
+                "type": "Referent:in",
                 "employee_name": "Siedenburg",
                 "employee_title": "Frau",
                 "relationship_to_parent": "Peripheral",

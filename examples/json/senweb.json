@@ -9,8 +9,8 @@
     "relationship_to_parent": "Parent",
     "suborganizations": [
       {
-        "name": "Senator(in)",
-        "type": "Senator",
+        "name": "Senator:in",
+        "type": "Senator:in",
         "employee_name": "Ramona Pop",
         "telephone": "9013 - 8100 / - 8101",
         "fax": "9013 - 7541",
@@ -18,47 +18,47 @@
         "suborganizations": [
           {
             "name": "Leitung des Büros des/der Senators/Senatorin)",
-            "type": "Büroleiter",
+            "type": "Büroleiter:in",
             "employee_name": "Thomas Krause",
             "relationship_to_parent": "Peripheral",
             "telephone": "9013 - 8118",
             "fax": "9013 - 7541"
           },
           {
-            "name": "Persönlicher Referent des/der Senators/Senatorin",
-            "type": "Referent",
+            "name": "Persönliche:r Referent:in des/der Senators/Senatorin",
+            "type": "Referent:in",
             "employee_name": "Christian Schwöbel",
             "relationship_to_parent": "Peripheral",
             "telephone": "9013 -   7486",
             "fax": "9013 - 7541"
           },
           {
-            "name": "Pressesprecher(in)",
-            "type": "Pressesprecher",
+            "name": "Pressesprecher:in",
+            "type": "Pressesprecher:in",
             "employee_name": "Svenja Fritz",
             "relationship_to_parent": "Peripheral",
             "telephone": "9013 - 7418",
             "fax": "9013 - 8281"
           },
           {
-            "name": "Referent(in) für Presse- und Öffenetlichkeits Arbeit",
-            "type": "Referent",
+            "name": "Referent:in für Presse- und Öffenetlichkeits Arbeit",
+            "type": "Referent:in",
             "employee_name": "Matthias Borowski",
             "relationship_to_parent": "Peripheral",
             "telephone": "9013 - 8112",
             "fax": "9013 - 8281"
           },
           {
-            "name": "Bundesratsreferent(in)",
-            "type": "Referent",
+            "name": "Bundesratsreferent:in",
+            "type": "Referent:in",
             "employee_name": "Uwe Engelking",
             "relationship_to_parent": "Peripheral",
             "telephone": "9013 - 8163",
             "fax": "9013 - 7597"
           },
           {
-            "name": "Referent(in) für die pol. Koordinierung des Bundesrates und des Abgeordnetenhauses",
-            "type": "Referent",
+            "name": "Referent:in für die pol. Koordinierung des Bundesrates und des Abgeordnetenhauses",
+            "type": "Referent:in",
             "employee_name": "Ronald Wenke",
             "relationship_to_parent": "Peripheral",
             "telephone": "9013 - 8207",
@@ -81,16 +81,16 @@
             "fax": "9013 - 8125"
           },
           {
-            "name": "Staatssekretär(in) R (Abteilung II und III)",
-            "type": "Staatssekretär",
+            "name": "Staatssekretär:in R (Abteilung II und III)",
+            "type": "Staatssekretär:in",
             "employee_name": "Christian Rickerts",
             "relationship_to_parent": "Direct subordinate",
             "telephone": "9013 - 7431",
             "fax": "9013 - 8170",
             "suborganizations": [
               {
-                "name": "Persönliche(r) Referent(in) des Staatssekretärs",
-                "type": "Referent",
+                "name": "Persönliche:r Referent:in des Staatssekretärs",
+                "type": "Referent:in",
                 "employee_name": "Anja Engelmohr",
                 "relationship_to_parent": "Peripheral",
                 "telephone": "9013 - 8346",
@@ -210,16 +210,16 @@
             ]
           },
           {
-            "name": "Staatssekretär(in) B (Abteilung I und IV)",
-            "type": "Staatssekretär",
+            "name": "Staatssekretär:in B (Abteilung I und IV)",
+            "type": "Staatssekretär:in",
             "employee_name": "Henner Bunde",
             "relationship_to_parent": "Direct subordinate",
             "telephone": "9013 - 7431",
             "fax": "9013 - 7566",
             "suborganizations": [
               {
-                "name": "Persönliche(r) Referent(in) des Staatssekretärs",
-                "type": "Referent",
+                "name": "Persönliche:r Referent:in des Staatssekretärs",
+                "type": "Referent:in",
                 "employee_name": "Sabine Menz",
                 "relationship_to_parent": "Peripheral",
                 "telephone": "9013 - 7420",

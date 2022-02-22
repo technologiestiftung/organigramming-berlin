@@ -12,7 +12,7 @@ const AlertModal = (props) => {
       <Modal.Footer>
         {props.onSave && (
           <Button variant="outline-success" onClick={props.onSave}>
-            Änderungen speichern
+            Dokument speichern
           </Button>
         )}
         <Button variant="outline-danger" onClick={props.onOkay}>
