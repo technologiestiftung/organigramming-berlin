@@ -23,7 +23,7 @@ const Sidebar = ({
   const [activeTap, setActiveTap] = useState(null);
   const [newDocumentModalShow, setNewDocumentModalShow] = useState(false);
   const [exportModalShow, setExportModalShow] = useState(false);
-  const [infoModalShow, setInfoModalShow] = useState(false);
+  const [infoModalShow, setInfoModalShow] = useState(true);
 
   const onChange = (e) => {
     sendDataUp(e);
@@ -170,7 +170,7 @@ const Sidebar = ({
                   className="bi bi-download"
                   viewBox="0 0 16 16"
                 >
-                  <path d="M8.91,11.75c0,.42.39.63,1.22.63v.79H5.79v-.79q1.2,0,1.2-.63V7.49c0-.43-.4-.64-1.2-.64v-.8H8.91Zm.17-8a1.17,1.17,0,0,1-.34.84,1.13,1.13,0,0,1-.85.36,1,1,0,0,1-.47-.1A1.22,1.22,0,0,1,7,4.54a1.34,1.34,0,0,1-.26-.38,1.18,1.18,0,0,1-.09-.46A1.12,1.12,0,0,1,7,2.85a1.18,1.18,0,0,1,.85-.34,1.11,1.11,0,0,1,.84.35A1.15,1.15,0,0,1,9.08,3.7Z"/>
+                  <path d="M8.91,11.75c0,.42.39.63,1.22.63v.79H5.79v-.79q1.2,0,1.2-.63V7.49c0-.43-.4-.64-1.2-.64v-.8H8.91Zm.17-8a1.17,1.17,0,0,1-.34.84,1.13,1.13,0,0,1-.85.36,1,1,0,0,1-.47-.1A1.22,1.22,0,0,1,7,4.54a1.34,1.34,0,0,1-.26-.38,1.18,1.18,0,0,1-.09-.46A1.12,1.12,0,0,1,7,2.85a1.18,1.18,0,0,1,.85-.34,1.11,1.11,0,0,1,.84.35A1.15,1.15,0,0,1,9.08,3.7Z" />
                 </svg>
               </Button>
             </ButtonGroup>
