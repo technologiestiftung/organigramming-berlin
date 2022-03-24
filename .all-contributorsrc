@@ -11,24 +11,6 @@
   "commitConvention": "angular",
   "contributors": [
     {
-      "login": "ff6347",
-      "name": "Fabian Morón Zirfas",
-      "avatar_url": "https://avatars.githubusercontent.com/u/315106?v=4",
-      "profile": "https://fabianmoronzirfas.me/",
-      "contributions": [
-        "doc"
-      ]
-    },
-    {
-      "login": "vogelino",
-      "name": "Lucas Vogel",
-      "avatar_url": "https://avatars.githubusercontent.com/u/2759340?v=4",
-      "profile": "https://vogelino.com/",
-      "contributions": [
-        "doc"
-      ]
-    },
-    {
       "login": "Lisa-Stubert",
       "name": "Lisa-Stubert",
       "avatar_url": "https://avatars.githubusercontent.com/u/61182572?v=4",
@@ -64,6 +46,15 @@
       "profile": "https://github.com/dnsos",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "vogelino",
+      "name": "Lucas Vogel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2759340?v=4",
+      "profile": "https://vogelino.com/",
+      "contributions": [
+        "doc"
       ]
     }
   ],
