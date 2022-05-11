@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/Build%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiesitftung%20Berlin-blue)
+![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 # Organigramm-Tool
 
@@ -50,4 +50,3 @@ This project follows the [all-contributors](https://github.com/all-contributors/
     </td>
   </tr>
 </table>
-
