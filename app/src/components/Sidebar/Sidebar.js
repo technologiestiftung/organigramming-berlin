@@ -1,6 +1,7 @@
 import { Row, Navbar, Nav, ButtonGroup, Button } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 
+import initDocument from "../../data/initDocument";
 import DocumentTab from "./DocumentTab";
 import NewDocumentModal from "./NewDocumetModal";
 import OrganisationTab from "./OrganisationTab";
@@ -23,11 +24,16 @@ const Sidebar = ({
   const [activeTap, setActiveTap] = useState(null);
   const [newDocumentModalShow, setNewDocumentModalShow] = useState(false);
   const [exportModalShow, setExportModalShow] = useState(false);
-  const [infoModalShow, setInfoModalShow] = useState(true);
+  const [infoModalShow, setInfoModalShow] = useState(false);
 
   const onChange = (e) => {
     sendDataUp(e);
   };
+
+  useEffect(() => {
+    setInfoModalShow(data === initDocument);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (selected === "document") {

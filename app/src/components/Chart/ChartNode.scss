@@ -93,7 +93,7 @@
               font-size: 0.75em;
             }
             h3 {
-              font-size: 0.70em;
+              font-size: 0.7em;
               font-style: italic;
               margin-bottom: 0;
             }
@@ -111,7 +111,7 @@
             ul.departments {
               display: block;
               padding-top: 0.3rem;
-              padding-bottom: 0.2rem;  
+              padding-bottom: 0.2rem;
               padding-left: 0.7rem;
               padding-right: 0.7rem;
               li {
@@ -191,7 +191,7 @@
                 &::before {
                   display: none;
                 }
-                svg{
+                svg {
                   width: auto;
                   height: 1em;
                 }
@@ -222,14 +222,14 @@
             }
             .oc-content {
               ul.person {
-                  .name {
-                    font-size: 1.35em;
-                  }
+                .name {
+                  font-size: 1.35em;
+                }
               }
             }
           }
         }
-         
+
         &.light {
           font-size: 0.75rem;
           $supCurrentColor: rgb(95, 99, 109);
@@ -238,9 +238,9 @@
             .oc-heading {
               background-color: $supCurrentColor;
             }
-            .oc-content{
+            .oc-content {
               //font-size: 1rem;
-              font-color: $supCurrentColor;
+              color: $supCurrentColor;
             }
           }
         }
@@ -248,17 +248,17 @@
           font-size: 0.75rem;
           $supCurrentColor: $currentColor;
           .oc-container {
-          background-color: $supCurrentColor;
-          height: 1rem;
-          width: 1rem;
-          border-radius: 10px;
+            background-color: $supCurrentColor;
+            height: 1rem;
+            width: 1rem;
+            border-radius: 10px;
             .oc-heading {
               display: none;
             }
-            .oc-content{
+            .oc-content {
               display: none;
               //font-size: 1rem;
-              font-color: $supCurrentColor;
+              color: $supCurrentColor;
             }
           }
         }
@@ -269,6 +269,7 @@
           width: 100%;
           padding-right: 2rem;
           padding-left: 2rem;
+          pointer-events: none;
           transition: opacity 300ms ease-in-out, box-shadow 300ms ease-in-out;
           .oc-container {
             width: 100%;
@@ -311,6 +312,7 @@
         }
         &.root.allowedDrop {
           opacity: 1;
+          pointer-events: all;
           .oc-container {
             background: $white;
             .oc-heading {
@@ -336,65 +338,177 @@
       }
     }
   }
+
   .chart-container {
-    & > ul {
+    position: relative;
+    ul.sub-organisations.horizontal {
       > li {
-        > ul {
-          li {
+        position: relative;
+        &::before {
+          content: "";
+          position: absolute;
+          top: -11px;
+          left: 0;
+          width: 100%;
+          border-top: 2px solid $primary;
+          box-sizing: border-box;
+        }
+        &:first-child {
+          &::before {
+            left: 50%;
+            width: 50%;
+          }
+        }
+        &:last-child {
+          &::before {
+            width: 50%;
+          }
+        }
+        &:only-child {
+          &::before {
+            display: none;
+          }
+        }
+        > .oc-node {
+          &::before {
+            content: "";
+            position: absolute;
+            top: -11px;
+            left: calc(50% - 1px);
+            width: 2px;
+            height: 9px;
+            background-color: $primary;
+          }
+        }
+      }
+      li.isSiblingsCollapsed {
+        &::before {
+          content: none;
+        }
+        > .oc-node {
+          &::before {
+            top: -13px;
+            height: 11px;
+          }
+        }
+      }
+      li.isAncestorsCollapsed {
+        > .oc-node {
+          &::before {
+            content: none;
+          }
+        }
+      }
+    }
+    ul.sub-organisations.vertical {
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+      margin-top: -10px;
+      padding-top: 10px;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: calc(50% + 1px);
+        top: 10px;
+        height: 2px;
+        background-color: $primary;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        left: calc(50% - 1px);
+        width: 2px;
+        top: 0px;
+        height: 10px;
+        background-color: $primary;
+      }
+      > li {
+        position: relative;
+        margin-left: 0px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-bottom: 0;
+        // &:last-child {
+        //   &::before {
+        //     width: 50%;
+        //   }
+        // }
+        // &:only-child {
+        //   &::before {
+        //     display: none;
+        //   }
+        // }
+        &> .oc-node {
+          position: relative;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-left: 0;
+          margin-right: 0;
+          .oc-container {
+            display: block;
+            position: relative;
+          }
+          &::before {
+            content: "";
+            position: absolute;
+            left: -10px;
+            width: calc(50% - 2px);
+            top: 0;
+            height: calc(50% - 2px);
+            border-bottom: 2px $primary solid;
+          }
+        }
+        &:first-child {
+          > .oc-node {
+            padding-top: 12px;
+          }
+        }
+
+        &:last-child {
+          > .oc-node {
             &::before {
               content: "";
               position: absolute;
-              top: -11px;
-              left: 0;
-              width: 100%;
-              border-top: 2px solid $primary;
-              box-sizing: border-box;
-            }
-            &:first-child {
-              &::before {
-                left: 50%;
-                width: 50%;
-              }
-            }
-            &:last-child {
-              &::before {
-                width: 50%;
-              }
-            }
-            &:only-child {
-              &::before {
-                display: none;
-              }
-            }
-            > .oc-node {
-              &::before {
-                content: "";
-                position: absolute;
-                top: -11px;
-                left: calc(50% - 1px);
-                width: 2px;
-                height: 9px;
-                background-color: $primary;
-              }
+              left: -10px;
+              width: calc(50% - 2px);
+              top: 0;
+              height: calc(50% - 2px);
+              // background-color: $primary;
+              border-bottom: 2px $primary solid;
+              border-left: 2px $primary solid;
             }
           }
-          li.isSiblingsCollapsed {
-            &::before {
-              content: none;
-            }
-            > .oc-node {
-              &::before {
-                top: -13px;
-                height: 11px;
-              }
-            }
+        }
+        &:not(:last-child) {
+          &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            top: 0;
+            background-color: $primary;
           }
-          li.isAncestorsCollapsed {
-            > .oc-node {
-              &::before {
-                content: none;
-              }
-            }
+        }
+      }
+      li.isSiblingsCollapsed {
+        &::before {
+          content: none;
+        }
+        > .oc-node {
+          &::before {
+            top: -13px;
+            height: 11px;
+          }
+        }
+      }
+      li.isAncestorsCollapsed {
+        > .oc-node {
+          &::before {
+            content: none;
           }
         }
       }

@@ -19,10 +19,10 @@ import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
 
 import "../../services/registerFiles";
-import SVGtoPDF from "svg-to-pdfkit";
+// import SVGtoPDF from "svg-to-pdfkit";
 
-const PDFDocument = require("pdfkit").default;
-const blobStream = require("blob-stream");
+// const PDFDocument = require("pdfkit").default;
+// const blobStream = require("blob-stream");
 
 const propTypes = {
   data: PropTypes.object.isRequired,
@@ -41,6 +41,7 @@ const propTypes = {
   sendDataUp: PropTypes.func,
   onContextMenu: PropTypes.func,
   onCloseContextMenu: PropTypes.func,
+  onAddInitNode: PropTypes.func,
 };
 
 const defaultProps = {
@@ -74,6 +75,7 @@ const ChartContainer = forwardRef(
       onContextMenu,
       onCloseContextMenu,
       onOpenDocument,
+      onAddInitNode
     },
     ref
   ) => {
@@ -113,6 +115,7 @@ const ChartContainer = forwardRef(
         style: "root",
         organisations: JSON.parse(JSON.stringify(data.organisations)),
       });
+
       setTimeout(() => {
         updateChartHandler();
       }, 50);
@@ -330,23 +333,59 @@ const ChartContainer = forwardRef(
       }
     };
 
+    // const exportSVG2PDF = async (canvas, exportFilename) => {
+    //   await exportSVG(canvas, exportFilename).then((svg) => {
+    //     // eslint-disable-next-line no-new-func
+    //     let doc = new PDFDocument({
+    //       size: data.document.paperSize,
+    //       layout: data.document.paperOrientation,
+    //       compress: true,
+    //     }); // It's easier to find bugs with uncompressed files
+    //     SVGtoPDF(doc, svg, 0, 0, {
+    //       useCSS: false,
+    //     });
+    //     let stream = doc.pipe(blobStream());
+    //     stream.on("finish", function () {
+    //       let blob = stream.toBlob("application/pdf");
+    //       download(URL.createObjectURL(blob), exportFilename, "pdf");
+    //     });
+    //     doc.end();
+    //   });
+    // };
+
     const exportSVG2PDF = async (canvas, exportFilename) => {
       await exportSVG(canvas, exportFilename).then((svg) => {
         // eslint-disable-next-line no-new-func
-        let doc = new PDFDocument({
-          size: data.document.paperSize,
-          layout: data.document.paperOrientation,
-          compress: true,
-        }); // It's easier to find bugs with uncompressed files
-        SVGtoPDF(doc, svg, 0, 0, {
-          useCSS: false,
+        let doc = new jsPDF();
+        const canvasWidth = Math.floor(canvas.width);
+        const canvasHeight = Math.floor(canvas.height);
+        console.log(chart.current.querySelector(".paper"));
+
+        doc.html(chart.current.querySelector(".paper"), {
+          callback: function (doc) {
+            doc.save(`${exportFilename}.pdf`);
+          },
+          orientation: data.document.paperOrientation,
+          unit: "px",
+          format: [canvasWidth, canvasHeight],
+          x: 10,
+          y: 10,
         });
-        let stream = doc.pipe(blobStream());
-        stream.on("finish", function () {
-          let blob = stream.toBlob("application/pdf");
-          download(URL.createObjectURL(blob), exportFilename, "pdf");
-        });
-        doc.end();
+
+        // let doc = new PDFDocument({
+        //   size: data.document.paperSize,
+        //   layout: data.document.paperOrientation,
+        //   compress: true,
+        // }); // It's easier to find bugs with uncompressed files
+        // SVGtoPDF(doc, svg, 0, 0, {
+        //   useCSS: false,
+        // });
+        // let stream = doc.pipe(blobStream());
+        // stream.on("finish", function () {
+        //   let blob = stream.toBlob("application/pdf");
+        //   download(URL.createObjectURL(blob), exportFilename, "pdf");
+        // });
+        // doc.end();
       });
     };
 
@@ -553,6 +592,7 @@ const ChartContainer = forwardRef(
               </Button>
             </ButtonGroup>
           </div>
+         
           <div
             ref={chart}
             className={"editor " + chartClass + (exporting ? " exporting" : "")}
@@ -657,6 +697,7 @@ const ChartContainer = forwardRef(
                     onClickNode={onClickNode}
                     onContextMenu={onContextMenu}
                     onDragNode={onDragNode}
+                    onAddInitNode={onAddInitNode}
                   />
                 </ul>
               </div>

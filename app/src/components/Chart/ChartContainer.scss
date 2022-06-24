@@ -97,7 +97,7 @@
         border: none;
         background-color: $gray-400;
         color: $gray-600;
-        &:hover{
+        &:hover {
           background-color: $gray-500;
         }
       }
@@ -117,7 +117,7 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        &:hover{
+        &:hover {
           background-color: $gray-500;
         }
       }
@@ -279,5 +279,49 @@
       border-bottom-color: rgba($primary, 0.8);
       border-left-color: rgba($primary, 0.8);
     }
+  }
+}
+
+@page {
+  // size: a;
+  margin: 0;
+}
+
+@media print {
+  * {
+    border: red 1px solid;
+  }
+  html,
+  body {
+    width: 210mm;
+    height: 297mm;
+  }
+  .navbar,
+  .navigation-container,
+  .paper-size-label {
+    display: none;
+  }
+  .view-container {
+    background: none;
+  }
+  .paper {
+    transform: none !important;
+    &.A4.landscape {
+      box-shadow: none;
+      width: 297mm;
+      height: 210mm;
+      background-image: none!important; 
+      background-color: white !important;
+    }
+  }
+  .oc-container {
+    box-shadow: none;
+    // .oc-heading {
+    //   color: white;
+    //   background-color: $primary !important;
+    // }
+    // .oc-content {
+    //   // border: $primary 1px solid;
+    // }
   }
 }

@@ -45,6 +45,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
     //   // setSelectedNodes((prev) => new Set(prev.add(nodeData)));
     // } else {
     // setSelectedNodes(new Set([nodeData]));
+    console.log(nodeData);
     setSelected(nodeData);
     setSelectedNode(nodeData);
     // }
@@ -85,6 +86,8 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
     const newNode = getNewNode();
     await dsDigger.addSiblings(selectedNode.id, newNode);
     sendDataUp({ ...dsDigger.ds });
+    setSelected(newNode);
+    setSelectedNode(newNode);
     onCloseContextMenu();
   };
 
@@ -92,7 +95,17 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
     const newNode = getNewNode();
     await dsDigger.addChildren(selectedNode.id, newNode);
     sendDataUp({ ...dsDigger.ds });
+    setSelected(newNode);
+    setSelectedNode(newNode);
     onCloseContextMenu();
+  };
+
+  const onAddInitNode = async () => {
+    const newNode = getNewNode();
+    await dsDigger.addInitNode(newNode);
+    setSelected(newNode);
+    setSelectedNode(newNode);
+    sendDataUp({ ...dsDigger.ds });
   };
 
   const removeNode = async () => {
@@ -156,6 +169,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
         onClickNode={readSelectedNode}
         onClickChart={clearSelectedNode}
         sendDataUp={onChanged}
+        onAddInitNode={onAddInitNode}
         onContextMenu={onContextMenu}
         onCloseContextMenu={onCloseContextMenu}
         onOpenDocument={(e) => {

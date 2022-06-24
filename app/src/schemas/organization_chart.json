@@ -98,14 +98,15 @@
           "type": "string",
           "title": "Stil",
           "default": "default",
-          "enum":[
-            "default",
-            "emphasized",
-            "light",
-          "hide"
-                  ],
-          "enumNames":["Standard","Hervorgehoben", "Zurückgenommen","Verbindungspunkt"]
+          "enum": ["default", "emphasized", "light", "hide"],
+          "enumNames": [
+            "Standard",
+            "Hervorgehoben",
+            "Zurückgenommen",
+            "Verbindungspunkt"
+          ]
         },
+
         "address": {
           "$ref": "#/definitions/address"
         },
@@ -135,8 +136,16 @@
         "relationship": {
           "type": "string",
           "format": "integer"
+        },
+        "suborganizationOrientation": {
+          "type": "string",
+          "title": "Suborganisation Anordnen",
+          "default": "horizontal",
+          "enum": ["vertical", "horizontal"],
+          "enumNames": ["Vertikal", "Horizontal"]
         }
       },
+
       "required": ["id", "name"],
       "title": "Organisation"
     },
@@ -144,7 +153,6 @@
       "type": "object",
       "additionalProperties": false,
       "title": "Zugehörige Organisationseinheit",
-      "required": ["name"],
       "properties": {
         "name": {
           "type": "string",
