@@ -1,6 +1,7 @@
 import { Button, Modal, Container, Row, Col } from "react-bootstrap";
 
 const InfoModal = (props) => {
+  console.log(props);
   return (
     <Modal
       {...props}
@@ -35,6 +36,15 @@ const InfoModal = (props) => {
                 gap: "12px",
               }}
             >
+              <Button
+                variant="primary"
+                onClick={() => {
+                  props.onHide();
+                  props.onJoyrideStart();
+                }}
+              >
+                Tour Starten
+              </Button>
               <Button variant="primary" onClick={props.onHide}>
                 Ausprobieren
               </Button>

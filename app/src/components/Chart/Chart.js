@@ -13,19 +13,38 @@ import { v4 as uuidv4 } from "uuid";
 const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const orgchart = useRef();
 
-  useImperativeHandle(
-    ref,
-    (fileName, fileextension, includeLogo, vectorPdf) => ({
-      exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
-        orgchart.current.exportTo(
-          fileName,
-          fileextension,
-          includeLogo,
-          vectorPdf
-        );
-      },
-    })
-  );
+  useImperativeHandle(ref, () => ({
+    exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
+      orgchart.current.exportTo(
+        fileName,
+        fileextension,
+        includeLogo,
+        vectorPdf
+      );
+    },
+    demoContexMenu: (enable, nodeId = "") => {
+      let element = document.getElementById(nodeId);
+      if (element) {
+        if (enable) {
+          const boundings = element.getBoundingClientRect(),
+            e = {
+              clientX: boundings.x + boundings.width / 2,
+              clientY: boundings.y + boundings.height / 2,
+            };
+          document.body.classList.add("context-demo");
+          setTimeout(() => {
+            onContextMenu(e);
+          }, 600);
+        } else {
+          document.body.classList.remove("context-demo");
+          onCloseContextMenu();
+        }
+      }
+    },
+    get orgchart() {
+      return orgchart.current;
+    },
+  }));
 
   const [ds, setDS] = useState(data);
   // const [selectedNodes, setSelectedNodes] = useState(new Set());
@@ -45,7 +64,6 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
     //   // setSelectedNodes((prev) => new Set(prev.add(nodeData)));
     // } else {
     // setSelectedNodes(new Set([nodeData]));
-    console.log(nodeData);
     setSelected(nodeData);
     setSelectedNode(nodeData);
     // }
@@ -113,6 +131,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
     sendDataUp({ ...dsDigger.ds });
     onCloseContextMenu();
   };
+
   const copyNode = () => {
     let copyNode = { ...selectedNode };
     setClipBoard(copyNode);

@@ -75,12 +75,13 @@ const ChartContainer = forwardRef(
       onContextMenu,
       onCloseContextMenu,
       onOpenDocument,
-      onAddInitNode
+      onAddInitNode,
     },
     ref
   ) => {
     const container = useRef();
     const chart = useRef();
+    const topNode = useRef();
 
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
@@ -503,18 +504,21 @@ const ChartContainer = forwardRef(
           );
         }
       },
-      expandAllNodes: () => {
-        chart.current
-          .querySelectorAll(
-            ".oc-node.hidden, .oc-hierarchy.hidden, .isSiblingsCollapsed, .isAncestorsCollapsed"
-          )
-          .forEach((el) => {
-            el.classList.remove(
-              "hidden",
-              "isSiblingsCollapsed",
-              "isAncestorsCollapsed"
-            );
-          });
+      // expandAllNodes: () => {
+      //   chart.current
+      //     .querySelectorAll(
+      //       ".oc-node.hidden, .oc-hierarchy.hidden, .isSiblingsCollapsed, .isAncestorsCollapsed"
+      //     )
+      //     .forEach((el) => {
+      //       el.classList.remove(
+      //         "hidden",
+      //         "isSiblingsCollapsed",
+      //         "isAncestorsCollapsed"
+      //       );
+      //     });
+      // },
+      demoDragMode: (enable, nodeId = "") => {
+        topNode.current.demoDragMode(enable, nodeId);
       },
     }));
 
@@ -592,7 +596,7 @@ const ChartContainer = forwardRef(
               </Button>
             </ButtonGroup>
           </div>
-         
+
           <div
             ref={chart}
             className={"editor " + chartClass + (exporting ? " exporting" : "")}
@@ -687,6 +691,7 @@ const ChartContainer = forwardRef(
               <div className="chart-container">
                 <ul className="chart" style={{ transform: chartTransform }}>
                   <ChartNode
+                    ref={topNode}
                     data={node}
                     level={0}
                     update={update}

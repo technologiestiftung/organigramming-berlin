@@ -104,7 +104,6 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
   const handleSendDataUp = async (data) => {
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
-      console.log("send");
       await dsDigger.updateNode(data);
       sendDataUp(dsDigger.ds);
     }, 500);
@@ -161,7 +160,7 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
         </div>
         <Button
           variant="outline-danger"
-          className="ms-auto"
+          className="ms-auto delete-organisation"
           onClick={() => setRemoveNodeAlertModalShow(true)}
         >
           <svg
@@ -228,7 +227,6 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           Neue Suborganisation
         </Button>
       </Stack>
-      <Stack></Stack>
     </div>
   );
 };

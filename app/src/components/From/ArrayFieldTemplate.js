@@ -7,7 +7,7 @@ const ArrayFieldTemplate = (props) => {
         {props.canAdd && (
           <button
             type="button"
-            className="btn btn-light btn-sm"
+            className="btn btn-light btn-sm add-array-item"
             onClick={props.onAddClick}
           >
             <svg
@@ -48,7 +48,7 @@ const ArrayFieldTemplate = (props) => {
                 </button>
               </div>
             )}
-            <div className="flex-grow-1 p-1">{element.children}</div>
+            <div className="flex-grow-1 p-1 expand-item">{element.children}</div>
           </li>
         ))}
       </ul>
