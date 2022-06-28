@@ -28,7 +28,6 @@ const App = () => {
   const menu = useRef();
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState(initdata());
-  // const [update, setUpdate] = useState(false);
   const [tempData, setTempData] = useState();
 
   const [{ run, stepIndex, steps }, setState] = useSetState({
@@ -101,12 +100,10 @@ const App = () => {
 
   const onUndo = () => {
     setUndo();
-    // setUpdate(!update);
   };
 
   const onRedo = () => {
     setRedo();
-    // setUpdate(!update);
   };
 
   useMount(() => {

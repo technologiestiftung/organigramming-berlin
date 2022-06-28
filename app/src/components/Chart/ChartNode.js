@@ -53,21 +53,17 @@ const ChartNode = forwardRef(
     // const [leftEdgeExpanded, setLeftEdgeExpanded] = useState();
     const [allowedDrop, setAllowedDrop] = useState(false);
     const [selected, setSelected] = useState(false);
-    const [dragDemo, setDragDemo] = useState(false);
     const [ds, setDs] = useState(data);
 
     useImperativeHandle(ref, () => ({
       demoDragMode: (enable, nodeId = "") => {
         if (enable) {
-          setDragDemo(true);
           filterAllowedDropNodes(nodeId);
           document.body.classList.add('drag-demo');
-
         } else {
           dragNodeService.clearDragInfo();
           document.body.classList.remove('drag-demo');
           onDragNode(false);
-          setDragDemo(false);
         }
       },
     }));
