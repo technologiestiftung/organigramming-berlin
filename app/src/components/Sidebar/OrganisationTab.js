@@ -4,15 +4,46 @@ import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import JSONDigger from "../../services/jsonDigger";
 import { v4 as uuidv4 } from "uuid";
+import { DragDropContext } from "react-beautiful-dnd";
 
 import AlertModal from "./AlertModal";
 
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
+import { isDefiend } from "../../services/service";
+
+// const findObject = (obj, id) => findObjectAux([obj], id);
+// const findObjectAux = (arr, id) => {
+//   for (const obj of arr) {
+//     if (obj.id === id) return obj;
+//     const nestedObj = findObjectAux(obj.organisations, id);
+//     if (nestedObj) return nestedObj;
+//   }
+// }
+
+// const loop = (arr, target, index, path) => {
+//   if (arr[index].id === target) {
+//     path.push(arr[index]);
+//   } else if (arr[index].organisations.length) {
+//     path.push(arr[index]);
+//     arr[index].organisations.forEach((_, i, a) => {
+//       loop(a, target, i, path);
+//     });
+
+//     if (path[path.length - 1].id === arr[index].id) path.pop();
+//   }
+// };
+
+// let getPath = (arr, target) => {
+//   let path = [];
+//   arr.forEach((_, i, a) => loop(a, target, i, path));
+//   return path;
+// };
 
 const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
   const [formData, setFormData] = useState({ current: selected });
+  const [idPrefix, setIdPrefix] = useState("root");
   const [removeNodeAlertModalShow, setRemoveNodeAlertModalShow] =
     useState(false);
   const dsDigger = new JSONDigger(data, "id", "organisations");
@@ -98,6 +129,9 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
   useEffect(() => {
     if (selected != null) {
       setFormData({ current: { ...selected } });
+      setIdPrefix(selected.id);
+    } else {
+      setIdPrefix("root");
     }
   }, [selected]);
 
@@ -142,6 +176,69 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
     setSelected(null);
   };
 
+  const getItemByPath = (obj, path) =>
+    path.reduce((obj, item) => obj[item], obj);
+
+  const deleteByPath = (obj, path) => {
+    var last = path.pop();
+    delete path.reduce((obj, item) => obj[item], obj)[last];
+  };
+
+  const createItemByPath = (obj, path, value) => {
+    // If a value is given, remove the last name and keep it for later:
+    var lastKey = path.pop();
+
+    // Walk the hierarchy, creating new objects where needed.
+    // If the lastKey was removed, then the last object is not set yet:
+    for (var i = 0; i < path.length; i++) {
+      obj = obj[path[i]] = obj[path[i]] || {};
+    }
+
+    // If a value was given, set it to the last name:
+    if (lastKey) obj = obj[lastKey] = value;
+
+    // Return the last object in the hierarchy:
+    return obj;
+  };
+
+  const onDragEnd = async (e) => {
+    if (!e.destination || e.destination.index === e.source.index) {
+      return;
+    }
+    // no movement
+    if (e.destination.index === e.source.index) {
+      return;
+    }
+    const sourcePath = e.source.droppableId.split("_");
+    const destinationPath = e.destination.droppableId.split("_");
+
+    let sourceNode = await dsDigger.findNodeById(sourcePath[0]);
+    sourcePath.shift();
+    const sourceList = getItemByPath(sourceNode, sourcePath);
+
+    const item = await JSON.parse(JSON.stringify(sourceList[e.source.index]));
+    sourceList.splice(e.source.index, 1);
+
+    createItemByPath(sourceNode, sourcePath, sourceList);
+
+    await dsDigger.updateNode(sourceNode);
+
+    let destinationNode = await dsDigger.findNodeById(destinationPath[0]);
+    destinationPath.shift();
+
+    let destinationList = getItemByPath(destinationNode, destinationPath);
+
+    if (isDefiend(destinationList)) {
+      destinationList.splice(e.destination.index, 0, item);
+    } else {
+      createItemByPath(destinationNode, destinationPath, [item]);
+    }
+
+    await dsDigger.updateNode(destinationNode);
+    setFormData({ current: destinationNode });
+    await sendDataUp({ ...dsDigger.ds });
+  };
+
   return (
     <div className="tab">
       <AlertModal
@@ -179,20 +276,23 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           </svg>
         </Button>
       </Stack>
-      <Form
-        schema={schema}
-        uiSchema={uiSchema}
-        formData={formData}
-        onChange={(e) => onChange(e)}
-        onBlur={onBlur}
-        fields={fields}
-        ArrayFieldTemplate={ArrayFieldTemplate}
-        ObjectFieldTemplate={ObjectFieldTemplate}
-        liveValidate
-        showErrorList={false}
-      >
-        <br />
-      </Form>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Form
+          schema={schema}
+          uiSchema={uiSchema}
+          formData={formData}
+          onChange={(e) => onChange(e)}
+          onBlur={onBlur}
+          fields={fields}
+          idPrefix={idPrefix}
+          ArrayFieldTemplate={ArrayFieldTemplate}
+          ObjectFieldTemplate={ObjectFieldTemplate}
+          liveValidate
+          showErrorList={false}
+        >
+          <br />
+        </Form>
+      </DragDropContext>
       <Stack direction="horizontal" gap={3}>
         <Button variant="outline-success" onClick={addSiblingNode}>
           <svg

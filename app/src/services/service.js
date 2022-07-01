@@ -24,3 +24,8 @@ export const toSnakeCase = (str) => {
     .map((x) => x.toLowerCase())
     .join("_");
 };
+
+
+export const isDefiend = (object) => {
+  return typeof object !== "undefined" && object !== null;
+};

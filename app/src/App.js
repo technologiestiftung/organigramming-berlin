@@ -1,5 +1,6 @@
 import "./global.scss";
 import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
+import { DragDropContext } from "react-beautiful-dnd";
 import { useMount, useSetState } from "react-use";
 import { Container } from "react-bootstrap";
 import React, { useState, useRef, useEffect } from "react";
@@ -58,6 +59,9 @@ const App = () => {
     setUndoData(JSON.parse(dataSting));
     // setUpdate(!update);
     localStorage.setItem("data", JSON.stringify(e));
+    if (selected != null) {
+      console.log(selected)
+    }
   };
 
   const handleKeyDown = (e) => {

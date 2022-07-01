@@ -1,6 +1,6 @@
 //inspiert by https://github.com/TreeHacks/root/blob/9f21f350416493e1f90fed5102330f4c8f8f1d0c/src/FormPage/FormPage.tsx%23L27-L52
-import FileWidget from "react-jsonschema-form/lib/components/widgets/FileWidget";
-import SelectWidget from "react-jsonschema-form/lib/components/widgets/SelectWidget";
+import FileWidget from "@rjsf/core/lib/components/widgets/FileWidget.js";
+import SelectWidget from "@rjsf/core/lib/components/widgets/SelectWidget";
 
 import React, { useState, useEffect } from "react";
 
