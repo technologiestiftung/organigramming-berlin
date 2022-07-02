@@ -4,33 +4,6 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 
 const ArrayFieldTemplate = (props) => {
   const [type] = useState(props.schema.items.$ref.split("/")[2]);
-  // const context = useContext(DragDropContext);
-
-  // const onDragEnd = (e) => {
-  //   // dropped outside the list
-  //   console.log(e);
-  //   if (!e.destination || e.destination.index === e.source.index) {
-  //     return;
-  //   }
-
-  //   // no movement
-  //   if (e.destination.index === e.source.index) {
-  //     return;
-  //   }
-
-  //   let fakeEvent = {
-  //     preventDefault: () => {},
-  //     target: {
-  //       blur: () => {},
-  //     },
-  //   };
-
-  //   props.items[e.source.index].onReorderClick(
-  //     e.source.index,
-  //     e.destination.index
-  //   )(fakeEvent);
-  // };
-
 
   const getListStyle = (isDraggingOver) => {
     if (isDraggingOver) {
@@ -38,11 +11,6 @@ const ArrayFieldTemplate = (props) => {
     } else {
       return { background: "#e9ecef" };
     }
-  };
-
-  const addItem = () => {
-    console.log(props.onAddClick);
-    props.onAddClick();
   };
 
   return (
@@ -60,7 +28,7 @@ const ArrayFieldTemplate = (props) => {
               <button
                 type="button"
                 className="btn btn-light btn-sm add-array-item"
-                onClick={addItem}
+                onClick={props.onAddClick}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +52,7 @@ const ArrayFieldTemplate = (props) => {
                 index={index}
               >
                 {(provided, snapshot) => (
-                  <div
+                  <li
                     className="item list-group-item bg-white m-1 p-0 d-flex align-center-top"
                     ref={provided.innerRef}
                     {...provided.draggableProps}
@@ -193,7 +161,7 @@ const ArrayFieldTemplate = (props) => {
                         </svg>
                       </button>
                     )}
-                  </div>
+                  </li>
                 )}
               </Draggable>
             ))}

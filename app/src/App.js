@@ -9,7 +9,13 @@ import useUndo from "use-undo";
 import Chart from "./components/Chart/Chart";
 import Sidebar from "./components/Sidebar/Sidebar";
 import initDocument from "./data/initDocument";
-import { toSnakeCase } from "./services/service";
+import {
+  toSnakeCase,
+  handleDropEnd,
+  isDefiend,
+  validateData,
+} from "./services/service";
+import JSONDigger from "./services/jsonDigger";
 
 const initdata = () => {
   if (localStorage.getItem("data") !== null) {
@@ -30,6 +36,7 @@ const App = () => {
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState(initdata());
   const [tempData, setTempData] = useState();
+  const dsDigger = new JSONDigger(data, "id", "organisations");
 
   const [{ run, stepIndex, steps }, setState] = useSetState({
     run: false,
@@ -54,13 +61,19 @@ const App = () => {
     setData(undoData);
   }, [undoData]);
 
-  const onChange = (e) => {
-    const dataSting = JSON.stringify(e);
-    setUndoData(JSON.parse(dataSting));
-    // setUpdate(!update);
-    localStorage.setItem("data", JSON.stringify(e));
-    if (selected != null) {
-      console.log(selected)
+  const onChange = async (e) => {
+    if (isDefiend(e)) {
+      const [valid, errors] = validateData(e);
+      if (valid) {
+        const dataSting = JSON.stringify(e);
+        setUndoData(JSON.parse(dataSting));
+        localStorage.setItem("data", JSON.stringify(e));
+        if (isDefiend(selected?.id)) {
+          setSelected(await dsDigger.findNodeById(selected.id));
+        }
+      } else {
+        console.error(errors);
+      }
     }
   };
 
@@ -345,6 +358,13 @@ const App = () => {
     }
   };
 
+  const onDragEnd = async (e) => {
+    console.log("onDragEnd", e);
+    let _data = await handleDropEnd(e, dsDigger);
+    console.log("_data", _data);
+    onChange(_data);
+  };
+
   return (
     <div className="App" onKeyDown={handleKeyDown}>
       <Joyride
@@ -387,31 +407,34 @@ const App = () => {
           },
         }}
       />
-      <Container className="control-layer" fluid>
-        <Sidebar
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Container className="control-layer" fluid>
+          <Sidebar
+            data={data}
+            dsDigger={dsDigger}
+            sendDataUp={onChange}
+            selected={selected}
+            setSelected={(e) => setSelected(e)}
+            onExport={exportTo}
+            onSave={onSave}
+            onUndo={onUndo}
+            onRedo={onRedo}
+            enableUndo={canUndo}
+            enableRedo={canRedo}
+            onJoyrideStart={handleJoyrideStart}
+            ref={menu}
+          />
+        </Container>
+        <Chart
+          ref={chart}
+          className="chart-layer"
           data={data}
           sendDataUp={onChange}
-          selected={selected}
-          setSelected={(e) => setSelected(e)}
-          onExport={exportTo}
-          onSave={onSave}
-          onUndo={onUndo}
-          onRedo={onRedo}
-          enableUndo={canUndo}
-          enableRedo={canRedo}
-          onJoyrideStart={handleJoyrideStart}
-          ref={menu}
+          setSelected={(e) => {
+            setSelected(e);
+          }}
         />
-      </Container>
-      <Chart
-        ref={chart}
-        className="chart-layer"
-        data={data}
-        sendDataUp={onChange}
-        setSelected={(e) => {
-          setSelected(e);
-        }}
-      />
+      </DragDropContext>
     </div>
   );
 };

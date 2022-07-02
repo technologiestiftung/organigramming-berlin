@@ -72,14 +72,6 @@ const ChartNode = forwardRef(
       },
     }));
 
-    // const nodeClass = [
-    //   "oc-node",
-    //   allowedDrop ? "allowedDrop" : "",
-    //   selected ? "selected" : "",
-    // ]
-    //   .filter((item) => item)
-    //   .join(" ");
-
     useEffect(() => {
       setDs(data);
     }, [data]);

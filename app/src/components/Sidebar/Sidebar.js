@@ -29,6 +29,7 @@ const Sidebar = forwardRef(
       enableUndo,
       enableRedo,
       onJoyrideStart,
+      dsDigger,
     },
     ref
   ) => {
@@ -45,9 +46,11 @@ const Sidebar = forwardRef(
     };
 
     useEffect(() => {
+      // check to show info modal
       setInfoModalShow(data === initDocument);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
 
     useEffect(() => {
       if (selected === "document") {
@@ -106,7 +109,10 @@ const Sidebar = forwardRef(
               <ButtonGroup aria-label="Toolbar">
                 <Button
                   variant="light"
-                  className={"new-document-toolbar-item" + (newDocumentModalShow ? " active" : "")}
+                  className={
+                    "new-document-toolbar-item" +
+                    (newDocumentModalShow ? " active" : "")
+                  }
                   onClick={() => {
                     setActiveTap(null);
                     setNewDocumentModalShow(true);
@@ -128,7 +134,11 @@ const Sidebar = forwardRef(
                 </Button>
                 <Button
                   variant="light"
-                  className={"document-toolbar-item " + activeTap === "document" ? "active" : ""}
+                  className={
+                    "document-toolbar-item " + activeTap === "document"
+                      ? "active"
+                      : ""
+                  }
                   onClick={() => setActiveTap("document")}
                   title="Dokument Informationen"
                   ref={docInfoRef}
@@ -148,7 +158,10 @@ const Sidebar = forwardRef(
                 {activeTap === "organisation" && (
                   <Button
                     variant="light"
-                    className={"organisation-toolbar-item " + (activeTap === "organisation" ? "active" : "")}
+                    className={
+                      "organisation-toolbar-item " +
+                      (activeTap === "organisation" ? "active" : "")
+                    }
                     onClick={() =>
                       selected != null
                         ? setActiveTap("organisation")
@@ -171,7 +184,9 @@ const Sidebar = forwardRef(
                 )}
                 <Button
                   variant="light"
-                  className={"export-toolbar-item" + (exportModalShow ? " active" : "")}
+                  className={
+                    "export-toolbar-item" + (exportModalShow ? " active" : "")
+                  }
                   onClick={() => {
                     setActiveTap(null);
                     setExportModalShow(true);
@@ -192,7 +207,9 @@ const Sidebar = forwardRef(
                 </Button>
                 <Button
                   variant="light"
-                  className={"info-toolbar-item" + (infoModalShow ? " active" : "")}
+                  className={
+                    "info-toolbar-item" + (infoModalShow ? " active" : "")
+                  }
                   onClick={() => {
                     setActiveTap(null);
                     setInfoModalShow(true);
@@ -214,7 +231,7 @@ const Sidebar = forwardRef(
                   variant="light"
                   className={"joyride-toolbar-item"}
                   onClick={() => {
-                    onJoyrideStart()
+                    onJoyrideStart();
                   }}
                   title="Tour Starten"
                 >
@@ -288,11 +305,11 @@ const Sidebar = forwardRef(
         >
           <div className="sidebar">
             {activeTap === "document" && (
-              <DocumentTab data={data}  sendDataUp={onChange} />
+              <DocumentTab data={data} sendDataUp={onChange} />
             )}
             {activeTap === "organisation" && (
               <OrganisationTab
-                data={data}
+                dsDigger={dsDigger}
                 sendDataUp={onChange}
                 selected={selected}
                 setSelected={(e) => setSelected(e)}
