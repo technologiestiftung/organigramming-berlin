@@ -2,6 +2,8 @@
 
 # Organigramm-Tool
 
+**Notice: This application and the documentation is still a work in progress.**
+
 An online tool for creating and editing administrative organization charts in PDF format and machine-readable JSON format.
 
 For more information on the app refer to the README file in /app.
