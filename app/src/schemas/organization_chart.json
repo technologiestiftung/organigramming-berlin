@@ -354,12 +354,9 @@
                 "pdfType": {
                   "type": "string",
                   "title": "PDF Prozess",
-                  "default": "png",
-                  "enum": ["svg", "png"],
-                  "enumNames": [
-                    "Eingebetter Text (experimentell)",
-                    "Bidmap (Bessere Darstellung)"
-                  ]
+                  "default": "print",
+                  "enum": ["print", "png"],
+                  "enumNames": ["Als PDF \"drucken\"", "Bidmap"]
                 }
               }
             }

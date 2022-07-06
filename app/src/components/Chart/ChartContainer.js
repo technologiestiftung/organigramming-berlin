@@ -20,6 +20,7 @@ import "./ChartContainer.scss";
 
 import "../../services/registerFiles";
 // import SVGtoPDF from "svg-to-pdfkit";
+// import toPDF from "svg-to-pdfkit";
 
 // const PDFDocument = require("pdfkit").default;
 // const blobStream = require("blob-stream");
@@ -81,7 +82,9 @@ const ChartContainer = forwardRef(
   ) => {
     const container = useRef();
     const chart = useRef();
+    const paper = useRef();
     const topNode = useRef();
+    // const innerRef = useRef();
 
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
@@ -244,8 +247,8 @@ const ChartContainer = forwardRef(
     const resetViewHandler = () => {
       const containerWidth = chart.current.clientWidth,
         containerHeight = chart.current.clientHeight,
-        chartWidth = chart.current.querySelector(".paper").clientWidth,
-        chartHeight = chart.current.querySelector(".paper").clientHeight,
+        chartWidth = chart.current.querySelector("#paper").clientWidth,
+        chartHeight = chart.current.querySelector("#paper").clientHeight,
         newScale = Math.min(
           (containerWidth - 32) / chartWidth,
           (containerHeight - 32) / chartHeight
@@ -334,35 +337,14 @@ const ChartContainer = forwardRef(
       }
     };
 
-    // const exportSVG2PDF = async (canvas, exportFilename) => {
-    //   await exportSVG(canvas, exportFilename).then((svg) => {
-    //     // eslint-disable-next-line no-new-func
-    //     let doc = new PDFDocument({
-    //       size: data.document.paperSize,
-    //       layout: data.document.paperOrientation,
-    //       compress: true,
-    //     }); // It's easier to find bugs with uncompressed files
-    //     SVGtoPDF(doc, svg, 0, 0, {
-    //       useCSS: false,
-    //     });
-    //     let stream = doc.pipe(blobStream());
-    //     stream.on("finish", function () {
-    //       let blob = stream.toBlob("application/pdf");
-    //       download(URL.createObjectURL(blob), exportFilename, "pdf");
-    //     });
-    //     doc.end();
-    //   });
-    // };
-
     const exportSVG2PDF = async (canvas, exportFilename) => {
       await exportSVG(canvas, exportFilename).then((svg) => {
         // eslint-disable-next-line no-new-func
         let doc = new jsPDF();
         const canvasWidth = Math.floor(canvas.width);
         const canvasHeight = Math.floor(canvas.height);
-        console.log(chart.current.querySelector(".paper"));
 
-        doc.html(chart.current.querySelector(".paper"), {
+        doc.html(chart.current.querySelector("#paper"), {
           callback: function (doc) {
             doc.save(`${exportFilename}.pdf`);
           },
@@ -372,39 +354,12 @@ const ChartContainer = forwardRef(
           x: 10,
           y: 10,
         });
-
-        // let doc = new PDFDocument({
-        //   size: data.document.paperSize,
-        //   layout: data.document.paperOrientation,
-        //   compress: true,
-        // }); // It's easier to find bugs with uncompressed files
-        // SVGtoPDF(doc, svg, 0, 0, {
-        //   useCSS: false,
-        // });
-        // let stream = doc.pipe(blobStream());
-        // stream.on("finish", function () {
-        //   let blob = stream.toBlob("application/pdf");
-        //   download(URL.createObjectURL(blob), exportFilename, "pdf");
-        // });
-        // doc.end();
       });
     };
 
     const exportPDF = (canvas, exportFilename) => {
       const canvasWidth = Math.floor(canvas.width);
       const canvasHeight = Math.floor(canvas.height);
-      // const doc =
-      //   canvasWidth > canvasHeight
-      //     ? new jsPDF({
-      //         orientation: "landscape",
-      //         unit: "px",
-      //         format: [canvasWidth, canvasHeight],
-      //       })
-      //     : new jsPDF({
-      //         orientation: "portrait",
-      //         unit: "px",
-      //         format: [canvasHeight, canvasWidth],
-      //       });
       const doc = new jsPDF({
         orientation: data.document.paperOrientation,
         unit: "px",
@@ -446,7 +401,7 @@ const ChartContainer = forwardRef(
     };
 
     useImperativeHandle(ref, () => ({
-      exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
+      exportTo: (fileName, fileextension, includeLogo, pdfType) => {
         setExporting(true);
         selectNodeService.clearSelectedNodeInfo();
         const exportFilename = fileName || "OrgChart";
@@ -456,7 +411,7 @@ const ChartContainer = forwardRef(
         container.current.scrollLeft = 0;
         const originalScrollTop = container.current.scrollTop;
         container.current.scrollTop = 0;
-        const canvas = chart.current.querySelector(".paper");
+        const canvas = chart.current.querySelector("#paper");
         if (!includeLogo && data.document.logo) {
           const logo = canvas.querySelector("#logo");
           if (logo) {
@@ -467,7 +422,8 @@ const ChartContainer = forwardRef(
           exportSVG(canvas, exportFilename, true).then(() => {
             setExporting(false);
           });
-        } else if (exportFileextension === "pdf" && vectorPdf) {
+        } else if (exportFileextension === "pdf" && pdfType === "svg") {
+          console.log("exportSVG2PDF");
           exportSVG2PDF(canvas, exportFilename).then(() => {
             setExporting(false);
           });
@@ -476,8 +432,8 @@ const ChartContainer = forwardRef(
             width: canvas.clientWidth,
             height: canvas.clientHeight,
             onclone: function (clonedDoc) {
-              clonedDoc.querySelector(".paper").style.background = "none";
-              clonedDoc.querySelector(".paper").style.transform = "";
+              clonedDoc.querySelector("#paper").style.background = "none";
+              clonedDoc.querySelector("#paper").style.transform = "";
             },
           }).then(
             (canvas) => {
@@ -504,19 +460,7 @@ const ChartContainer = forwardRef(
           );
         }
       },
-      // expandAllNodes: () => {
-      //   chart.current
-      //     .querySelectorAll(
-      //       ".oc-node.hidden, .oc-hierarchy.hidden, .isSiblingsCollapsed, .isAncestorsCollapsed"
-      //     )
-      //     .forEach((el) => {
-      //       el.classList.remove(
-      //         "hidden",
-      //         "isSiblingsCollapsed",
-      //         "isAncestorsCollapsed"
-      //       );
-      //     });
-      // },
+
       demoDragMode: (enable, nodeId = "") => {
         topNode.current.demoDragMode(enable, nodeId);
       },
@@ -605,6 +549,8 @@ const ChartContainer = forwardRef(
             onMouseMove={enablePan && panning ? panHandler : undefined}
           >
             <div
+              id="paper"
+              ref={paper}
               className={`paper ${data.document.paperSize} ${data.document.paperOrientation}`}
               style={{ transform: transform }}
             >
@@ -694,6 +640,7 @@ const ChartContainer = forwardRef(
                     ref={topNode}
                     data={node}
                     level={0}
+                    index={0}
                     update={update}
                     draggable={draggable}
                     collapsible={collapsible}

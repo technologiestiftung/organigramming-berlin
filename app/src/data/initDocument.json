@@ -12,7 +12,7 @@
     "saveExport": "export",
     "includeLogo": true,
     "exportType": "pdf",
-    "pdfType": "png",
+    "pdfType": "print",
     "filename": "opener_document"
   },
   "organisations": [

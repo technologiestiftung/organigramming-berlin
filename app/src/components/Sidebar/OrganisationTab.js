@@ -3,14 +3,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
-import { DragDropContext } from "react-beautiful-dnd";
 
 import AlertModal from "./AlertModal";
 
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
-import { isDefiend, createItemByPath, getItemByPath } from "../../services/service";
 
 
 const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {

@@ -78,18 +78,21 @@ body {
   flex-grow: 0;
   flex-shrink: 0;
   .navbar {
-    pointer-events: all;
+    pointer-events: none;
     margin-bottom: 1rem;
-    .btn-group {
-      box-shadow: rgba($gray-700, 0.2) 0px 1px 2px;
-      border-radius: $border-radius;
-      .btn.btn-light {
-        background-color: $white;
-        &:hover {
-          background-color: $gray-400;
-        }
-        &.active {
-          background-color: $primary;
+    .navbar-nav {
+      .btn-group {
+        pointer-events: all;
+        box-shadow: rgba($gray-700, 0.2) 0px 1px 2px;
+        border-radius: $border-radius;
+        .btn.btn-light {
+          background-color: $white;
+          &:hover {
+            background-color: $gray-400;
+          }
+          &.active {
+            background-color: $primary;
+          }
         }
       }
     }
@@ -100,6 +103,7 @@ body {
     flex-basis: auto;
     opacity: 0;
     // overflow: hidden;
+    pointer-events: none;
     .sidebar {
       // transform: matrix(1, 0, 0, 1, 0, -50);
       opacity: 0;
@@ -124,6 +128,7 @@ body {
         background-color: $white;
         box-shadow: rgba($gray-700, 0.2) 0px 1px 2px;
         border-radius: $border-radius;
+        pointer-events: all;
         .tab {
           background-color: $white;
           padding: 0.75rem;

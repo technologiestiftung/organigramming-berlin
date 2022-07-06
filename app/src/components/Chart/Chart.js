@@ -101,20 +101,24 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const addSiblingNode = async () => {
+    setSelected(null);
+    setSelectedNode(null);
     const newNode = getNewNode();
     await dsDigger.addSiblings(selectedNode.id, newNode);
-    sendDataUp({ ...dsDigger.ds });
-    setSelected(newNode);
-    setSelectedNode(newNode);
+    await sendDataUp({ ...dsDigger.ds });
+    setSelected({ ...newNode });
+    setSelectedNode({ ...newNode });
     onCloseContextMenu();
   };
 
   const addChildNode = async () => {
+    await setSelected(null);
+    setSelectedNode(null);
     const newNode = getNewNode();
     await dsDigger.addChildren(selectedNode.id, newNode);
-    sendDataUp({ ...dsDigger.ds });
-    setSelected(newNode);
-    setSelectedNode(newNode);
+    await sendDataUp({ ...dsDigger.ds });
+    setSelected({ ...newNode });
+    setSelectedNode({ ...newNode });
     onCloseContextMenu();
   };
 
@@ -127,15 +131,17 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const removeNode = async () => {
-    await dsDigger.removeNodes(selectedNode.id);
-    sendDataUp({ ...dsDigger.ds });
     onCloseContextMenu();
+    await setSelected(null);
+    setSelectedNode(null);
+    await dsDigger.removeNodes(selectedNode.id);
+    await sendDataUp({ ...dsDigger.ds });
   };
 
   const copyNode = () => {
+    onCloseContextMenu();
     let copyNode = { ...selectedNode };
     setClipBoard(copyNode);
-    onCloseContextMenu();
   };
 
   const cutNode = async () => {

@@ -68,9 +68,6 @@ const App = () => {
         const dataSting = JSON.stringify(e);
         setUndoData(JSON.parse(dataSting));
         localStorage.setItem("data", JSON.stringify(e));
-        if (isDefiend(selected?.id)) {
-          setSelected(await dsDigger.findNodeById(selected.id));
-        }
       } else {
         console.error(errors);
       }
@@ -110,9 +107,9 @@ const App = () => {
     document.body.removeChild(link);
   };
 
-  const exportTo = (fileextension, includeLogo = true, vectorPdf = true) => {
+  const exportTo = (fileextension, includeLogo = true, pdfType = "") => {
     const fileName = data.export.filename || toSnakeCase(data.document.title);
-    chart.current.exportTo(fileName, fileextension, includeLogo, vectorPdf);
+    chart.current.exportTo(fileName, fileextension, includeLogo, pdfType);
   };
 
   const onUndo = () => {
@@ -128,7 +125,7 @@ const App = () => {
       run: false,
       steps: [
         {
-          content: "Erstelleun und Öffnen von Dokumenten",
+          content: "Erstellen und Öffnen von Dokumenten",
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
@@ -248,7 +245,7 @@ const App = () => {
         },
         {
           content:
-            "Organisation mit der Maus per 'Drag and Drop' umsortieren, indem die Organisation auf eine grün eingefärbte Organisation gezogen und losgelassen wird",
+            "Organisation mit der Maus per 'Drag-and-drop' umsortieren, indem die Organisation auf eine grün eingefärbte Organisation gezogen und losgelassen wird",
           placement: "left",
           styles: {
             options: {
@@ -266,8 +263,7 @@ const App = () => {
             <p>
               Mit einem Rechts-Klick ist das Kontex-Menu zu öffnen.
               Organisationen können auch mit der <code>crt</code> +
-              <code>c</code> kopiert und mit <code>crt</code> + <code>v</code>
-              eingefügt werden
+              <code>c</code> kopiert und mit <code>crt</code> + <code>v</code> eingefügt werden.
             </p>
           ),
           placement: "left",
@@ -284,7 +280,7 @@ const App = () => {
         },
         {
           content:
-            "Sie können ein fertiges Organigramm auch als PDF oder Bilddatei exportieren. Klicken Sie in der hier.",
+            "Sie können ein fertiges Organigramm auch als PDF oder Bilddatei exportieren.",
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
@@ -359,10 +355,10 @@ const App = () => {
   };
 
   const onDragEnd = async (e) => {
-    console.log("onDragEnd", e);
-    let _data = await handleDropEnd(e, dsDigger);
-    console.log("_data", _data);
-    onChange(_data);
+    if (e.type !== "organisation") {
+      let _data = await handleDropEnd(e, dsDigger);
+      onChange(_data);
+    }
   };
 
   return (
@@ -376,7 +372,6 @@ const App = () => {
         showSkipButton
         stepIndex={stepIndex}
         steps={steps}
-        // tooltipComponent={Tooltip}
         locale={{
           back: "Zurück",
           close: "Verlassen",
