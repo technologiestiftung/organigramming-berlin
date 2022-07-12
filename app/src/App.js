@@ -125,7 +125,7 @@ const App = () => {
       run: false,
       steps: [
         {
-          content: "Erstellen und Öffnen von Dokumenten",
+          content: "Hier können Sie ein neues Dokument anlegen oder ein vorhandenes hochladen.",
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
@@ -137,11 +137,11 @@ const App = () => {
             },
           },
           target: menu.current.newDocRef,
-          title: "Neues Dokument Menu",
+          title: "Neues Dokument Menü",
         },
         {
           content:
-            "Hier klicken, um Dokumentinformationen und -einstellungen anzupassen.",
+            "Klicken Sie hier, um Dokumenteinstellungen wie zum Beispiel Orientierung, Logo, oder Größe anzupassen.",
           placement: "bottom",
           spotlightPadding: 0,
           styles: {
@@ -153,7 +153,7 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: menu.current.docInfoRef,
-          title: "Dokument",
+          title: "Dokumentinformationen und -einstellungen",
         },
         {
           content:
@@ -173,7 +173,7 @@ const App = () => {
         },
         {
           content:
-            "Organisation durch Klick auswählen, um Informationen zu bearbeiten",
+            "Um Informationen einer Organisationseinheit zu bearbeiten, wählen Sie diese per Klick aus.",
           placement: "right",
           styles: {
             options: {
@@ -187,7 +187,7 @@ const App = () => {
           title: "Bearbeiten einer Organisation",
         },
         {
-          content: "Organisation anpassen",
+          content: "In diesem Menü können Sie die Inhalte der Organisationseinheit bearbeiten, wie Name, Anschrift oder zugehörige Organisationseinheiten.",
           placement: "right",
           styles: {
             options: {
@@ -199,7 +199,7 @@ const App = () => {
           disableOverlayClose: true,
           spotlightPadding: 0,
           target: ".sidebar",
-          title: "Menu",
+          title: "Organisationseinheit bearbeiten",
         },
         {
           placement: "right",
@@ -212,7 +212,8 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: "button.add-array-item",
-          content: "Eine Person der Organisation hinzufügen",
+          title: "Eine Person der Organisationseinheit hinzufügen",
+          content: "Wenn Sie eine neue Person anlegen möchten, klicken Sie auf das kleine Plus-Symbol in der Personen-Leiste."
         },
         {
           placement: "right",
@@ -226,11 +227,11 @@ const App = () => {
           disableOverlayClose: true,
           target: ".expand-item",
           title: "Personeninformationen bearbeiten",
-          content: "",
+          content: "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person. ",
         },
         {
           content:
-            "Entfernen der ausgewählten Organisation und alle ihr untergeordnete Organisationen.",
+            "Das Mülleimer Icon entfernt die ausgewählte Organisationeinheit und alle ihr untergeordneten Organisationen.",
           placement: "right",
           styles: {
             options: {
@@ -241,11 +242,11 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: ".delete-organisation",
-          title: "Organisation Entfernen",
+          title: "Organisationseinheit entfernen",
         },
         {
           content:
-            "Organisation mit der Maus per 'Drag-and-drop' umsortieren, indem die Organisation auf eine grün eingefärbte Organisation gezogen und losgelassen wird",
+            "Sie können eine Organisationseinheit mit der Maus per 'Drag-and-drop' umsortieren, indem die Organisationseinheit auf eine grün eingefärbte Organisationseinheit gezogen und losgelassen wird.",
           placement: "left",
           styles: {
             options: {
@@ -256,14 +257,14 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: ".chart",
-          title: "Organisation umsortieren",
+          title: "Organisationseinheiten umsortieren",
         },
         {
           content: (
             <p>
-              Mit einem Rechts-Klick ist das Kontex-Menu zu öffnen.
-              Organisationen können auch mit der <code>crt</code> +
-              <code>c</code> kopiert und mit <code>crt</code> + <code>v</code> eingefügt werden.
+              Mit einem Rechtsklick können Sie das Kontextmenü öffnen.
+              Organisationen können auch mit der <code>strg</code> +
+              <code>c</code> kopiert und mit <code>strg</code> + <code>v</code> eingefügt werden.
             </p>
           ),
           placement: "left",
@@ -276,7 +277,7 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: ".chart",
-          title: "Kontext Menu",
+          title: "Kontextmenü",
         },
         {
           content:
@@ -295,7 +296,7 @@ const App = () => {
           title: "Fertiges Organigramm exportieren",
         },
         {
-          content: "Änderungen Rückgangig machen und wiederherstellen",
+          content: "Mithilfe der Pfeile oben rechts können Sie Schritte rückgängig machen bzw. wiederholen.",
           placement: "bottom",
           styles: {
             options: {
@@ -309,7 +310,7 @@ const App = () => {
           title: "Undo Redo",
         },
         {
-          content: "Heran und heraus zoomen, Bildschirmfüllend anziegen",
+          content: "Unten rechts können Sie heran- und herauszoomen, sowie die Ansicht auf das ganze Dokument aktivieren. Alternativ können Sie dafür auch das Scrollrad der Maus benutzen.",
           placement: "right",
           styles: {
             options: {

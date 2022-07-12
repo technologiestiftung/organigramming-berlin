@@ -16,7 +16,7 @@ const AlertModal = (props) => {
           </Button>
         )}
         <Button variant="outline-danger" onClick={props.onOkay}>
-          Verwerfen
+          Änderungen verwerfen
         </Button>
         <Button variant="outline-primary" onClick={props.onHide}>
           Abbrechen

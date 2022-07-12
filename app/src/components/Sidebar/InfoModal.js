@@ -23,8 +23,9 @@ const InfoModal = (props) => {
               ein einheitlicheres und maschinenlesbares Format zu bringen.
             </p>
             <p>
-              Es handelt sich um einen ersten Prototypen, es kann also sein,
-              dass das Tool nicht immer reibungslos läuft und Fehler enthält.
+              Es handelt sich derzeit noch um einen ersten Prototypen, es kann also sein,
+              dass das Tool noch einzelne Programmierfehler enthält. Das Tool funktioniert direkt im Browser, 
+              ein Download oder eine Anmeldung sind nicht nötig. Am besten funktioniert die Anwendung in den Browsern Chrome und Microsoft Edge.
             </p>
           </Row>
           <Row>

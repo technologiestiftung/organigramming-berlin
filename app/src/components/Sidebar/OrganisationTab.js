@@ -155,8 +155,8 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
         onHide={() => setRemoveNodeAlertModalShow(false)}
         title="Organisation entfernen"
       >
-        Soll die Informatinen dieser Organisation und deren Unterorganisationen
-        entfert werden?
+        Sollen die Informationen dieser Organisation und deren Unterorganisationen
+        entfernt werden?
       </AlertModal>
       <Stack direction="horizontal" gap={3}>
         <div>
