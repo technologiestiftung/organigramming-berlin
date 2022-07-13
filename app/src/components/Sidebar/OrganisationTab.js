@@ -154,6 +154,7 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
         show={removeNodeAlertModalShow}
         onHide={() => setRemoveNodeAlertModalShow(false)}
         title="Organisation entfernen"
+        continueButton="Ja, Organisation entfernen"
       >
         Sollen die Informationen dieser Organisation und deren Unterorganisationen
         entfernt werden?
