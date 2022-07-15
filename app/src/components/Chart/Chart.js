@@ -13,19 +13,38 @@ import { v4 as uuidv4 } from "uuid";
 const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const orgchart = useRef();
 
-  useImperativeHandle(
-    ref,
-    (fileName, fileextension, includeLogo, vectorPdf) => ({
-      exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
-        orgchart.current.exportTo(
-          fileName,
-          fileextension,
-          includeLogo,
-          vectorPdf
-        );
-      },
-    })
-  );
+  useImperativeHandle(ref, () => ({
+    exportTo: (fileName, fileextension, includeLogo, vectorPdf) => {
+      orgchart.current.exportTo(
+        fileName,
+        fileextension,
+        includeLogo,
+        vectorPdf
+      );
+    },
+    demoContexMenu: (enable, nodeId = "") => {
+      let element = document.getElementById(nodeId);
+      if (element) {
+        if (enable) {
+          const boundings = element.getBoundingClientRect(),
+            e = {
+              clientX: boundings.x + boundings.width / 2,
+              clientY: boundings.y + boundings.height / 2,
+            };
+          document.body.classList.add("context-demo");
+          setTimeout(() => {
+            onContextMenu(e);
+          }, 600);
+        } else {
+          document.body.classList.remove("context-demo");
+          onCloseContextMenu();
+        }
+      }
+    },
+    get orgchart() {
+      return orgchart.current;
+    },
+  }));
 
   const [ds, setDS] = useState(data);
   // const [selectedNodes, setSelectedNodes] = useState(new Set());
@@ -82,28 +101,47 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const addSiblingNode = async () => {
+    setSelected(null);
+    setSelectedNode(null);
     const newNode = getNewNode();
     await dsDigger.addSiblings(selectedNode.id, newNode);
-    sendDataUp({ ...dsDigger.ds });
+    await sendDataUp({ ...dsDigger.ds });
+    setSelected({ ...newNode });
+    setSelectedNode({ ...newNode });
     onCloseContextMenu();
   };
 
   const addChildNode = async () => {
+    await setSelected(null);
+    setSelectedNode(null);
     const newNode = getNewNode();
     await dsDigger.addChildren(selectedNode.id, newNode);
-    sendDataUp({ ...dsDigger.ds });
+    await sendDataUp({ ...dsDigger.ds });
+    setSelected({ ...newNode });
+    setSelectedNode({ ...newNode });
     onCloseContextMenu();
   };
 
-  const removeNode = async () => {
-    await dsDigger.removeNodes(selectedNode.id);
+  const onAddInitNode = async () => {
+    const newNode = getNewNode();
+    await dsDigger.addInitNode(newNode);
+    setSelected(newNode);
+    setSelectedNode(newNode);
     sendDataUp({ ...dsDigger.ds });
-    onCloseContextMenu();
   };
+
+  const removeNode = async () => {
+    onCloseContextMenu();
+    await setSelected(null);
+    setSelectedNode(null);
+    await dsDigger.removeNodes(selectedNode.id);
+    await sendDataUp({ ...dsDigger.ds });
+  };
+
   const copyNode = () => {
+    onCloseContextMenu();
     let copyNode = { ...selectedNode };
     setClipBoard(copyNode);
-    onCloseContextMenu();
   };
 
   const cutNode = async () => {
@@ -156,6 +194,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
         onClickNode={readSelectedNode}
         onClickChart={clearSelectedNode}
         sendDataUp={onChanged}
+        onAddInitNode={onAddInitNode}
         onContextMenu={onContextMenu}
         onCloseContextMenu={onCloseContextMenu}
         onOpenDocument={(e) => {

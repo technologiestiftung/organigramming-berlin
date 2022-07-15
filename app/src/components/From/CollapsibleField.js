@@ -14,7 +14,7 @@ const CollapsibleField = (_ref) => {
   title = uiSchema["ui:title"] ? uiSchema["ui:title"] : title ? title : name;
 
   //For employee object
-  if (_ref.formData.title || _ref.formData.firstName || _ref.formData.lastName){
+  if (_ref.formData?.title || _ref.formData?.firstName || _ref.formData?.lastName){
     const contact = _ref.formData;
     let personName = [];
     if (contact.title) {
@@ -29,7 +29,7 @@ const CollapsibleField = (_ref) => {
     title = personName.join(" ");
   }
   //For employee object
-  if (_ref.formData.name){
+  if (_ref.formData?.name){
     title = _ref.formData.name;
   }
 

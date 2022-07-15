@@ -3,7 +3,6 @@
 // "license": "MIT",
 // website "https://github.com/dabeng/json-helper/issues"
 
-
 export default class JSONDigger {
   constructor(datasource, idProp, organisationsProp) {
     this.ds = datasource;
@@ -135,19 +134,20 @@ export default class JSONDigger {
 
               break;
             }
-            default:{ // Just to make the linter happy
+            default: {
+              // Just to make the linter happy
               flag = false;
-              return true
+              return true;
             }
           }
-          return false// Just to make the linter happy
+          return false; // Just to make the linter happy
         });
 
         if (!flag) {
           return false;
         }
       }
-      return false// Just to make the linter happy
+      return false; // Just to make the linter happy
     });
     return flag;
   }
@@ -338,7 +338,6 @@ export default class JSONDigger {
 
   async addChildren(id, data) {
     this.validateParams(id, data);
-
     try {
       const parent = await this.findNodeById(id);
 
@@ -356,6 +355,7 @@ export default class JSONDigger {
         }
       }
     } catch (err) {
+      console.log(err);
       throw new Error("Failed to add child nodes.");
     }
   }
@@ -376,8 +376,18 @@ export default class JSONDigger {
     }
   }
 
-  addRoot(data) {
+  addInitNode(data){
+    if (
+      !data ||
+      data.constructor !== Object ||
+      (data.constructor === Object && !Object.keys(data).length)
+    ) {
+      throw new Error("Parameter data is invalid.");
+    }
+    this.ds.organisations = [data];
+  }
 
+  addRoot(data) {
     if (
       !data ||
       data.constructor !== Object ||
@@ -403,11 +413,14 @@ export default class JSONDigger {
   }
 
   async updateNode(data) {
-
+    console.log("updateNode", data);
     if (
-      !data || data.constructor !== Object ||
+      !data ||
+      data.constructor !== Object ||
       (data.constructor === Object && !Object.keys(data).length) ||
-      (data.constructor === Object && Object.keys(data).length && !data[this.id])
+      (data.constructor === Object &&
+        Object.keys(data).length &&
+        !data[this.id])
     ) {
       throw new Error("Parameter data is invalid.");
     }
