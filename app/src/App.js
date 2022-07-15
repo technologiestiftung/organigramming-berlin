@@ -125,7 +125,7 @@ const App = () => {
       run: false,
       steps: [
         {
-          content: "Hier können Sie ein neues Dokument anlegen oder ein vorhandenes hochladen.",
+          content: "Hier können Sie ein neues Dokument anlegen oder ein vorhandenes Organigramm (JSON-Datei) hochladen.",
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
@@ -137,11 +137,11 @@ const App = () => {
             },
           },
           target: menu.current.newDocRef,
-          title: "Neues Dokument Menü",
+          title: "Neues Dokument",
         },
         {
           content:
-            "Klicken Sie hier, um Dokumenteinstellungen wie zum Beispiel Orientierung, Logo, oder Größe anzupassen.",
+            "Anschließend können Sie hier die Dokumenteinstellungen wie zum Beispiel Orientierung, Logo oder Papierformat anpassen.",
           placement: "bottom",
           spotlightPadding: 0,
           styles: {
@@ -157,7 +157,7 @@ const App = () => {
         },
         {
           content:
-            "Tragen Sie über die Maske den Namen Ihrer Behörde als Dokumenttitel ein. Des Weiteren lässt sich die Ausrichtung des Dokuments (Hochformat oder Querformat) und die Ausgabegröße einstellen. In den Dokumentinformationen können Sie ebenfalls ein Logo einbinden. Bisher sind aus Lizenzgründen nur die Logos der Bezirksverwaltungen auswählbar. Sie können aber ganz einfach selbst eine Bilddatei mit einem Logo hochladen. Neben Datum und Name des Verfassers oder der Verfasserin kann hier auch die Fußzeile bearbeitet werden.",
+            "Tragen Sie über diese Maske den Namen Ihrer Behörde als Dokumenttitel ein. Des Weiteren lässt sich die Ausrichtung des Dokuments (Hochformat oder Querformat) und die Ausgabegröße einstellen. In den Dokumentinformationen können Sie ebenfalls ein Logo einbinden. Bisher sind aus Lizenzgründen nur die Logos der Bezirksverwaltungen auswählbar. Sie können aber ganz einfach selbst eine Bilddatei mit einem Logo hochladen. Neben Datum und Name des Verfassers oder der Verfasserin kann hier auch die Fußzeile bearbeitet werden.",
           placement: "right",
           styles: {
             options: {
@@ -173,7 +173,7 @@ const App = () => {
         },
         {
           content:
-            "Um Informationen einer Organisationseinheit zu bearbeiten, wählen Sie diese per Klick aus.",
+            "Jede Box stellt eine sogenannte Organisationseinheit dar. Um die Informationen in der Box zu bearbeiten, wählen Sie diese per Mausklick aus.",
           placement: "right",
           styles: {
             options: {
@@ -184,10 +184,10 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: "#n3",
-          title: "Bearbeiten einer Organisation",
+          title: "Bearbeiten einer Organisationseinheit",
         },
         {
-          content: "In diesem Menü können Sie die Inhalte der Organisationseinheit bearbeiten, wie Name, Anschrift oder zugehörige Organisationseinheiten.",
+          content: "Über diese Maske können Sie den Inhalt der Box anpassen. Tragen Sie den Namen (Bezeichnung) der Organisationseinheit ein. Sie können auch eine Anschrift und Kontaktinformationen der Einheit eintragen. Zu einer Organisationseinheit können außerdem Personen und zugehörige Organisationseinheiten gehören.",
           placement: "right",
           styles: {
             options: {
@@ -212,8 +212,8 @@ const App = () => {
           spotlightClicks: false,
           disableOverlayClose: true,
           target: "button.add-array-item",
-          title: "Eine Person der Organisationseinheit hinzufügen",
-          content: "Wenn Sie eine neue Person anlegen möchten, klicken Sie auf das kleine Plus-Symbol in der Personen-Leiste."
+          title: "Eine Person zur Organisationseinheit hinzufügen",
+          content: "Wenn Sie eine neue Person hinzufügen möchten, klicken Sie auf das kleine Plus-Symbol in der Personen-Leiste."
         },
         {
           placement: "right",
@@ -227,11 +227,11 @@ const App = () => {
           disableOverlayClose: true,
           target: ".expand-item",
           title: "Personeninformationen bearbeiten",
-          content: "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person. ",
+          content: "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person.",
         },
         {
           content:
-            "Das Mülleimer Icon entfernt die ausgewählte Organisationeinheit und alle ihr untergeordneten Organisationen.",
+            "Sie können die einzelnen Elemente und auch die ganze Organisationseinheit wieder aus dem Organigramm entfernen. Über das Mülleimer-Icon löschen Sie die ausgewählte Organisationeinheit und alle ihr untergeordneten Organisationen.",
           placement: "right",
           styles: {
             options: {
@@ -246,7 +246,7 @@ const App = () => {
         },
         {
           content:
-            "Sie können eine Organisationseinheit mit der Maus per 'Drag-and-drop' umsortieren, indem die Organisationseinheit auf eine grün eingefärbte Organisationseinheit gezogen und losgelassen wird.",
+            "Sie können eine Organisationseinheit mit der Maus per 'Drag-and-drop' umsortieren, indem Sie die Organisationseinheit auf eine grün eingefärbte Organisationseinheit ziehen.",
           placement: "left",
           styles: {
             options: {
@@ -280,22 +280,6 @@ const App = () => {
           title: "Kontextmenü",
         },
         {
-          content:
-            "Sie können ein fertiges Organigramm auch als PDF oder Bilddatei exportieren.",
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          placement: "bottom",
-          spotlightPadding: 0,
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          target: ".export-toolbar-item",
-          title: "Fertiges Organigramm exportieren",
-        },
-        {
           content: "Mithilfe der Pfeile oben rechts können Sie Schritte rückgängig machen bzw. wiederholen.",
           placement: "bottom",
           styles: {
@@ -322,6 +306,22 @@ const App = () => {
           disableOverlayClose: true,
           target: ".navigation-container",
           title: "Navigations Menu",
+        },
+        {
+          content:
+            "Sie können ein fertiges Organigramm als PDF, als Bilddatei oder als maschinenlesbare JSON-Datei exportieren. Die JSON-Datei können Sie später nutzen, um das Organigramm wieder einzuladen und daran weiterzuarbeiten.",
+          disableBeacon: true,
+          spotlightClicks: false,
+          disableOverlayClose: true,
+          placement: "bottom",
+          spotlightPadding: 0,
+          styles: {
+            options: {
+              zIndex: 10000,
+            },
+          },
+          target: ".export-toolbar-item",
+          title: "Fertiges Organigramm exportieren",
         },
       ],
     });
