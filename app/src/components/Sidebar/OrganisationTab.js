@@ -1,8 +1,7 @@
 import definitions from "../../schemas/organization_chart";
-import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
-import JSONDigger from "../../services/jsonDigger";
 import { v4 as uuidv4 } from "uuid";
 
 import AlertModal from "./AlertModal";
@@ -11,10 +10,14 @@ import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 
-const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
+
+const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
-  const [removeNodeAlertModalShow, setRemoveNodeAlertModalShow] = useState(false);
-  const dsDigger = new JSONDigger(data, "id", "organisations");
+  const [idPrefix, setIdPrefix] = useState("root");
+  const [removeNodeAlertModalShow, setRemoveNodeAlertModalShow] =
+    useState(false);
+  // const dsDigger = new JSONDigger(data, "id", "organisations");
+  const timerRef = useRef(null);
 
   const properties = {
     properties: {
@@ -34,11 +37,11 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
     "ui:headless": true,
     current: {
       "ui:headless": true,
-      id:{
-        "ui:widget": "hidden"
+      id: {
+        "ui:widget": "hidden",
       },
-      relationship:{
-        "ui:widget": "hidden"
+      relationship: {
+        "ui:widget": "hidden",
       },
       employees: {
         "ui:headless": true,
@@ -63,12 +66,12 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           field: "ObjectField",
         },
       },
-      style:{
-        title: "Stil"
+      style: {
+        title: "Stil",
       },
       organisations: {
         "ui:headless": true,
-        "ui:widget": "hidden"
+        "ui:widget": "hidden",
       },
       departments: {
         items: {
@@ -84,26 +87,40 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           },
         },
       },
+      suborganizationOrientation: {
+        "ui:widget": "radio",
+        "ui:options": {
+          inline: true,
+        },
+      },
     },
   };
 
   useEffect(() => {
     if (selected != null) {
       setFormData({ current: { ...selected } });
+      setIdPrefix(selected.id);
+    } else {
+      setIdPrefix("root");
     }
   }, [selected]);
 
-  const onChange =  async(e) => {
-    setFormData({...e.formData});
-    // await dsDigger.updateNode(formData.current);
+  const handleSendDataUp = async (data) => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      await dsDigger.updateNode(data);
+      sendDataUp(dsDigger.ds);
+    }, 500);
   };
 
-  const onBlur = async () =>{
-    if (formData.current) {
-      await dsDigger.updateNode(formData.current);
-      sendDataUp(dsDigger.ds);
-    }
-  }
+  const onChange = async (e) => {
+    setFormData({ ...e.formData });
+    handleSendDataUp({ ...e.formData.current });
+  };
+
+  const onBlur = async () => {
+    // handleSendDataUp(formData.current);
+  };
 
   const getNewNode = () => {
     return { type: "", name: "Organisation", id: "n" + uuidv4() };
@@ -113,42 +130,77 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
     const newNode = getNewNode();
     await dsDigger.addSiblings(selected.id, newNode);
     sendDataUp({ ...dsDigger.ds });
+    setSelected(newNode);
   };
 
   const addChildNode = async () => {
     const newNode = getNewNode();
     await dsDigger.addChildren(selected.id, newNode);
     sendDataUp({ ...dsDigger.ds });
+    setSelected(newNode);
   };
 
   const removeNode = async () => {
     await dsDigger.removeNodes(selected.id);
-    sendDataUp({ ...dsDigger.ds});
+    sendDataUp({ ...dsDigger.ds });
     setSelected(null);
   };
 
+
   return (
     <div className="tab">
-      <AlertModal onOkay={removeNode} show={removeNodeAlertModalShow} onHide={()=> setRemoveNodeAlertModalShow(false)} title="Organisation entfernen">
-        Soll die Informatinen dieser Organisation und deren Unterorganisationen entfert werden?
-      </AlertModal>
-      {selected && selected.kind && <h3>{selected.kind}</h3>}
-      {selected && selected.name && <h2>{selected.name}</h2>}
-      <Form
-        schema={schema}
-        uiSchema={uiSchema}
-        formData={formData}
-        onChange={(e) => onChange(e)}
-        onBlur={onBlur}
-        fields={fields}
-        ArrayFieldTemplate={ArrayFieldTemplate}
-        ObjectFieldTemplate={ObjectFieldTemplate}
-        liveValidate
-        showErrorList={false}
+      <AlertModal
+        onOkay={removeNode}
+        show={removeNodeAlertModalShow}
+        onHide={() => setRemoveNodeAlertModalShow(false)}
+        title="Organisation entfernen"
+        continueButton="Ja, Organisation entfernen"
       >
-        <br />
-      </Form>
-      <div className="d-grid gap-2">
+        Sollen die Informationen dieser Organisation und deren Unterorganisationen
+        entfernt werden?
+      </AlertModal>
+      <Stack direction="horizontal" gap={3}>
+        <div>
+          {selected && selected.kind && <h3>{selected.kind}</h3>}
+          {selected && selected.name && <h2>{selected.name}</h2>}
+        </div>
+        <Button
+          variant="outline-danger"
+          className="ms-auto delete-organisation"
+          onClick={() => setRemoveNodeAlertModalShow(true)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className="bi bi-trash"
+            viewBox="0 0 16 16"
+          >
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+            <path
+              fillRule="evenodd"
+              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+            />
+          </svg>
+        </Button>
+      </Stack>
+        <Form
+          schema={schema}
+          uiSchema={uiSchema}
+          formData={formData}
+          onChange={(e) => onChange(e)}
+          onBlur={onBlur}
+          fields={fields}
+          idPrefix={idPrefix}
+          ArrayFieldTemplate={ArrayFieldTemplate}
+          ObjectFieldTemplate={ObjectFieldTemplate}
+          liveValidate
+          showErrorList={false}
+        >
+          <br />
+        </Form>
+      <Stack direction="horizontal" gap={3}>
         <Button variant="outline-success" onClick={addSiblingNode}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -166,7 +218,6 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           Neue Nebenorganisation
         </Button>
         <Button variant="outline-success" onClick={addChildNode}>
-          {" "}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -182,24 +233,7 @@ const OrganisationTab = ({ data, sendDataUp, selected, setSelected }) => {
           </svg>
           Neue Suborganisation
         </Button>
-        <Button className="btn btn-danger" onClick={()=>setRemoveNodeAlertModalShow(true)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi me-1 bi-trash"
-            viewBox="0 0 16 16"
-          >
-            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-            <path
-              fillRule="evenodd"
-              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-            />
-          </svg>
-          Entfernen
-        </Button>
-      </div>
+      </Stack>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import definitions from "../../schemas/organization_chart";
 import Form from "@rjsf/bootstrap-4";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import FileSelect from "../From/FileSelect";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import MDEditorWidget from "../From/MDEditor";
@@ -50,6 +50,9 @@ const preuploads = importAll(
 
 const DocumentTab = ({ data, sendDataUp }) => {
   const [formData, setFormData] = useState({ ...data });
+  
+  const timerRef = useRef(null);
+
 
   const properties = {
     properties: {
@@ -85,12 +88,24 @@ const DocumentTab = ({ data, sendDataUp }) => {
     },
   };
 
-  const onBlur = () => {
-    sendDataUp(formData);
+  const handleSendDataUp = (data) => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      sendDataUp(data);
+    }, 200);
   };
-  const onChange = (e) => {
-    setFormData(e.formData);
+
+  const onChange = async (e) => {
+    setFormData({ ...e.formData });
+    handleSendDataUp({ ...e.formData });
   };
+
+  // const onBlur = () => {
+  //   sendDataUp(formData);
+  // };
+  // const onChange = (e) => {
+  //   setFormData(e.formData);
+  // };
 
   return (
     <div className="tab">
@@ -101,7 +116,7 @@ const DocumentTab = ({ data, sendDataUp }) => {
         formData={formData}
         ObjectFieldTemplate={ObjectFieldTemplate}
         onChange={onChange}
-        onBlur={onBlur}
+        // onBlur={onBlur}
         liveValidate
         showErrorList={false}
       >
