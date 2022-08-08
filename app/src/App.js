@@ -125,7 +125,8 @@ const App = () => {
       run: false,
       steps: [
         {
-          content: "Hier können Sie ein neues Dokument anlegen oder ein vorhandenes Organigramm (JSON-Datei) hochladen.",
+          content:
+            "Hier können Sie ein neues Dokument anlegen oder ein vorhandenes Organigramm (JSON-Datei) hochladen.",
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
@@ -187,7 +188,8 @@ const App = () => {
           title: "Bearbeiten einer Organisationseinheit",
         },
         {
-          content: "Über diese Maske können Sie den Inhalt der Box anpassen. Tragen Sie den Namen (Bezeichnung) der Organisationseinheit ein. Sie können auch eine Anschrift und Kontaktinformationen der Einheit eintragen. Zu einer Organisationseinheit können außerdem Personen und zugehörige Organisationseinheiten gehören.",
+          content:
+            "Über diese Maske können Sie den Inhalt der Box anpassen. Tragen Sie den Namen (Bezeichnung) der Organisationseinheit ein. Sie können auch eine Anschrift und Kontaktinformationen der Einheit eintragen. Zu einer Organisationseinheit können außerdem Personen und zugehörige Organisationseinheiten gehören.",
           placement: "right",
           styles: {
             options: {
@@ -213,7 +215,8 @@ const App = () => {
           disableOverlayClose: true,
           target: "button.add-array-item",
           title: "Eine Person zur Organisationseinheit hinzufügen",
-          content: "Wenn Sie eine neue Person hinzufügen möchten, klicken Sie auf das kleine Plus-Symbol in der Personen-Leiste."
+          content:
+            "Wenn Sie eine neue Person hinzufügen möchten, klicken Sie auf das kleine Plus-Symbol in der Personen-Leiste.",
         },
         {
           placement: "right",
@@ -227,7 +230,8 @@ const App = () => {
           disableOverlayClose: true,
           target: ".expand-item",
           title: "Personeninformationen bearbeiten",
-          content: "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person.",
+          content:
+            "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person.",
         },
         {
           content:
@@ -264,7 +268,8 @@ const App = () => {
             <p>
               Mit einem Rechtsklick können Sie das Kontextmenü öffnen.
               Organisationen können auch mit der <code>strg</code> +
-              <code>c</code> kopiert und mit <code>strg</code> + <code>v</code> eingefügt werden.
+              <code>c</code> kopiert und mit <code>strg</code> + <code>v</code>{" "}
+              eingefügt werden.
             </p>
           ),
           placement: "left",
@@ -280,7 +285,8 @@ const App = () => {
           title: "Kontextmenü",
         },
         {
-          content: "Mithilfe der Pfeile oben rechts können Sie Schritte rückgängig machen bzw. wiederholen.",
+          content:
+            "Mithilfe der Pfeile oben rechts können Sie Schritte rückgängig machen bzw. wiederholen.",
           placement: "bottom",
           styles: {
             options: {
@@ -294,7 +300,8 @@ const App = () => {
           title: "Undo Redo",
         },
         {
-          content: "Unten rechts können Sie heran- und herauszoomen, sowie die Ansicht auf das ganze Dokument aktivieren. Alternativ können Sie dafür auch das Scrollrad der Maus benutzen.",
+          content:
+            "Unten rechts können Sie heran- und herauszoomen, sowie die Ansicht auf das ganze Dokument aktivieren. Alternativ können Sie dafür auch das Scrollrad der Maus benutzen.",
           placement: "right",
           styles: {
             options: {
@@ -352,6 +359,8 @@ const App = () => {
       setData({ ...tempData });
       setState({ run: false });
       setSelected(null);
+      chart.current.demoContexMenu(false, "n3");
+      chart.current.orgchart.demoDragMode(false);
     }
   };
 
