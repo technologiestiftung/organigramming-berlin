@@ -148,7 +148,7 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
 
 
   return (
-    <div className="tab">
+    <div className="tab" id="organisation-tab">
       <AlertModal
         onOkay={removeNode}
         show={removeNodeAlertModalShow}

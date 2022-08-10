@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
-// import { v4 as uuidv4 } from "uuid";
 
 const ArrayFieldTemplate = (props) => {
   const [type] = useState(props.schema.items.$ref.split("/")[2]);
 
   const getListStyle = (isDraggingOver) => {
     if (isDraggingOver) {
-      return { background: "lightblue" };
+      return { background: "lightblue", borderRadius: "0.2rem" };
     } else {
-      return { background: "#e9ecef" };
+      return { background: "#e9ecef", borderRadius: "0.2rem" };
     }
   };
 
@@ -22,7 +21,7 @@ const ArrayFieldTemplate = (props) => {
           ref={provided.innerRef}
           style={getListStyle(snapshot.isDraggingOver)}
         >
-          <div className="header d-flex justify-content-between align-items-center ps-2">
+          <div className="header d-flex justify-content-between align-items-center ps-2 overflow-hidden">
             <h5 className="m-0">{props.title}</h5>
             {props.canAdd && (
               <button
@@ -44,7 +43,7 @@ const ArrayFieldTemplate = (props) => {
               </button>
             )}
           </div>
-          <ul className="content list-group list-group-flush">
+          <ul className="content list-group list-group-flush ">
             {props.items.map((element, index) => (
               <Draggable
                 key={element.key}
@@ -53,7 +52,7 @@ const ArrayFieldTemplate = (props) => {
               >
                 {(provided, snapshot) => (
                   <li
-                    className="item list-group-item bg-white m-1 p-0 d-flex align-center-top"
+                    className="item list-group-item bg-white m-1 p-0 d-flex align-center-top overflow-hidden"
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
