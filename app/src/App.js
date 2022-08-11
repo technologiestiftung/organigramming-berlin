@@ -32,7 +32,7 @@ const initdata = () => {
 
 const App = () => {
   const chart = useRef();
-  const menu = useRef();
+  const controlLayer = useRef();
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState(initdata());
   const [tempData, setTempData] = useState();
@@ -78,9 +78,9 @@ const App = () => {
     let charCode = String.fromCharCode(e.which).toLowerCase();
     if ((e.ctrlKey || e.metaKey) && charCode === "z") {
       if (e.shiftKey) {
-        onRedo();
+        setRedo();
       } else {
-        onUndo();
+        setUndo();
       }
     }
   };
@@ -112,14 +112,6 @@ const App = () => {
     chart.current.exportTo(fileName, fileextension, includeLogo, pdfType);
   };
 
-  const onUndo = () => {
-    setUndo();
-  };
-
-  const onRedo = () => {
-    setRedo();
-  };
-
   useMount(() => {
     setState({
       run: false,
@@ -137,7 +129,7 @@ const App = () => {
               zIndex: 10000,
             },
           },
-          target: menu.current.newDocRef,
+          target: controlLayer.current.newDocRef,
           title: "Neues Dokument",
         },
         {
@@ -153,7 +145,7 @@ const App = () => {
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
-          target: menu.current.docInfoRef,
+          target: controlLayer.current.docInfoRef,
           title: "Dokumentinformationen und -einstellungen",
         },
         {
@@ -213,6 +205,7 @@ const App = () => {
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
+          spotlightPadding: 50,
           target: "button.add-array-item",
           title: "Eine Person zur Organisationseinheit hinzufügen",
           content:
@@ -245,6 +238,7 @@ const App = () => {
           disableBeacon: true,
           spotlightClicks: false,
           disableOverlayClose: true,
+          spotlightPadding: 50,
           target: ".delete-organisation",
           title: "Organisationseinheit entfernen",
         },
@@ -343,12 +337,21 @@ const App = () => {
       setState({ stepIndex: stepIndex });
       chart.current.orgchart.demoDragMode(false);
       chart.current.demoContexMenu(false, "n3");
+      chart.current.resetViewHandler();
+      console.log(controlLayer.current);
       setSelected(null);
       if (stepIndex === 2) {
         setSelected("document");
-      } else if (stepIndex === 3) {
       } else if (stepIndex > 3 && stepIndex < 8) {
         setSelected(data.organisations[0]);
+        if (stepIndex === 7) {
+          // const tab = controlLayer.current;
+          // document.getElementById("organisation-tab").scrollTo(0, 0);
+          const element = document.getElementById("organisation-tab");
+          element.scrollIntoView({
+            block: "center",
+          });
+        }
       } else if (stepIndex === 8) {
         chart.current.orgchart.demoDragMode(true, "n6");
       } else if (stepIndex === 9) {
@@ -368,6 +371,7 @@ const App = () => {
     if (e.type !== "organisation") {
       let _data = await handleDropEnd(e, dsDigger);
       onChange(_data);
+      setSelected(await dsDigger.findNodeById(selected.id));
     }
   };
 
@@ -422,12 +426,12 @@ const App = () => {
             setSelected={(e) => setSelected(e)}
             onExport={exportTo}
             onSave={onSave}
-            onUndo={onUndo}
-            onRedo={onRedo}
+            onUndo={setUndo}
+            onRedo={setRedo}
             enableUndo={canUndo}
             enableRedo={canRedo}
             onJoyrideStart={handleJoyrideStart}
-            ref={menu}
+            ref={controlLayer}
           />
         </Container>
         <Chart

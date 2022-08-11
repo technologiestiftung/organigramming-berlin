@@ -41,15 +41,16 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
         }
       }
     },
+    resetViewHandler: () => {
+      orgchart.current.resetViewHandler();
+    },
     get orgchart() {
       return orgchart.current;
     },
   }));
 
   const [ds, setDS] = useState(data);
-  // const [selectedNodes, setSelectedNodes] = useState(new Set());
   const [selectedNode, setSelectedNode] = useState(null);
-  // const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [contextMenuStyle, setContextMenuStyle] = useState("");
   const [clipBoard, setClipBoard] = useState({});
 
@@ -60,17 +61,12 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   }, [data, update]);
 
   const readSelectedNode = (nodeData) => {
-    // if (isMultipleSelect) {
-    //   // setSelectedNodes((prev) => new Set(prev.add(nodeData)));
-    // } else {
-    // setSelectedNodes(new Set([nodeData]));
     setSelected(nodeData);
     setSelectedNode(nodeData);
     // }
   };
 
   const clearSelectedNode = () => {
-    // setSelectedNodes(new Set());
     setSelected(null);
     setSelectedNode(null);
   };
@@ -78,10 +74,6 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const onChanged = (e) => {
     sendDataUp(e);
   };
-
-  // const onMultipleSelectChange = (e) => {
-  //   setIsMultipleSelect(e.target.checked);
-  // };
 
   const onCloseContextMenu = () => {
     setContextMenuStyle({});
@@ -170,7 +162,6 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const handleKeyDown = (e) => {
-    // e.preDefault();
     if (e.code === "Backspace" && selectedNode) {
       removeNode();
     }

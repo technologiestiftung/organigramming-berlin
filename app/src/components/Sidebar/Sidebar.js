@@ -39,7 +39,7 @@ const Sidebar = forwardRef(
     const [infoModalShow, setInfoModalShow] = useState(false);
     const newDocRef = useRef();
     const docInfoRef = useRef();
-    const tabRef = useRef();
+    const organisationTabRef = useRef();
 
     const onChange = (e) => {
       sendDataUp(e);
@@ -69,9 +69,9 @@ const Sidebar = forwardRef(
       get docInfoRef() {
         return docInfoRef.current;
       },
-      get tabRef() {
-        return tabRef.current;
-      },
+      get organisationTabRef(){
+        return organisationTabRef.current;
+      }
     }));
 
     return (
@@ -312,6 +312,7 @@ const Sidebar = forwardRef(
                 dsDigger={dsDigger}
                 sendDataUp={onChange}
                 selected={selected}
+                ref={organisationTabRef}
                 setSelected={(e) => setSelected(e)}
               />
             )}

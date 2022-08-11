@@ -19,11 +19,6 @@ import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
 
 import "../../services/registerFiles";
-// import SVGtoPDF from "svg-to-pdfkit";
-// import toPDF from "svg-to-pdfkit";
-
-// const PDFDocument = require("pdfkit").default;
-// const blobStream = require("blob-stream");
 
 const propTypes = {
   data: PropTypes.object.isRequired,
@@ -84,7 +79,6 @@ const ChartContainer = forwardRef(
     const chart = useRef();
     const paper = useRef();
     const topNode = useRef();
-    // const innerRef = useRef();
 
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
@@ -460,7 +454,9 @@ const ChartContainer = forwardRef(
           );
         }
       },
-
+      resetViewHandler: () => {
+        resetViewHandler();
+      },
       demoDragMode: (enable, nodeId = "") => {
         topNode.current.demoDragMode(enable, nodeId);
       },

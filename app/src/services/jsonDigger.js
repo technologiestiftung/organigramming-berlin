@@ -413,7 +413,6 @@ export default class JSONDigger {
   }
 
   async updateNode(data) {
-    console.log("updateNode", data);
     if (
       !data ||
       data.constructor !== Object ||
