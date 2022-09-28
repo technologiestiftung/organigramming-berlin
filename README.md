@@ -4,9 +4,58 @@
 
 **Notice: This application and the documentation is still a work in progress.**
 
-An online tool for creating and editing administrative organization charts in PDF format and machine-readable JSON format.
+## A simple organisation chart application for public service of Berlin
 
-For more information on the app refer to the README file in /app.
+This repository contains an app for creating and editing administrative organization charts in machine-readable json format and as a graphical representation in pdf format. The online tool was developed with the aim to provide a simple yet sufficient tool to create organisational charts to export human as well as machine readable files.
+
+Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, this means that they cannot be read by machines or code, or can only be read inadequately. However, the organigrams contain a lot of valuable information and a machine-readable preparation could enable various uses and applications. 
+The json file format allows the data entered to be stored in a simple text format and made available as Open Data. The organizational chart tool also aims to simplify the creation of organizational charts for the Berlin administration and to bring the organizational charts into a more uniform format.
+
+More information and the protoype is accessible through the [ODIS website](https://odis-berlin.de/projekte/organigramme/) (only in German).
+
+## Getting Started
+
+Clone this repository, go to the directory `app` by:
+
+`cd app`
+
+Then install the required dependencies with:
+
+`yarn install`
+
+
+## Development
+
+To run the app in the development mode run:
+
+`yarn start`
+
+
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
+
+
+## Production
+
+To build the app for production to the `build` folder run:
+
+`yarn build`
+
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+
+## Acknowledgement
+
+This project relies on the projects of Dabeng's [react-orgchart](https://github.com/dabeng/react-orgchart) and therefore on its precursor, Wesnolte's [jOrgChart](https://github.com/wesnolte/jOrgChart).
+
+The icons used in this app came from [icons.getbootstrap.com/](https://icons.getbootstrap.com/).
+
+The included files of Berlin's coats of arms came from [https://de.wikipedia.org/wiki/Liste_der_Wappen_in_Berlin](https://de.wikipedia.org/wiki/Liste_der_Wappen_in_Berlin).
 
 ## Contributors
 
@@ -37,17 +86,24 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <table>
   <tr>
     <td>
-      Made by <a src="https://citylab-berlin.org/de/start/">
+      Made by <a href="https://odis-berlin.de">
         <br />
         <br />
-        <img width="200" src="https://citylab-berlin.org/wp-content/uploads/2021/05/citylab-logo.svg" />
+        <img width="200" src="https://logos.citylab-berlin.org/logo-odis-berlin.svg" />
       </a>
     </td>
     <td>
-      A project by <a src="https://www.technologiestiftung-berlin.de/">
+      A project by <a href="https://www.technologiestiftung-berlin.de/">
         <br />
         <br />
         <img width="150" src="https://citylab-berlin.org/wp-content/uploads/2021/05/tsb.svg" />
+      </a>
+    </td>
+    <td>
+      Supported by <a href="https://www.berlin.de/rbmskzl/en/">
+        <br />
+        <br />
+        <img width="80" src="https://logos.citylab-berlin.org/logo-berlin-senweb-en.svg" />
       </a>
     </td>
   </tr>
