@@ -37,10 +37,10 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <table>
   <tr>
     <td>
-      Made by <a src="https://citylab-berlin.org/de/start/">
+      Made by <a src="https://odis-berlin.de">
         <br />
         <br />
-        <img width="200" src="https://citylab-berlin.org/wp-content/uploads/2021/05/citylab-logo.svg" />
+        <img width="200" src="https://logos.citylab-berlin.org/logo-odis-berlin.svg" />
       </a>
     </td>
     <td>
@@ -48,6 +48,13 @@ This project follows the [all-contributors](https://github.com/all-contributors/
         <br />
         <br />
         <img width="150" src="https://citylab-berlin.org/wp-content/uploads/2021/05/tsb.svg" />
+      </a>
+    </td>
+    <td>
+      Supported by: <a src="https://www.berlin.de/rbmskzl/en/">
+        <br />
+        <br />
+        <img width="80" src="https://logos.citylab-berlin.org/logo-berlin-senweb-en.svg" />
       </a>
     </td>
   </tr>
