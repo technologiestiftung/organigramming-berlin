@@ -56,6 +56,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "m-b-e",
+      "name": "Max B. Eckert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36029603?v=4",
+      "profile": "https://github.com/m-b-e",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
