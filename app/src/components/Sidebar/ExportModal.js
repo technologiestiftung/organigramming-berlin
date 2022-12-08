@@ -20,7 +20,8 @@ const ExportModal = (props) => {
   useEffect(() => {
     if (
       formData.export.exportType === "pdf" &&
-      formData.export.pdfType === "print"
+      formData.export.pdfType === "print" &&
+      formData.export.saveExport === "export"
     ) {
       setShowInfo(true);
     } else {
@@ -130,7 +131,8 @@ const ExportModal = (props) => {
             <Col className="mb-3">
               <Alert variant="success">
                 <p>
-                  Dies Funktion erzeugt die besten Ergebnisse in <b>Chrome-basierten Browsern</b> (Chrome, Edge, etc.). Bitte
+                  Dies Funktion erzeugt die besten Ergebnisse in{" "}
+                  <b>Chrome-basierten Browsern</b> (Chrome, Edge, etc.). Bitte
                   nehmen Sie folgende Einstellungen im Druckmenu vor:
                   <ol>
                     <li>
