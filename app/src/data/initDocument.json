@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "about": "This file was created by the Organigramm-Tool. A simple organisation chart application for public service of Berlin.",
+    "url": "https://github.com/technologiestiftung/organigramming-berlin"
+  },
   "document": {
     "paperSize": "A3",
     "schemaVersion": "1.0.0",
