@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
+import { HexColorPicker } from "react-colorful";
 
 import AlertModal from "./AlertModal";
 
@@ -10,8 +11,12 @@ import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 
+const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
+  const [color, setColor] = useState("#aabbcc");
+  const ColorPicker = () => {
+    return <HexColorPicker color={color} onChange={setColor} />;
+  };
 
-const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
   const [idPrefix, setIdPrefix] = useState("root");
   const [removeNodeAlertModalShow, setRemoveNodeAlertModalShow] =
@@ -68,6 +73,14 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
       },
       style: {
         title: "Stil",
+      },
+      bgColor: {
+        title: "Hintergrundfarbe",
+        // "ui:widget": ColorPicker,
+        // "ui:widget": ColorPicker,
+        // "ui:options": {
+        //   backgroundColor: "yellow",
+        // },
       },
       organisations: {
         "ui:headless": true,
@@ -146,7 +159,6 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
     setSelected(null);
   };
 
-
   return (
     <div className="tab" id="organisation-tab">
       <AlertModal
@@ -156,8 +168,8 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
         title="Organisation entfernen"
         continueButton="Ja, Organisation entfernen"
       >
-        Sollen die Informationen dieser Organisation und deren Unterorganisationen
-        entfernt werden?
+        Sollen die Informationen dieser Organisation und deren
+        Unterorganisationen entfernt werden?
       </AlertModal>
       <Stack direction="horizontal" gap={3}>
         <div>
@@ -185,21 +197,21 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
           </svg>
         </Button>
       </Stack>
-        <Form
-          schema={schema}
-          uiSchema={uiSchema}
-          formData={formData}
-          onChange={(e) => onChange(e)}
-          onBlur={onBlur}
-          fields={fields}
-          idPrefix={idPrefix}
-          ArrayFieldTemplate={ArrayFieldTemplate}
-          ObjectFieldTemplate={ObjectFieldTemplate}
-          liveValidate
-          showErrorList={false}
-        >
-          <br />
-        </Form>
+      <Form
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={formData}
+        onChange={(e) => onChange(e)}
+        onBlur={onBlur}
+        fields={fields}
+        idPrefix={idPrefix}
+        ArrayFieldTemplate={ArrayFieldTemplate}
+        ObjectFieldTemplate={ObjectFieldTemplate}
+        liveValidate
+        showErrorList={false}
+      >
+        <br />
+      </Form>
       <Stack direction="horizontal" gap={3}>
         <Button variant="outline-success" onClick={addSiblingNode}>
           <svg

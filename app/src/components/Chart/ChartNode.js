@@ -202,7 +202,12 @@ const ChartNode = forwardRef(
               )}
             </div>
             {(ds.departments || ds.employees || ds.contact || ds.address) && (
-              <div className="oc-content">
+              <div
+                className="oc-content"
+                style={{
+                  backgroundColor: ds.bgColor,
+                }}
+              >
                 {ds.employees && (
                   <ul className="employees">
                     {ds.employees &&
