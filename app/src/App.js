@@ -5,6 +5,7 @@ import { useMount, useSetState } from "react-use";
 import { Container } from "react-bootstrap";
 import React, { useState, useRef, useEffect } from "react";
 import useUndo from "use-undo";
+import { fromEvent } from "file-selector";
 
 import Chart from "./components/Chart/Chart";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -375,8 +376,50 @@ const App = () => {
     }
   };
 
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const draggedFiles = await fromEvent(e);
+    const reader = new FileReader();
+    if (!draggedFiles[0]) {
+      return;
+    }
+    reader.readAsText(draggedFiles[0]);
+    reader.onload = () => {
+      let result = reader.result;
+      try {
+        JSON.parse(result);
+      } catch (e) {
+        return;
+      }
+      result = JSON.parse(result);
+      console.log(result);
+    };
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
-    <div className="App" onKeyDown={handleKeyDown}>
+    <div
+      className="App"
+      onKeyDown={handleKeyDown}
+      onDrop={(e) => handleDrop(e)}
+      onDragOver={(e) => handleDragOver(e)}
+      onDragEnter={(e) => handleDragEnter(e)}
+      onDragLeave={(e) => handleDragLeave(e)}
+    >
       <Joyride
         callback={handleJoyrideCallback}
         continuous
