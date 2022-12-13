@@ -7,6 +7,7 @@ import React, { useState, useRef, useEffect } from "react";
 import useUndo from "use-undo";
 import { fromEvent } from "file-selector";
 
+import AlertModal from "./components/Sidebar/AlertModal";
 import Chart from "./components/Chart/Chart";
 import Sidebar from "./components/Sidebar/Sidebar";
 import initDocument from "./data/initDocument";
@@ -17,6 +18,7 @@ import {
   validateData,
 } from "./services/service";
 import JSONDigger from "./services/jsonDigger";
+import { validate } from "./lib/validate";
 
 const initdata = () => {
   if (localStorage.getItem("data") !== null) {
@@ -35,8 +37,11 @@ const App = () => {
   const chart = useRef();
   const controlLayer = useRef();
   const [selected, setSelected] = useState(null);
+  const [alertModalShow, setAlertModalShow] = useState(true);
   const [data, setData] = useState(initdata());
   const [tempData, setTempData] = useState();
+  const [droppedData, setDroppedData] = useState();
+
   const dsDigger = new JSONDigger(data, "id", "organisations");
 
   const [{ run, stepIndex, steps }, setState] = useSetState({
@@ -394,7 +399,13 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
-      console.log(result);
+      const valid = validate(result);
+      if (!valid) {
+        // setImportError(validate.errors);
+        return;
+      } else {
+        setDroppedData(result);
+      }
     };
   };
 
@@ -459,6 +470,25 @@ const App = () => {
           },
         }}
       />
+
+      {droppedData && (
+        <AlertModal
+          show={alertModalShow}
+          onHide={() => {
+            setAlertModalShow(false);
+          }}
+          saveButton={"Importieren"}
+          onSave={() => {
+            onChange(droppedData);
+            setDroppedData(null);
+          }}
+          title="Dokument importieren"
+        >
+          Wenn Sie ein neues Dokument öffnen, gehen ungespeicherte Änderungen an
+          ihrem aktuellen Dokument verloren.
+        </AlertModal>
+      )}
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Container className="control-layer" fluid>
           <Sidebar
