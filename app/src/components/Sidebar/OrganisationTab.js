@@ -13,9 +13,9 @@ import CollapsibleField from "../From/CollapsibleField";
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [color, setColor] = useState("#aabbcc");
-  const ColorPicker = () => {
-    return <HexColorPicker color={color} onChange={setColor} />;
-  };
+  // const ColorPicker = () => {
+  //   return <HexColorPicker color={color} onChange={setColor} />;
+  // };
 
   const [formData, setFormData] = useState({ current: selected });
   const [idPrefix, setIdPrefix] = useState("root");
