@@ -74,13 +74,19 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       style: {
         title: "Stil",
       },
-      bgColor: {
+      backgroundColor: {
         title: "Hintergrundfarbe",
         // "ui:widget": ColorPicker,
         // "ui:widget": ColorPicker,
         // "ui:options": {
         //   backgroundColor: "yellow",
         // },
+      },
+      backgroundStyle: {
+        "ui:widget": "radio",
+        "ui:options": {
+          inline: true,
+        },
       },
       organisations: {
         "ui:headless": true,

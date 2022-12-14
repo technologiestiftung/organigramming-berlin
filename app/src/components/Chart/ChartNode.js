@@ -192,8 +192,23 @@ const ChartNode = forwardRef(
           onDrop={dropHandler}
           onContextMenu={ds.style !== "root" ? contextMenuHandler : null}
         >
-          <div className="oc-container">
-            <div className="oc-heading">
+          <div
+            className="oc-container"
+            style={{
+              backgroundColor: ds.backgroundColor,
+            }}
+          >
+            <div
+              className="oc-heading"
+              style={{
+                backgroundColor:
+                  ds.backgroundStyle === "default" ? ds.backgroundColor : "",
+                "background-image":
+                  ds.backgroundColor && ds.backgroundStyle === "half"
+                    ? `linear-gradient(to bottom left, rgba(100,100,100,0) 50%,${ds.backgroundColor} 50%)`
+                    : "",
+              }}
+            >
               <h1>{ds.name}</h1>
               {ds.altName && (
                 <h3 className="text-end">
@@ -202,12 +217,7 @@ const ChartNode = forwardRef(
               )}
             </div>
             {(ds.departments || ds.employees || ds.contact || ds.address) && (
-              <div
-                className="oc-content"
-                style={{
-                  backgroundColor: ds.bgColor,
-                }}
-              >
+              <div className="oc-content">
                 {ds.employees && (
                   <ul className="employees">
                     {ds.employees &&

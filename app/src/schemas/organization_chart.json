@@ -106,10 +106,17 @@
             "Verbindungspunkt"
           ]
         },
-        "bgColor": {
+        "backgroundColor": {
           "title": "Hintergrundfarbe",
           "type": "string",
-          "default": "#fff"
+          "default": ""
+        },
+        "backgroundStyle": {
+          "title": "Hintergrund Stil",
+          "type": "string",
+          "default": "default",
+          "enum": ["default", "half"],
+          "enumNames": ["Voll", "Halb"]
         },
         "address": {
           "$ref": "#/definitions/address"
