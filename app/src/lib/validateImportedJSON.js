@@ -2,7 +2,7 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import definitions from "../schemas/organization_chart";
 
-export const validate = (data) => {
+export const validateImportedJSON = (data) => {
   const ajv = new Ajv();
 
   //add custom formats to validate against
@@ -19,6 +19,8 @@ export const validate = (data) => {
   ajv.addVocabulary(["version", "enumNames"]);
 
   const validate = ajv.compile(definitions);
-  console.log("ÄÄÄÄÄÄÄÄÄ");
+  if (!validate(data)) {
+    return validate.errors;
+  }
   return validate(data);
 };
