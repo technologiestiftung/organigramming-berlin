@@ -197,13 +197,11 @@ const App = () => {
       result = JSON.parse(result);
       const [valid, errors] = validateData(result);
 
-      console.log(valid, errors);
       if (!valid) {
         setImportError(errors);
         return;
       } else {
         setDroppedData(result);
-        console.log("result", result);
       }
     };
   };
