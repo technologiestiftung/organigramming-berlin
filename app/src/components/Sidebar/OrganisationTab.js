@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
-import { HexColorPicker } from "react-colorful";
+// import { HexColorPicker } from "react-colorful";
 
 import AlertModal from "./AlertModal";
 
@@ -12,7 +12,7 @@ import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
-  const [color, setColor] = useState("#aabbcc");
+  // const [color, setColor] = useState("#aabbcc");
   // const ColorPicker = () => {
   //   return <HexColorPicker color={color} onChange={setColor} />;
   // };
