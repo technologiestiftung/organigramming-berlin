@@ -39,7 +39,6 @@ const App = () => {
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState(initdata());
   const [tempData, setTempData] = useState();
-  const [alertModalShow, setAlertModalShow] = useState(true);
   const [droppedData, setDroppedData] = useState();
   const [importError, setImportError] = useState(null);
 
