@@ -18,7 +18,6 @@ import {
   validateData,
 } from "./services/service";
 import JSONDigger from "./services/jsonDigger";
-import { validateImportedJSON } from "./lib/validateImportedJSON";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
 
 const initdata = () => {
@@ -194,9 +193,9 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
-      const valid = validateImportedJSON(result);
-      if (valid.errors) {
-        setImportError(valid.errors);
+      const [valid, errors] = validateData(result);
+      if (!valid) {
+        setImportError(errors);
         return;
       } else {
         setDroppedData(result);

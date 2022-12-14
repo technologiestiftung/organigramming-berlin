@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Modal, Row, Col, Form, Alert } from "react-bootstrap";
 import initDocument from "../../data/initDocument";
 import AlertModal from "./AlertModal";
-import { validateImportedJSON } from "../../lib/validateImportedJSON";
+import { validateData } from "../../services/service";
 
 const NewDocumetModal = (props) => {
   const [alertModalShow, setAlertModalShow] = useState(false);
@@ -22,9 +22,9 @@ const NewDocumetModal = (props) => {
     reader.onload = async (e) => {
       const text = e.target.result;
       const data = JSON.parse(text);
-      const valid = validateImportedJSON(data);
-      if (valid.errors) {
-        setImportError(valid.errors);
+      const [valid, errors] = validateData(data);
+      if (!valid) {
+        setImportError(errors);
       } else {
         setImportError(null);
         setImportData(data);
