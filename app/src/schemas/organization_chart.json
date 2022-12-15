@@ -106,17 +106,56 @@
             "Verbindungspunkt"
           ]
         },
-        "backgroundColor": {
-          "title": "Hintergrundfarbe",
-          "type": "string",
-          "default": ""
-        },
-        "backgroundStyle": {
-          "title": "Hintergrund Stil",
-          "type": "string",
-          "default": "default",
-          "enum": ["default", "half"],
-          "enumNames": ["Voll", "Halb"]
+        "background": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "title": "Hintergrundfarbe",
+              "type": "string",
+              "default": "",
+              "enum": [
+                "",
+                "#c41b31",
+                "#bdcde7",
+                "#7694ce",
+                "#324fa3",
+                "#13245b",
+                "#b5d4b7",
+                "#67b18d",
+                "#357a5d",
+                "#0e4c38",
+                "#f8ed45",
+                "#db9f29",
+                "#e5bbd0",
+                "#988bc2"
+              ],
+              "enumNames": [
+                "Standard",
+                "Rot",
+                "Hellblau",
+                "Mittelblau",
+                "Blau",
+                "Dunkelblau",
+                "Hellgrün",
+                "Mittelgrün",
+                "Grün",
+                "Dunkelgrün",
+                "Gelb",
+                "Orange",
+                "Rosa",
+                "Violett"
+              ]
+            },
+            "style": {
+              "title": "Hintergrund Stil",
+              "type": "string",
+              "default": "default",
+              "enum": ["default", "half"],
+              "enumNames": ["Voll", "Halb"]
+            }
+          },
+          "title": "Hintergrund"
         },
         "address": {
           "$ref": "#/definitions/address"

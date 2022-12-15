@@ -195,17 +195,21 @@ const ChartNode = forwardRef(
           <div
             className="oc-container"
             style={{
-              backgroundColor: ds.backgroundColor,
+              backgroundColor: ds.background ? ds.background.color : "",
             }}
           >
             <div
               className="oc-heading"
               style={{
                 backgroundColor:
-                  ds.backgroundStyle === "default" ? ds.backgroundColor : "",
-                "background-image":
-                  ds.backgroundColor && ds.backgroundStyle === "half"
-                    ? `linear-gradient(to bottom left, rgba(100,100,100,0) 50%,${ds.backgroundColor} 50%)`
+                  ds.background && ds.background.style === "default"
+                    ? ds.background.color
+                    : "",
+                backgroundImage:
+                  ds.background &&
+                  ds.background.color &&
+                  ds.background.style === "half"
+                    ? `linear-gradient(to bottom left, rgba(0,0,0,0) 50%,${ds.background.color} 50%)`
                     : "",
               }}
             >

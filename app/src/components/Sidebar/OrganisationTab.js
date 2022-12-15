@@ -71,23 +71,30 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           field: "ObjectField",
         },
       },
+      background: {
+        "ui:headless": true,
+        "ui:field": "CollapsibleField",
+        collapse: {
+          field: "ObjectField",
+        },
+      },
       style: {
         title: "Stil",
       },
-      backgroundColor: {
-        title: "Hintergrundfarbe",
-        // "ui:widget": ColorPicker,
-        // "ui:widget": ColorPicker,
-        // "ui:options": {
-        //   backgroundColor: "yellow",
-        // },
-      },
-      backgroundStyle: {
-        "ui:widget": "radio",
-        "ui:options": {
-          inline: true,
-        },
-      },
+      // color: {
+      //   title: "Hintergrundfarbe",
+      //   // "ui:widget": ColorPicker,
+      //   // "ui:widget": ColorPicker,
+      //   // "ui:options": {
+      //   //   backgroundColor: "yellow",
+      //   // },
+      // },
+      // color: {
+      //   "ui:widget": "radio",
+      //   "ui:options": {
+      //     inline: true,
+      //   },
+      // },
       organisations: {
         "ui:headless": true,
         "ui:widget": "hidden",
