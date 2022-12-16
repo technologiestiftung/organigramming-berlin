@@ -30,6 +30,7 @@ const Sidebar = forwardRef(
       enableRedo,
       onJoyrideStart,
       dsDigger,
+      closeNewDocumentModal,
     },
     ref
   ) => {
@@ -51,6 +52,9 @@ const Sidebar = forwardRef(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+      setNewDocumentModalShow(false);
+    }, [closeNewDocumentModal]);
 
     useEffect(() => {
       if (selected === "document") {
@@ -69,9 +73,9 @@ const Sidebar = forwardRef(
       get docInfoRef() {
         return docInfoRef.current;
       },
-      get organisationTabRef(){
+      get organisationTabRef() {
         return organisationTabRef.current;
-      }
+      },
     }));
 
     return (

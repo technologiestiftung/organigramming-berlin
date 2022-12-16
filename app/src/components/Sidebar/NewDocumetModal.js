@@ -74,7 +74,10 @@ const NewDocumetModal = (props) => {
             <Row>
               <Col>
                 <Form.Group controlId="formFile" className="mb-3">
-                  <Form.Label>Bestehendes Dokument öffnen</Form.Label>
+                  <Form.Label>
+                    Bestehendes Dokument öffnen oder Datei auf die Anwednung
+                    ziehen
+                  </Form.Label>
                   <Form.Control
                     onChange={(e) => onFileImportChange(e)}
                     type="file"

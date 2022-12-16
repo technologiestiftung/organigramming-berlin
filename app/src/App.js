@@ -41,6 +41,7 @@ const App = () => {
   const [tempData, setTempData] = useState();
   const [droppedData, setDroppedData] = useState();
   const [importError, setImportError] = useState(null);
+  const [closeNewDocumentModal, setCloseNewDocumentModal] = useState(0);
 
   const dsDigger = new JSONDigger(data, "id", "organisations");
 
@@ -74,6 +75,7 @@ const App = () => {
         const dataSting = JSON.stringify(e);
         setUndoData(JSON.parse(dataSting));
         localStorage.setItem("data", JSON.stringify(e));
+        setCloseNewDocumentModal((prev) => prev + 1);
       } else {
         console.error(errors);
       }
@@ -132,7 +134,6 @@ const App = () => {
       chart.current.orgchart.demoDragMode(false);
       chart.current.demoContexMenu(false, "n3");
       chart.current.resetViewHandler();
-      console.log(controlLayer.current);
       setSelected(null);
       if (stepIndex === 2) {
         setSelected("document");
@@ -316,6 +317,7 @@ const App = () => {
             enableRedo={canRedo}
             onJoyrideStart={handleJoyrideStart}
             ref={controlLayer}
+            closeNewDocumentModal={closeNewDocumentModal}
           />
         </Container>
         <Chart
