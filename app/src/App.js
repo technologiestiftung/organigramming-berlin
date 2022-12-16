@@ -2,10 +2,12 @@ import "./global.scss";
 import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 import { DragDropContext } from "react-beautiful-dnd";
 import { useMount, useSetState } from "react-use";
-import { Container } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import React, { useState, useRef, useEffect } from "react";
 import useUndo from "use-undo";
+import { fromEvent } from "file-selector";
 
+import AlertModal from "./components/Sidebar/AlertModal";
 import Chart from "./components/Chart/Chart";
 import Sidebar from "./components/Sidebar/Sidebar";
 import initDocument from "./data/initDocument";
@@ -16,6 +18,7 @@ import {
   validateData,
 } from "./services/service";
 import JSONDigger from "./services/jsonDigger";
+import { getJoyrideSettings } from "./lib/getJoyrideSettings";
 
 const initdata = () => {
   if (localStorage.getItem("data") !== null) {
@@ -36,6 +39,10 @@ const App = () => {
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState(initdata());
   const [tempData, setTempData] = useState();
+  const [droppedData, setDroppedData] = useState();
+  const [importError, setImportError] = useState(null);
+  const [closeNewDocumentModal, setCloseNewDocumentModal] = useState(0);
+
   const dsDigger = new JSONDigger(data, "id", "organisations");
 
   const [{ run, stepIndex, steps }, setState] = useSetState({
@@ -68,6 +75,7 @@ const App = () => {
         const dataSting = JSON.stringify(e);
         setUndoData(JSON.parse(dataSting));
         localStorage.setItem("data", JSON.stringify(e));
+        setCloseNewDocumentModal((prev) => prev + 1);
       } else {
         console.error(errors);
       }
@@ -113,219 +121,7 @@ const App = () => {
   };
 
   useMount(() => {
-    setState({
-      run: false,
-      steps: [
-        {
-          content:
-            "Hier können Sie ein neues Dokument anlegen oder ein vorhandenes Organigramm (JSON-Datei) hochladen.",
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          placement: "bottom",
-          spotlightPadding: 0,
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          target: controlLayer.current.newDocRef,
-          title: "Neues Dokument",
-        },
-        {
-          content:
-            "Anschließend können Sie hier die Dokumenteinstellungen wie zum Beispiel Orientierung, Logo oder Papierformat anpassen.",
-          placement: "bottom",
-          spotlightPadding: 0,
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: controlLayer.current.docInfoRef,
-          title: "Dokumentinformationen und -einstellungen",
-        },
-        {
-          content:
-            "Tragen Sie über diese Maske den Namen Ihrer Behörde als Dokumenttitel ein. Des Weiteren lässt sich die Ausrichtung des Dokuments (Hochformat oder Querformat) und die Ausgabegröße einstellen. In den Dokumentinformationen können Sie ebenfalls ein Logo einbinden. Bisher sind aus Lizenzgründen nur die Logos der Bezirksverwaltungen auswählbar. Sie können aber ganz einfach selbst eine Bilddatei mit einem Logo hochladen. Neben Datum und Name des Verfassers oder der Verfasserin kann hier auch die Fußzeile bearbeitet werden.",
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          spotlightPadding: 0,
-          target: ".sidebar",
-          title: "Dokumentinformationen bearbeiten",
-        },
-        {
-          content:
-            "Jede Box stellt eine sogenannte Organisationseinheit dar. Um die Informationen in der Box zu bearbeiten, wählen Sie diese per Mausklick aus.",
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: "#n3",
-          title: "Bearbeiten einer Organisationseinheit",
-        },
-        {
-          content:
-            "Über diese Maske können Sie den Inhalt der Box anpassen. Tragen Sie den Namen (Bezeichnung) der Organisationseinheit ein. Sie können auch eine Anschrift und Kontaktinformationen der Einheit eintragen. Zu einer Organisationseinheit können außerdem Personen und zugehörige Organisationseinheiten gehören.",
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          spotlightPadding: 0,
-          target: ".sidebar",
-          title: "Organisationseinheit bearbeiten",
-        },
-        {
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          spotlightPadding: 50,
-          target: "button.add-array-item",
-          title: "Eine Person zur Organisationseinheit hinzufügen",
-          content:
-            "Wenn Sie eine neue Person hinzufügen möchten, klicken Sie auf das kleine Plus-Symbol in der Personen-Leiste.",
-        },
-        {
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: ".expand-item",
-          title: "Personeninformationen bearbeiten",
-          content:
-            "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person.",
-        },
-        {
-          content:
-            "Sie können die einzelnen Elemente und auch die ganze Organisationseinheit wieder aus dem Organigramm entfernen. Über das Mülleimer-Icon löschen Sie die ausgewählte Organisationeinheit und alle ihr untergeordneten Organisationen.",
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          spotlightPadding: 50,
-          target: ".delete-organisation",
-          title: "Organisationseinheit entfernen",
-        },
-        {
-          content:
-            "Sie können eine Organisationseinheit mit der Maus per 'Drag-and-drop' umsortieren, indem Sie die Organisationseinheit auf eine grün eingefärbte Organisationseinheit ziehen.",
-          placement: "left",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: ".chart",
-          title: "Organisationseinheiten umsortieren",
-        },
-        {
-          content: (
-            <p>
-              Mit einem Rechtsklick können Sie das Kontextmenü öffnen.
-              Organisationen können auch mit der <code>strg</code> +
-              <code>c</code> kopiert und mit <code>strg</code> + <code>v</code>{" "}
-              eingefügt werden.
-            </p>
-          ),
-          placement: "left",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: ".chart",
-          title: "Kontextmenü",
-        },
-        {
-          content:
-            "Mithilfe der Pfeile oben rechts können Sie Schritte rückgängig machen bzw. wiederholen.",
-          placement: "bottom",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: ".undo-redo-group",
-          title: "Undo Redo",
-        },
-        {
-          content:
-            "Unten rechts können Sie heran- und herauszoomen, sowie die Ansicht auf das ganze Dokument aktivieren. Alternativ können Sie dafür auch das Scrollrad der Maus benutzen.",
-          placement: "right",
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          target: ".navigation-container",
-          title: "Navigations Menu",
-        },
-        {
-          content:
-            "Sie können ein fertiges Organigramm als PDF, als Bilddatei oder als maschinenlesbare JSON-Datei exportieren. Die JSON-Datei können Sie später nutzen, um das Organigramm wieder einzuladen und daran weiterzuarbeiten.",
-          disableBeacon: true,
-          spotlightClicks: false,
-          disableOverlayClose: true,
-          placement: "bottom",
-          spotlightPadding: 0,
-          styles: {
-            options: {
-              zIndex: 10000,
-            },
-          },
-          target: ".export-toolbar-item",
-          title: "Fertiges Organigramm exportieren",
-        },
-      ],
-    });
+    setState(getJoyrideSettings(controlLayer));
   });
 
   const handleJoyrideCallback = (jRData) => {
@@ -338,7 +134,6 @@ const App = () => {
       chart.current.orgchart.demoDragMode(false);
       chart.current.demoContexMenu(false, "n3");
       chart.current.resetViewHandler();
-      console.log(controlLayer.current);
       setSelected(null);
       if (stepIndex === 2) {
         setSelected("document");
@@ -375,8 +170,64 @@ const App = () => {
     }
   };
 
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const draggedFiles = await fromEvent(e);
+
+    if (!draggedFiles[0]) {
+      return;
+    }
+
+    const reader = new FileReader();
+    if (draggedFiles[0].type && draggedFiles[0].type !== "application/json") {
+      setImportError(["Keine valide JSON Datei"]);
+      return;
+    }
+    reader.readAsText(draggedFiles[0]);
+    reader.onload = () => {
+      let result = reader.result;
+      try {
+        JSON.parse(result);
+      } catch (e) {
+        setImportError(["Keine valide JSON Datei"]);
+        return;
+      }
+      result = JSON.parse(result);
+      const [valid, errors] = validateData(result);
+
+      if (!valid) {
+        setImportError(errors);
+        return;
+      } else {
+        setDroppedData(result);
+      }
+    };
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
-    <div className="App" onKeyDown={handleKeyDown}>
+    <div
+      className="App"
+      onKeyDown={handleKeyDown}
+      onDrop={(e) => handleDrop(e)}
+      onDragOver={(e) => handleDragOver(e)}
+      onDragEnter={(e) => handleDragEnter(e)}
+      onDragLeave={(e) => handleDragLeave(e)}
+    >
       <Joyride
         callback={handleJoyrideCallback}
         continuous
@@ -416,6 +267,40 @@ const App = () => {
           },
         }}
       />
+
+      <AlertModal
+        show={droppedData}
+        onHide={() => {
+          setDroppedData(null);
+        }}
+        saveButton={"Importieren"}
+        onSave={() => {
+          onChange(droppedData);
+          setDroppedData(null);
+        }}
+        title="Dokument importieren"
+      >
+        Wenn Sie ein neues Dokument öffnen, gehen ungespeicherte Änderungen an
+        ihrem aktuellen Dokument verloren.
+      </AlertModal>
+
+      <AlertModal
+        show={importError}
+        onHide={() => {
+          setImportError(null);
+        }}
+        title="Import Fehlgeschlagen"
+      >
+        <Alert variant="danger">
+          Beim öffnen der Datei ist ein Fehler aufgetreten:
+          {importError?.map((error, i) => (
+            <pre key={"error-" + i} className="mt-2">
+              {JSON.stringify(error, null, " ")}
+            </pre>
+          ))}
+        </Alert>
+      </AlertModal>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Container className="control-layer" fluid>
           <Sidebar
@@ -432,6 +317,7 @@ const App = () => {
             enableRedo={canRedo}
             onJoyrideStart={handleJoyrideStart}
             ref={controlLayer}
+            closeNewDocumentModal={closeNewDocumentModal}
           />
         </Container>
         <Chart
