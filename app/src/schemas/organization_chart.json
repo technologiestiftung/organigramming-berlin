@@ -120,15 +120,14 @@
                 "#bdcde7",
                 "#7694ce",
                 "#324fa3",
-                "#13245b",
                 "#b5d4b7",
                 "#67b18d",
                 "#357a5d",
                 "#0e4c38",
-                "#f8ed45",
                 "#db9f29",
                 "#e5bbd0",
-                "#988bc2"
+                "#988bc2",
+                "#999999"
               ],
               "enumNames": [
                 "Standard",
@@ -136,15 +135,14 @@
                 "Hellblau",
                 "Mittelblau",
                 "Blau",
-                "Dunkelblau",
                 "Hellgrün",
                 "Mittelgrün",
                 "Grün",
                 "Dunkelgrün",
-                "Gelb",
                 "Orange",
                 "Rosa",
-                "Violett"
+                "Violett",
+                "Grau"
               ]
             },
             "style": {

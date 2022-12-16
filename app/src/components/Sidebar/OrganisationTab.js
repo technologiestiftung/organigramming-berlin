@@ -3,8 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
-// import { HexColorPicker } from "react-colorful";
-
 import AlertModal from "./AlertModal";
 
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
@@ -12,11 +10,6 @@ import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
-  // const [color, setColor] = useState("#aabbcc");
-  // const ColorPicker = () => {
-  //   return <HexColorPicker color={color} onChange={setColor} />;
-  // };
-
   const [formData, setFormData] = useState({ current: selected });
   const [idPrefix, setIdPrefix] = useState("root");
   const [removeNodeAlertModalShow, setRemoveNodeAlertModalShow] =
@@ -77,24 +70,18 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         collapse: {
           field: "ObjectField",
         },
+        color: {},
+        style: {
+          "ui:disabled": !formData.current.background.color,
+          "ui:widget": "radio",
+          "ui:options": {
+            inline: true,
+          },
+        },
       },
       style: {
         title: "Stil",
       },
-      // color: {
-      //   title: "Hintergrundfarbe",
-      //   // "ui:widget": ColorPicker,
-      //   // "ui:widget": ColorPicker,
-      //   // "ui:options": {
-      //   //   backgroundColor: "yellow",
-      //   // },
-      // },
-      // color: {
-      //   "ui:widget": "radio",
-      //   "ui:options": {
-      //     inline: true,
-      //   },
-      // },
       organisations: {
         "ui:headless": true,
         "ui:widget": "hidden",
@@ -122,6 +109,12 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     },
   };
 
+  function whenDataChanges(e) {
+    if (!e.formData.current.background.color) {
+      e.formData.current.background.style = "default";
+    }
+  }
+
   useEffect(() => {
     if (selected != null) {
       setFormData({ current: { ...selected } });
@@ -140,6 +133,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   };
 
   const onChange = async (e) => {
+    whenDataChanges(e);
     setFormData({ ...e.formData });
     handleSendDataUp({ ...e.formData.current });
   };

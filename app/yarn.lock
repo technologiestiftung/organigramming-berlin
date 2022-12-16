@@ -11828,11 +11828,6 @@ react-bootstrap@^2.0.3:
     uncontrollable "^7.2.1"
     warning "^4.0.3"
 
-react-colorful@^5.6.1:
-  version "5.6.1"
-  resolved "https://registry.npmjs.org/react-colorful/-/react-colorful-5.6.1.tgz"
-  integrity sha512-1exovf0uGTGyq5mXQT0zgQ80uvj2PCwvF8zY1RN9/vbJVSjSo3fsB/4L3ObbF7u70NduSiK4xu4Y6q1MHoUGEw==
-
 react-dev-utils@^11.0.3:
   version "11.0.4"
   resolved "https://registry.npmjs.org/react-dev-utils/-/react-dev-utils-11.0.4.tgz"
