@@ -15,9 +15,13 @@ const AlertModal = (props) => {
             {props.saveButton ? props.saveButton : "Dokument speichern"}
           </Button>
         )}
-        <Button variant="outline-danger" onClick={props.onOkay}>
-          {props.continueButton ? props.continueButton : "Änderungen verwerfen"}
-        </Button>
+        {props.onOkay && (
+          <Button variant="outline-danger" onClick={props.onOkay}>
+            {props.continueButton
+              ? props.continueButton
+              : "Änderungen verwerfen"}
+          </Button>
+        )}
         <Button variant="outline-primary" onClick={props.onHide}>
           {props.cancelButton ? props.cancelButton : "Abbrechen"}
         </Button>
