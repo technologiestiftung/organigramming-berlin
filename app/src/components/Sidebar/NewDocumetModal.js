@@ -75,7 +75,7 @@ const NewDocumetModal = (props) => {
               <Col>
                 <Form.Group controlId="formFile" className="mb-3">
                   <Form.Label>
-                    Bestehendes Dokument öffnen oder Datei auf die Anwednung
+                    Bestehendes Dokument öffnen oder Datei auf die Anwendung
                     ziehen
                   </Form.Label>
                   <Form.Control
