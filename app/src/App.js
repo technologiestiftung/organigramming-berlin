@@ -17,7 +17,7 @@ import {
   isDefiend,
   validateData,
 } from "./services/service";
-import { updateDataStructure } from "./services/updateDataStructure";
+import { upgradeDataStructure } from "./services/upgradeDataStructure";
 
 import JSONDigger from "./services/jsonDigger";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
@@ -197,7 +197,7 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
-      updateDataStructure(result);
+      upgradeDataStructure(result);
       const [valid, errors] = validateData(result);
 
       if (!valid) {

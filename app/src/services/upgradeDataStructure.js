@@ -1,4 +1,4 @@
-export const updateDataStructure = (data) => {
+export const upgradeDataStructure = (data) => {
   if (
     data.organisations &&
     data.organisations.length &&
