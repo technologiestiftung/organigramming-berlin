@@ -51,7 +51,7 @@
             left: calc(50% - 1px);
             width: 2px;
             height: 9px;
-            background-color: $currentColor;
+            background-color: $secondary;
           }
         }
         &.end-node {
@@ -353,7 +353,7 @@
           top: -11px;
           left: 0;
           width: 100%;
-          border-top: 2px solid $primary;
+          border-top: 2px solid $secondary;
           box-sizing: border-box;
         }
         &:first-child {
@@ -380,7 +380,7 @@
             left: calc(50% - 1px);
             width: 2px;
             height: 9px;
-            background-color: $primary;
+            background-color: $secondary;
           }
         }
       }

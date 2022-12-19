@@ -3,15 +3,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
-
 import AlertModal from "./AlertModal";
 
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 
-
-const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
+const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
   const [idPrefix, setIdPrefix] = useState("root");
   const [removeNodeAlertModalShow, setRemoveNodeAlertModalShow] =
@@ -66,6 +64,23 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
           field: "ObjectField",
         },
       },
+      background: {
+        "ui:headless": true,
+        "ui:field": "CollapsibleField",
+        collapse: {
+          field: "ObjectField",
+        },
+        color: {},
+        style: {
+          "ui:disabled": !formData.current.background
+            ? false
+            : !formData.current.background.color,
+          "ui:widget": "radio",
+          "ui:options": {
+            inline: true,
+          },
+        },
+      },
       style: {
         title: "Stil",
       },
@@ -96,6 +111,12 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
     },
   };
 
+  function whenDataChanges(e) {
+    if (!e.formData.current.background.color) {
+      e.formData.current.background.style = "default";
+    }
+  }
+
   useEffect(() => {
     if (selected != null) {
       setFormData({ current: { ...selected } });
@@ -114,6 +135,7 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
   };
 
   const onChange = async (e) => {
+    whenDataChanges(e);
     setFormData({ ...e.formData });
     handleSendDataUp({ ...e.formData.current });
   };
@@ -146,7 +168,6 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
     setSelected(null);
   };
 
-
   return (
     <div className="tab" id="organisation-tab">
       <AlertModal
@@ -156,8 +177,8 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
         title="Organisation entfernen"
         continueButton="Ja, Organisation entfernen"
       >
-        Sollen die Informationen dieser Organisation und deren Unterorganisationen
-        entfernt werden?
+        Sollen die Informationen dieser Organisation und deren
+        Unterorganisationen entfernt werden?
       </AlertModal>
       <Stack direction="horizontal" gap={3}>
         <div>
@@ -185,21 +206,21 @@ const OrganisationTab = ({sendDataUp, selected, setSelected, dsDigger }) => {
           </svg>
         </Button>
       </Stack>
-        <Form
-          schema={schema}
-          uiSchema={uiSchema}
-          formData={formData}
-          onChange={(e) => onChange(e)}
-          onBlur={onBlur}
-          fields={fields}
-          idPrefix={idPrefix}
-          ArrayFieldTemplate={ArrayFieldTemplate}
-          ObjectFieldTemplate={ObjectFieldTemplate}
-          liveValidate
-          showErrorList={false}
-        >
-          <br />
-        </Form>
+      <Form
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={formData}
+        onChange={(e) => onChange(e)}
+        onBlur={onBlur}
+        fields={fields}
+        idPrefix={idPrefix}
+        ArrayFieldTemplate={ArrayFieldTemplate}
+        ObjectFieldTemplate={ObjectFieldTemplate}
+        liveValidate
+        showErrorList={false}
+      >
+        <br />
+      </Form>
       <Stack direction="horizontal" gap={3}>
         <Button variant="outline-success" onClick={addSiblingNode}>
           <svg

@@ -13,13 +13,15 @@ const ObjectFieldTemplate = (_ref) => {
   return React.createElement(
     React.Fragment,
     null,
-    ((uiSchema["ui:title"] || title) && !uiSchema["ui:headless"]) && 
+    (uiSchema["ui:title"] || title) &&
+      !uiSchema["ui:headless"] &&
       React.createElement(TitleField, {
         id: idSchema.$id + "-title",
         title: title,
         required: required,
       }),
-    (description && !uiSchema["ui:headless"]) && 
+    description &&
+      !uiSchema["ui:headless"] &&
       React.createElement(DescriptionField, {
         id: idSchema.$id + "-description",
         description: description,
