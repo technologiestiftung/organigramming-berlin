@@ -100,6 +100,12 @@ This project follows the [all-contributors](https://github.com/all-contributors/
       </a>
     </td>
     <td>
+      Together with: <a href="https://citylab-berlin.org/en/start/">
+        <br />
+        <br />
+        <img width="200" src="https://logos.citylab-berlin.org/logo-citylab-berlin.svg" />
+      </a>
+    </td>
     <td>
       A project by: <a href="https://www.technologiestiftung-berlin.de/en/">
         <br />
