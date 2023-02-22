@@ -93,24 +93,25 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <table>
   <tr>
     <td>
-      Made by <a href="https://odis-berlin.de">
+      <a href="https://odis-berlin.de">
         <br />
         <br />
         <img width="200" src="https://logos.citylab-berlin.org/logo-odis-berlin.svg" />
       </a>
     </td>
     <td>
-      A project by <a href="https://www.technologiestiftung-berlin.de/">
+    <td>
+      A project by: <a href="https://www.technologiestiftung-berlin.de/en/">
         <br />
         <br />
-        <img width="150" src="https://citylab-berlin.org/wp-content/uploads/2021/05/tsb.svg" />
+        <img width="150" src="https://logos.citylab-berlin.org/logo-technologiestiftung-berlin-en.svg" />
       </a>
     </td>
     <td>
-      Supported by <a href="https://www.berlin.de/rbmskzl/en/">
+      Supported by: <a href="https://www.berlin.de/sen/inneres/">
         <br />
         <br />
-        <img width="80" src="https://logos.citylab-berlin.org/logo-berlin-senweb-en.svg" />
+        <img width="100" src="https://logos.citylab-berlin.org/logo-berlin-seninnds-en.svg" />
       </a>
     </td>
   </tr>
