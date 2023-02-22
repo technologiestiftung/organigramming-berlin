@@ -127,7 +127,10 @@
                 "#db9f29",
                 "#e5bbd0",
                 "#988bc2",
-                "#999999"
+                "#999999",
+                "#00b140",
+                "#97d700",
+                "#c4d600"
               ],
               "enumNames": [
                 "Standard",
@@ -142,7 +145,10 @@
                 "Orange",
                 "Rosa",
                 "Violett",
-                "Grau"
+                "Grau",
+                "Pantone 354",
+                "Pantone 375",
+                "Pantone 382"
               ]
             },
             "style": {
