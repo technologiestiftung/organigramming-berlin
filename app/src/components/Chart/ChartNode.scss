@@ -71,6 +71,7 @@
           transition-timing-function: ease-out;
           transition: box-shadow 100ms, transform 100ms, outline-color 100ms;
           box-shadow: rgba($gray-600, 0.2) 0px 1px 2px;
+          overflow-wrap: break-word;
           &:hover {
             transform: translateY(-1px);
             box-shadow: rgba($gray-600, 0.5) 0px 8px 24px;
@@ -286,7 +287,7 @@
               color: $gray-300;
               border-radius: $border-radius;
               background-color: transparent;
-              h1{
+              h1 {
                 margin-bottom: 0;
               }
             }
