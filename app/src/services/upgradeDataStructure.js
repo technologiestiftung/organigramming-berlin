@@ -1,4 +1,10 @@
+import initDocument from "../data/initDocument";
+
 export const upgradeDataStructure = (data) => {
+  if (!data.meta) {
+    data.meta = initDocument.meta;
+  }
+
   if (
     data.organisations &&
     data.organisations.length &&
