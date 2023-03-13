@@ -51,6 +51,7 @@ Your app is ready to be deployed!
 
 ## Changelog (added, fixed, changed)
 
+- 12.03.2022 - Added: simple changelog
 - 12.03.2022 - Fixed: [Use overflow-wrap: break-word for organisation units](https://github.com/technologiestiftung/organigramming-berlin/pull/41)
 
 
