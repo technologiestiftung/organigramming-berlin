@@ -49,6 +49,11 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 
+## Changelog (added, fixed, changed)
+
+- 12.03.2022 - Fixed: [Use overflow-wrap: break-word for organisation units](https://github.com/technologiestiftung/organigramming-berlin/pull/41)
+
+
 ## Acknowledgement
 
 This project relies on the projects of Dabeng's [react-orgchart](https://github.com/dabeng/react-orgchart) and therefore on its precursor, Wesnolte's [jOrgChart](https://github.com/wesnolte/jOrgChart).
