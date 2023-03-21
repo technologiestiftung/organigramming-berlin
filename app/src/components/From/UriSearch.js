@@ -4,8 +4,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { useDebounce } from "use-debounce";
 
 const UriSearch = (props) => {
-  console.log("prrrprprprprprprprprp", props);
-  const { value, formData, onChange, schema, uiSchema } = props;
+  const { value, formData, onChange, schema } = props;
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState(value);
   const [debouncedInputValue] = useDebounce(inputValue, 700);
