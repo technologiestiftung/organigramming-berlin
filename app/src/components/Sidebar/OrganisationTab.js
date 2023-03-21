@@ -8,6 +8,7 @@ import AlertModal from "./AlertModal";
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
+import UriSearch from "../From/UriSearch";
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
@@ -28,6 +29,11 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const fields = {
     CollapsibleField: CollapsibleField,
     ArrayFieldTemplate: ArrayFieldTemplate,
+    UriSearch: UriSearch,
+  };
+
+  const widgets = {
+    uriSearch: UriSearch,
   };
 
   const schema = { ...definitions, ...properties };
@@ -56,6 +62,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         collapse: {
           field: "ObjectField",
         },
+      },
+      uri: {
+        "ui:headless": true,
+        "ui:field": "UriSearch",
       },
       address: {
         "ui:headless": true,
@@ -216,6 +226,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         idPrefix={idPrefix}
         ArrayFieldTemplate={ArrayFieldTemplate}
         ObjectFieldTemplate={ObjectFieldTemplate}
+        widgets={widgets}
         liveValidate
         showErrorList={false}
       >

@@ -94,6 +94,25 @@
           "type": "string",
           "title": "Alternative Bezeichnung"
         },
+        "uri": {
+          "title": "Verlinkung (URI)",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "uri": {
+              "title": "URI",
+              "type": "string"
+            },
+            "uriLabel": {
+              "title": "URI Label",
+              "type": "string"
+            },
+            "uriDescription": {
+              "title": "URI Description",
+              "type": "string"
+            }
+          }
+        },
         "style": {
           "type": "string",
           "title": "Stil",
