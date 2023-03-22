@@ -156,10 +156,11 @@ body {
           color: $gray-600;
           font-size: 0.8rem;
           text-decoration: none;
-          font-weight: bold;
+          // font-weight: bold;
           margin-top: 5px;
           position: inherit;
           display: block;
+          text-decoration: underline;
         }
       }
       .gutter {

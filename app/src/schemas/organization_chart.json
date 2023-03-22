@@ -95,23 +95,7 @@
           "title": "Alternative Bezeichnung"
         },
         "uri": {
-          "title": "Verlinkung (URI)",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "uri": {
-              "title": "URI",
-              "type": "string"
-            },
-            "uriLabel": {
-              "title": "URI Label",
-              "type": "string"
-            },
-            "uriDescription": {
-              "title": "URI Description",
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/uri"
         },
         "style": {
           "type": "string",
@@ -265,11 +249,33 @@
           "type": "string",
           "title": "Position"
         },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
         "contact": {
           "$ref": "#/definitions/contact"
         }
       },
       "title": "Person"
+    },
+    "uri": {
+      "title": "Verlinkung (URI)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "URI",
+          "type": "string"
+        },
+        "uriLabel": {
+          "title": "URI Label",
+          "type": "string"
+        },
+        "uriDescription": {
+          "title": "URI Description",
+          "type": "string"
+        }
+      }
     },
     "contact": {
       "type": "object",
