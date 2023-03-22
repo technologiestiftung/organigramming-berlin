@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form, OverlayTrigger, Button, Tooltip, Badge } from "react-bootstrap";
+import { Form, OverlayTrigger, Button, Tooltip } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { useDebounce } from "use-debounce";
 
