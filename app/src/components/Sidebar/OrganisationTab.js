@@ -32,10 +32,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     UriSearch: UriSearch,
   };
 
-  const widgets = {
-    uriSearch: UriSearch,
-  };
-
   const schema = { ...definitions, ...properties };
   const uiSchema = {
     "ui:headless": true,
@@ -234,7 +230,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         idPrefix={idPrefix}
         ArrayFieldTemplate={ArrayFieldTemplate}
         ObjectFieldTemplate={ObjectFieldTemplate}
-        widgets={widgets}
         liveValidate
         showErrorList={false}
       >
