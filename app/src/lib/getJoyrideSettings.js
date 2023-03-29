@@ -81,22 +81,22 @@ export const getJoyrideSettings = (controlLayer) => {
         target: ".sidebar",
         title: "Organisationseinheit bearbeiten",
       },
-      // {
-      //   content:
-      //     "Über eine Suchfunktion lassen sich URIs hinzufügen. So lassen sich Ihren Daten mit dem sematischen Web verknüpfen.",
-      //   placement: "right",
-      //   styles: {
-      //     options: {
-      //       zIndex: 10000,
-      //     },
-      //   },
-      //   disableBeacon: true,
-      //   spotlightClicks: false,
-      //   disableOverlayClose: true,
-      //   spotlightPadding: 10,
-      //   target: ".org-uri",
-      //   title: "URI angeben",
-      // },
+      {
+        content:
+          "Über eine Suchfunktion lassen sich URIs hinzufügen. So lassen sich Ihren Daten mit dem sematischen Web verknüpfen.",
+        placement: "right",
+        styles: {
+          options: {
+            zIndex: 10000,
+          },
+        },
+        disableBeacon: true,
+        spotlightClicks: false,
+        disableOverlayClose: true,
+        spotlightPadding: 10,
+        target: ".org-uri",
+        title: "URI angeben",
+      },
       {
         placement: "right",
         styles: {

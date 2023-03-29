@@ -76,10 +76,8 @@ const UriSearch = (props) => {
         <Typeahead
           ref={ref}
           id={"typeahead" + schema.id}
-          //   multiple
           labelKey={labelKey}
           options={options}
-          //   placeholder={formData.uri ? formData.uri : "Suche..."}
           placeholder={
             "Nach Wikidata suchen oder selbstdefinierte URIs hinzufügen"
           }
@@ -146,11 +144,6 @@ const UriSearch = (props) => {
           )}
         </Typeahead>
       </Form.Group>
-      {/* {!formData.uri && (
-        <p className="uri-info">
-          Hier kannst du Wikidata oder andere URIs hinzufügen
-        </p>
-      )} */}
     </>
   );
 };
