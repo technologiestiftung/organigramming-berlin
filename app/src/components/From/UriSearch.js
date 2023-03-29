@@ -67,6 +67,7 @@ const UriSearch = (props) => {
       <Form.Group className={"org-uri"}>
         <Form.Label>{schema.title}</Form.Label>
         <Typeahead
+          className="uri-ui"
           ref={ref}
           id={"typeahead" + schema.id}
           labelKey={labelKey}
