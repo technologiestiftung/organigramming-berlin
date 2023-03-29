@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Form, Button } from "react-bootstrap";
-import {
-  Typeahead,
-  //   Token,
-  TypeaheadInputMulti,
-  //   ClearButton,
-} from "react-bootstrap-typeahead";
+import { Typeahead, TypeaheadInputMulti } from "react-bootstrap-typeahead";
 import { useDebounce } from "use-debounce";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
@@ -21,8 +16,6 @@ const UriSearch = (props) => {
     "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&errorformat=plaintext&language=de&origin=*&uselang=de&type=item&search=";
   const labelKey = "label";
   const valueKey = "url";
-  //   const labelKey = uiSchema["ui:options"].labelKey;
-  //   const valueKey = uiSchema["ui:options"].valueKey;
 
   useEffect(() => {
     if (debouncedInputValue) {
@@ -81,9 +74,9 @@ const UriSearch = (props) => {
           placeholder={
             "Nach Wikidata suchen oder selbstdefinierte URIs hinzufügen"
           }
+          disabled={formData.uri}
           onChange={(selected) => {
             // when something is selected
-
             ref.current?.clear();
             if (!selected[0]) return;
 
@@ -92,7 +85,8 @@ const UriSearch = (props) => {
               uriLabel: selected[0]["label"],
               uriDescription: selected[0]["description"],
             };
-
+            // remove focus from input
+            ref.current?.blur();
             onChange(data);
           }}
           onInputChange={(text) => {
@@ -101,7 +95,6 @@ const UriSearch = (props) => {
           emptyLabel="Keine Verlinkungen gefunden"
           isLoading={isLoading}
           filterBy={() => true}
-          //   selected={options.filter((option) => option[valueKey] === value)}
           renderMenuItemChildren={(option) => (
             <div>
               {option.label}
@@ -113,7 +106,15 @@ const UriSearch = (props) => {
           renderInput={(inputProps, props) => (
             <TypeaheadInputMulti {...inputProps} selected={formData.uri}>
               {formData.uri && (
-                <div style={{ width: "100%", marginBottom: "5px" }}>
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "5px",
+                    paddingTop: "0px",
+                    cursor: "default",
+                    paddingRight: "22px",
+                  }}
+                >
                   {formData.uriLabel}
                   <br></br>
                   <a href={formData.uri} target="blank">
