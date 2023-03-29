@@ -8,6 +8,7 @@ import AlertModal from "./AlertModal";
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
+import UriSearch from "../From/UriSearch";
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
@@ -28,6 +29,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const fields = {
     CollapsibleField: CollapsibleField,
     ArrayFieldTemplate: ArrayFieldTemplate,
+    UriSearch: UriSearch,
   };
 
   const schema = { ...definitions, ...properties };
@@ -48,6 +50,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           collapse: {
             field: "ObjectField",
           },
+          uri: {
+            "ui:headless": true,
+            "ui:field": "UriSearch",
+          },
         },
       },
       contact: {
@@ -56,6 +62,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         collapse: {
           field: "ObjectField",
         },
+      },
+      uri: {
+        "ui:headless": true,
+        "ui:field": "UriSearch",
       },
       address: {
         "ui:headless": true,
@@ -97,6 +107,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
               "ui:field": "CollapsibleField",
               collapse: {
                 field: "ObjectField",
+              },
+              uri: {
+                "ui:headless": true,
+                "ui:field": "UriSearch",
               },
             },
           },

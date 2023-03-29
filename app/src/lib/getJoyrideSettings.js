@@ -82,6 +82,22 @@ export const getJoyrideSettings = (controlLayer) => {
         title: "Organisationseinheit bearbeiten",
       },
       {
+        content:
+          "Über das Suchfeld lässt sich die Organisationseinheit durch einen sogenannten Unique Ressource Identifier (URI) mit einem Eintrag in Wikidata verknüpfen. So können die Daten mit dem semantischen Web verbunden werden. Es ist auch möglich andere URIs anzugeben.",
+        placement: "right",
+        styles: {
+          options: {
+            zIndex: 10000,
+          },
+        },
+        disableBeacon: true,
+        spotlightClicks: false,
+        disableOverlayClose: true,
+        spotlightPadding: 10,
+        target: ".org-uri",
+        title: "URI angeben",
+      },
+      {
         placement: "right",
         styles: {
           options: {

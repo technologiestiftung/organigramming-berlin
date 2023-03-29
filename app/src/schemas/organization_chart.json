@@ -94,6 +94,9 @@
           "type": "string",
           "title": "Alternative Bezeichnung"
         },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
         "style": {
           "type": "string",
           "title": "Stil",
@@ -246,11 +249,33 @@
           "type": "string",
           "title": "Position"
         },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
         "contact": {
           "$ref": "#/definitions/contact"
         }
       },
       "title": "Person"
+    },
+    "uri": {
+      "title": "Uniform Resource Identifier (URI)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "URI",
+          "type": "string"
+        },
+        "uriLabel": {
+          "title": "URI Label",
+          "type": "string"
+        },
+        "uriDescription": {
+          "title": "URI Description",
+          "type": "string"
+        }
+      }
     },
     "contact": {
       "type": "object",

@@ -139,9 +139,9 @@ const App = () => {
       setSelected(null);
       if (stepIndex === 2) {
         setSelected("document");
-      } else if (stepIndex > 3 && stepIndex < 8) {
+      } else if (stepIndex > 3 && stepIndex < 9) {
         setSelected(data.organisations[0]);
-        if (stepIndex === 7) {
+        if (stepIndex === 8) {
           // const tab = controlLayer.current;
           // document.getElementById("organisation-tab").scrollTo(0, 0);
           const element = document.getElementById("organisation-tab");
@@ -149,9 +149,9 @@ const App = () => {
             block: "center",
           });
         }
-      } else if (stepIndex === 8) {
-        chart.current.orgchart.demoDragMode(true, "n6");
       } else if (stepIndex === 9) {
+        chart.current.orgchart.demoDragMode(true, "n6");
+      } else if (stepIndex === 10) {
         chart.current.demoContexMenu(true, "n3");
       }
     } else if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
