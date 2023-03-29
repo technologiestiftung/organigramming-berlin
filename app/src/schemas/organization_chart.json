@@ -259,7 +259,7 @@
       "title": "Person"
     },
     "uri": {
-      "title": "Verlinkung (URI)",
+      "title": "Uniform Resource Identifier (URI)",
       "type": "object",
       "additionalProperties": false,
       "properties": {

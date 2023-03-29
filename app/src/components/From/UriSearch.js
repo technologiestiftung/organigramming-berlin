@@ -72,9 +72,7 @@ const UriSearch = (props) => {
           id={"typeahead" + schema.id}
           labelKey={labelKey}
           options={options}
-          placeholder={
-            "Nach Wikidata suchen oder selbstdefinierte URIs hinzufügen"
-          }
+          placeholder={"Wikidata durchsuchen oder andere URI einfügen"}
           disabled={formData.uri}
           onChange={(selected) => {
             // when something is selected
@@ -93,7 +91,7 @@ const UriSearch = (props) => {
           onInputChange={(text) => {
             setInputValue(text);
           }}
-          emptyLabel="Keine Verlinkungen gefunden"
+          emptyLabel="Keine URI gefunden"
           isLoading={isLoading}
           filterBy={() => true}
           renderMenuItemChildren={(option) => (

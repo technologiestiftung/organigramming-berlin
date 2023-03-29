@@ -83,7 +83,7 @@ export const getJoyrideSettings = (controlLayer) => {
       },
       {
         content:
-          "Über eine Suchfunktion lassen sich URIs hinzufügen. So lassen sich Ihren Daten mit dem sematischen Web verknüpfen.",
+          "Über das Suchfeld lässt sich die Organisationseinheit durch einen sogenannten Unique Ressource Identifier (URI) mit einem Eintrag in Wikidata verknüpfen. So können die Daten mit dem semantischen Web verbunden werden. Es ist auch möglich andere URIs anzugeben.",
         placement: "right",
         styles: {
           options: {
