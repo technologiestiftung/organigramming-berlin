@@ -112,6 +112,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
               collapse: {
                 field: "ObjectField",
               },
+              uri: {
+                "ui:headless": true,
+                "ui:field": "UriSearch",
+              },
             },
           },
         },

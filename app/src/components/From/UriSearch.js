@@ -116,7 +116,7 @@ const UriSearch = (props) => {
                 >
                   {formData.uriLabel}
                   <br></br>
-                  <a href={formData.uri} target="blank">
+                  <a href={formData.uri} target="blank" rel="noreferrer">
                     <small>{formData.uriDescription}</small>
                   </a>
                 </div>
