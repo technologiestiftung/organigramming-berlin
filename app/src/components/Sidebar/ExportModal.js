@@ -8,7 +8,8 @@ import Form from "@rjsf/bootstrap-4";
 
 const ExportModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
-  const [showInfo, setShowInfo] = useState(false);
+  const [showPDFInfo, setShowPDFInfo] = useState(false);
+  const [showRDFInfo, setShowRDFInfo] = useState(false);
   const properties = {
     properties: {
       export: {
@@ -23,9 +24,17 @@ const ExportModal = (props) => {
       formData.export.pdfType === "print" &&
       formData.export.saveExport === "export"
     ) {
-      setShowInfo(true);
+      setShowPDFInfo(true);
     } else {
-      setShowInfo(false);
+      setShowPDFInfo(false);
+    }
+    if (
+      formData.export.exportType === "rdf" &&
+      formData.export.saveExport === "export"
+    ) {
+      setShowRDFInfo(true);
+    } else {
+      setShowRDFInfo(false);
     }
     if (!formData.export) {
       setFormData({
@@ -71,6 +80,9 @@ const ExportModal = (props) => {
           break;
         case "png":
           props.onExport("png", formData.export.includeLogo);
+          break;
+        case "rdf":
+          props.onExport("rdf", false, false, formData.export.rdfType);
           break;
         case "json":
           props.onSave(formData.export.includeLogo);
@@ -126,7 +138,7 @@ const ExportModal = (props) => {
             </Form>
           </Col>
         </Row>
-        {showInfo && (
+        {showPDFInfo && (
           <Row>
             <Col className="mb-3">
               <Alert variant="success">
@@ -162,6 +174,15 @@ const ExportModal = (props) => {
                     </li>
                   </ol>
                 </p>
+              </Alert>
+            </Col>
+          </Row>
+        )}
+        {showRDFInfo && (
+          <Row>
+            <Col className="mb-3">
+              <Alert variant="success">
+                <p>Info über RDF</p>
               </Alert>
             </Col>
           </Row>

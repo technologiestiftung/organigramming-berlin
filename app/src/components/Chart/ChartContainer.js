@@ -17,6 +17,7 @@ import { elementToSVG, inlineResources } from "dom-to-svg";
 import jsPDF from "jspdf";
 import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
+import { exportRDF } from "../../services/exportRDF";
 
 import "../../services/registerFiles";
 
@@ -395,7 +396,16 @@ const ChartContainer = forwardRef(
     };
 
     useImperativeHandle(ref, () => ({
-      exportTo: (fileName, fileextension, includeLogo, pdfType) => {
+      exportTo: (
+        fileName,
+        fileextension,
+        includeLogo,
+        data,
+        pdfType,
+        rdfType
+      ) => {
+        // @pdf and rdf type not working
+
         setExporting(true);
         selectNodeService.clearSelectedNodeInfo();
         const exportFilename = fileName || "OrgChart";
@@ -416,6 +426,9 @@ const ChartContainer = forwardRef(
           exportSVG(canvas, exportFilename, true).then(() => {
             setExporting(false);
           });
+        } else if (exportFileextension === "rdf") {
+          exportRDF(data);
+          setExporting(false);
         } else if (exportFileextension === "pdf" && pdfType === "svg") {
           console.log("exportSVG2PDF");
           exportSVG2PDF(canvas, exportFilename).then(() => {

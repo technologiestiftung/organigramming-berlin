@@ -395,8 +395,8 @@
                   "type": "string",
                   "title": "Dateiformat",
                   "default": "pdf",
-                  "enum": ["json", "svg", "png", "pdf"],
-                  "enumNames": ["JSON", "SVG", "PNG", "PDF"]
+                  "enum": ["json", "svg", "png", "pdf", "rdf"],
+                  "enumNames": ["JSON", "SVG", "PNG", "PDF", "RDF"]
                 }
               }
             }
@@ -436,6 +436,20 @@
                   "default": "print",
                   "enum": ["print", "png"],
                   "enumNames": ["Als PDF \"drucken\"", "Bidmap"]
+                }
+              }
+            },
+            {
+              "properties": {
+                "exportType": {
+                  "enum": ["rdf"]
+                },
+                "rdfType": {
+                  "type": "string",
+                  "title": "RDF Format",
+                  "default": "json-ld",
+                  "enum": ["json-ld", "ntriples"],
+                  "enumNames": ["JSON-LD", "N-Triples"]
                 }
               }
             }
