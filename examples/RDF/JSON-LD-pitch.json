@@ -41,6 +41,7 @@
       "vcard:given-name": "Vorname",
       "vcard:family-name": "Namchname 1",
       "vcard:role": "Software Engineer",
+      "vcard:additional-name": "Frau",
       "vcard:tel": {
         "@type": "vcard:Work",
         "vcard:hasValue": "tel:+1-555-555-5555"
