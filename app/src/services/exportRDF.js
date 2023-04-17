@@ -98,7 +98,9 @@ function getOrgData(d) {
       newOrgJSONLD["org:hasSite"]["org:siteAddress"] = {
         "@type": "vcard:Address",
         ...(hasAddress && {
-          "vcard:street-address": `${aD?.street} ${aD?.housenumber} ${aD?.building} ${aD?.room}`,
+          "vcard:street-address": `${aD?.street} ${aD?.housenumber}${
+            aD?.building ? " | Gebäude: " + aD?.building : ""
+          }${aD?.room ? " | Raum: " + aD?.room : ""}`,
         }),
         ...(aD.zipCode && { "vcard:postal-code": aD.zipCode }),
         ...(aD.city && { "vcard:locality": aD.city }),
