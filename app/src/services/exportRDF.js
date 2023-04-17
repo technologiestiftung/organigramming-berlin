@@ -28,6 +28,7 @@ function getMemberData(d) {
     ...(d.firstName && { "vcard:given-name": d.firstName }),
     ...(d.lastName && { "vcard:family-name": d.lastName }),
     ...(d.position && { "vcard:role": d.position }),
+    ...(d.gender && { "vcard:Gender": d.gender }),
     ...(dC.telephone && {
       "vcard:tel": {
         "@type": "vcard:Work",
@@ -108,15 +109,12 @@ function getOrgData(d) {
     }
   }
   if (d.employees && d.employees.length) {
-    console.log("EMPLOYYY", d.employees);
     newOrgJSONLD["org:hasMember"] = d.employees.map((d) => {
       return getMemberData(d);
     });
   }
   if (d.departments && d.departments.length) {
     newOrgJSONLD["org:hasUnit"] = d.departments.map((d) => {
-      console.log("ÄÄÄÄÄÄÄÄÄÄÄ", d);
-
       return getOrgData(d);
     });
   }

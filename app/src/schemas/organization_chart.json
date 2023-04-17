@@ -245,6 +245,13 @@
           "type": "string",
           "title": "Nachname"
         },
+        "gender": {
+          "type": "string",
+          "title": "Geschlecht",
+          "default": "1",
+          "enum": ["m", "w", "d", "1"],
+          "enumNames": ["Männlich", "Weiblich", "Divers", "ohne Angabe"]
+        },
         "position": {
           "type": "string",
           "title": "Position"
