@@ -396,16 +396,7 @@ const ChartContainer = forwardRef(
     };
 
     useImperativeHandle(ref, () => ({
-      exportTo: (
-        fileName,
-        fileextension,
-        includeLogo,
-        data,
-        pdfType,
-        rdfType
-      ) => {
-        // @pdf and rdf type not working
-
+      exportTo: (fileName, fileextension, includeLogo, data, pdfType) => {
         setExporting(true);
         selectNodeService.clearSelectedNodeInfo();
         const exportFilename = fileName || "OrgChart";

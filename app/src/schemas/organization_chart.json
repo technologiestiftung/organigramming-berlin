@@ -455,8 +455,8 @@
                   "type": "string",
                   "title": "RDF Format",
                   "default": "json-ld",
-                  "enum": ["json-ld", "ntriples"],
-                  "enumNames": ["JSON-LD", "N-Triples"]
+                  "enum": ["json-ld", "rdf-xml"],
+                  "enumNames": ["JSON-LD", "RDF/XML"]
                 }
               }
             }

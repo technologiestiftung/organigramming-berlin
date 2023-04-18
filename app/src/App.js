@@ -117,22 +117,10 @@ const App = () => {
     document.body.removeChild(link);
   };
 
-  const exportTo = (
-    fileextension,
-    includeLogo = true,
-    pdfType = "",
-    rdfType = ""
-  ) => {
+  const exportTo = (fileextension, includeLogo = true, pdfType = "") => {
     const fileName = data.export.filename || toSnakeCase(data.document.title);
 
-    chart.current.exportTo(
-      fileName,
-      fileextension,
-      includeLogo,
-      data,
-      pdfType,
-      rdfType
-    );
+    chart.current.exportTo(fileName, fileextension, includeLogo, data, pdfType);
   };
 
   useMount(() => {

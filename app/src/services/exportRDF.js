@@ -1,12 +1,27 @@
 import { toSnakeCase } from "./service";
+import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
+
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
-  const json = JSON.stringify(rdf);
-  const blob = new Blob([json], { type: "application/json" });
+  const rdfType = data.export.rdfType;
+  let fileData;
+  let fileType = "application/xml";
+  let fileExtension = ".rdf";
+
+  if (rdfType === "json-ld") {
+    fileData = JSON.stringify(rdf);
+    fileType = "application/json";
+    fileExtension = ".json";
+  }
+  if (rdfType === "rdf-xml") {
+    fileData = await convertJsonLdToRdfXml(rdf);
+  }
+
+  const blob = new Blob([fileData], { type: fileType });
   const href = await URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = href;
-  link.download = fileName + ".json";
+  link.download = fileName + fileExtension;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
