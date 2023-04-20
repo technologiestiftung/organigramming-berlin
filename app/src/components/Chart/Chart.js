@@ -89,7 +89,14 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const getNewNode = () => {
-    return { type: "Neue", name: "Organisation", id: "n" + uuidv4() };
+    return {
+      type: "Neue",
+      name: "Organisation",
+      id: "n" + uuidv4(),
+      // uri: {
+      //   uri: "https://example.com/resource/" + uuidv4(),
+      // },
+    };
   };
 
   const addSiblingNode = async () => {

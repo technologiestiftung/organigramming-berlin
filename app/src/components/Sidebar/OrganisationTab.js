@@ -159,10 +159,26 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   };
 
   const getNewNode = () => {
-    return { type: "", name: "Organisation", id: "n" + uuidv4() };
+    return {
+      type: "",
+      name: "Organisation",
+      id: "n" + uuidv4(),
+      // uri: {
+      //   uri: "https://example.com/resource/" + uuidv4(),
+      // },
+    };
   };
 
   const addSiblingNode = async () => {
+    // @todo block second main org
+    // console.log(
+    //   dsDigger,
+    //   selected
+    //    dsDigger.ds.organisations.length
+    // );
+    // if (dsDigger.ds.organisations.length > 0) {
+    //   return;
+    // }
     const newNode = getNewNode();
     await dsDigger.addSiblings(selected.id, newNode);
     sendDataUp({ ...dsDigger.ds });

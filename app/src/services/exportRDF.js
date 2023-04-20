@@ -5,15 +5,15 @@ const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
   const rdfType = data.export.rdfType;
   let fileData;
-  let fileType = "application/xml";
-  let fileExtension = ".rdf";
+  let fileType = "application/n-quads";
+  let fileExtension = ".nq";
 
   if (rdfType === "json-ld") {
     fileData = JSON.stringify(rdf);
     fileType = "application/json";
-    fileExtension = ".json";
+    fileExtension = ".jsonld";
   }
-  if (rdfType === "rdf-xml") {
+  if (rdfType === "nquads") {
     fileData = await convertJsonLdToRdfXml(rdf);
   }
 
