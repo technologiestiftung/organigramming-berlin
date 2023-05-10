@@ -288,6 +288,9 @@
 }
 
 @media print {
+  @page {
+    size: landscape;
+  }
   body,
   html {
     display: block;
