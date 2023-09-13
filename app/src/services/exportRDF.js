@@ -36,10 +36,10 @@ function getMemberData(d) {
   const dC = d.contact;
   const newMemberJSONLD = {
     "@type": "vcard:Individual",
-    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+    // ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+    ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
     ...(d.title && { "vcard:title": d.title }),
-    // @todo find a data property for salutation
-    ...(d.salutation && { "vcard:additional-name": d.salutation }),
+    ...(d.salutation && { "vcard:honorific-prefix": d.salutation }),
     ...(d.firstName && { "vcard:given-name": d.firstName }),
     ...(d.lastName && { "vcard:family-name": d.lastName }),
     ...(d.position && { "vcard:role": d.position }),
@@ -75,7 +75,8 @@ function getMemberData(d) {
 function getOrgData(d) {
   const newOrgJSONLD = {
     "@type": "org:Organization",
-    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+    ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
+    // ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.name && { "org:name": d.name }),
     ...(d.type && { "org:classification": d.type }),
   };
@@ -160,6 +161,7 @@ export const exportRDF = (data) => {
     "@context": {
       org: "http://www.w3.org/ns/org#",
       vcard: "http://www.w3.org/2006/vcard/ns#",
+      owl: "http://www.w3.org/2002/07/owl#",
     },
     ...orgs,
   };

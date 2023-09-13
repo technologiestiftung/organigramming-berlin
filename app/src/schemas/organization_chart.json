@@ -266,19 +266,19 @@
       "title": "Person"
     },
     "uri": {
-      "title": "Uniform Resource Identifier (URI)",
+      "title": "Verknüpfen (externe URI)",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "uri": {
+        "uriSameAs": {
           "title": "URI",
           "type": "string"
         },
-        "uriLabel": {
+        "uriSameAsLabel": {
           "title": "URI Label",
           "type": "string"
         },
-        "uriDescription": {
+        "uriSameAsDescription": {
           "title": "URI Description",
           "type": "string"
         }

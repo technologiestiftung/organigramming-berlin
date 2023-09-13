@@ -53,9 +53,9 @@ const UriSearch = (props) => {
 
   function unlink() {
     const data = {
-      uri: "",
-      uriLabel: "",
-      uriDescription: "",
+      uriSameAs: "",
+      uriSameAsLabel: "",
+      uriSameAsDescription: "",
     };
 
     onChange(data);
@@ -73,16 +73,16 @@ const UriSearch = (props) => {
           labelKey={labelKey}
           options={options}
           placeholder={"Wikidata durchsuchen oder andere URI einfügen"}
-          disabled={formData.uri}
+          disabled={formData.uriSameAs}
           onChange={(selected) => {
             // when something is selected
             ref.current?.clear();
             if (!selected[0]) return;
 
             const data = {
-              uri: selected[0][valueKey],
-              uriLabel: selected[0]["label"],
-              uriDescription: selected[0]["description"],
+              uriSameAs: selected[0][valueKey],
+              uriSameAsLabel: selected[0]["label"],
+              uriSameAsDescription: selected[0]["description"],
             };
             // remove focus from input
             ref.current?.blur();
@@ -103,8 +103,8 @@ const UriSearch = (props) => {
             </div>
           )}
           renderInput={(inputProps, props) => (
-            <TypeaheadInputMulti {...inputProps} selected={formData.uri}>
-              {formData.uri && (
+            <TypeaheadInputMulti {...inputProps} selected={formData.uriSameAs}>
+              {formData.uriSameAs && (
                 <div
                   style={{
                     width: "100%",
@@ -114,17 +114,17 @@ const UriSearch = (props) => {
                     paddingRight: "22px",
                   }}
                 >
-                  {formData.uriLabel}
+                  {formData.uriSameAsLabel}
                   <br></br>
-                  <a href={formData.uri} target="blank" rel="noreferrer">
-                    <small>{formData.uriDescription}</small>
+                  <a href={formData.uriSameAs} target="blank" rel="noreferrer">
+                    <small>{formData.uriSameAsDescription}</small>
                   </a>
                 </div>
               )}
             </TypeaheadInputMulti>
           )}
         >
-          {formData.uri && (
+          {formData.uriSameAs && (
             <Button
               style={{ top: 0, right: 0, position: "absolute", zIndex: 10 }}
               variant="link"

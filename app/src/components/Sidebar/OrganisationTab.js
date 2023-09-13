@@ -163,9 +163,11 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       type: "",
       name: "Organisation",
       id: "n" + uuidv4(),
-      // uri: {
-      //   uri: "https://example.com/resource/" + uuidv4(),
-      // },
+      uri: {
+        uri: "https://example.com/resource/" + uuidv4(),
+        uriLabel: "Default",
+        // uriDescription: "Platzhalter text",
+      },
     };
   };
 
