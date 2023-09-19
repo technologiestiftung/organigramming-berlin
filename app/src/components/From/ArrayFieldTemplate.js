@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import getURI from "../../services/getURI";
 
 const ArrayFieldTemplate = (props) => {
   const [type] = useState(props.schema.items.$ref.split("/")[2]);
@@ -11,6 +12,17 @@ const ArrayFieldTemplate = (props) => {
       return { background: "#e9ecef", borderRadius: "0.2rem" };
     }
   };
+
+  // add a uri for each employee
+  props.formData?.forEach((employees) => {
+    if (!employees.uri) {
+      // in case an old file is opened with no uri
+      employees.uri = {};
+    }
+    if (!employees.uri?.uri) {
+      employees.uri.uri = getURI("employee");
+    }
+  });
 
   return (
     <Droppable droppableId={props.idSchema.$id} type={type}>

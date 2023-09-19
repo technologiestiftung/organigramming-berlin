@@ -94,9 +94,6 @@
           "type": "string",
           "title": "Alternative Bezeichnung"
         },
-        "uri": {
-          "$ref": "#/definitions/uri"
-        },
         "style": {
           "type": "string",
           "title": "Stil",
@@ -169,6 +166,9 @@
         },
         "contact": {
           "$ref": "#/definitions/contact"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
         },
         "employees": {
           "title": "Personen",
@@ -266,12 +266,16 @@
       "title": "Person"
     },
     "uri": {
-      "title": "Verknüpfen (externe URI)",
+      "title": "Verknüpfungen (URIs)",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "uriSameAs": {
+        "uri": {
           "title": "URI",
+          "type": "string"
+        },
+        "uriSameAs": {
+          "title": "Externe Verknüfung",
           "type": "string"
         },
         "uriSameAsLabel": {

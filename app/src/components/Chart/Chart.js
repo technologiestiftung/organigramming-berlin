@@ -9,6 +9,7 @@ import { Button } from "react-bootstrap";
 import OrganizationChart from "./ChartContainer";
 import JSONDigger from "../../services/jsonDigger";
 import { v4 as uuidv4 } from "uuid";
+import getURI from "../../services/getURI";
 
 const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const orgchart = useRef();
@@ -93,9 +94,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
       type: "Neue",
       name: "Organisation",
       id: "n" + uuidv4(),
-      // uri: {
-      //   uri: "https://example.com/resource/" + uuidv4(),
-      // },
+      uri: { uri: getURI("mainorg") },
     };
   };
 

@@ -4,6 +4,7 @@ import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
 import AlertModal from "./AlertModal";
+import getURI from "../../services/getURI";
 
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
@@ -129,6 +130,14 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     if (!e.formData.current.background.color) {
       e.formData.current.background.style = "default";
     }
+
+    // // when a new employee is added
+    // e.formData.current.employees?.forEach((employees) => {
+    //   if (!employees.uri?.uri) {
+    //     employees.uri.uri = getURI("employee");
+    //   }
+    //   // employees.salutation = "??";
+    // });
   }
 
   useEffect(() => {
@@ -152,6 +161,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     whenDataChanges(e);
     setFormData({ ...e.formData });
     handleSendDataUp({ ...e.formData.current });
+
+    // setFormData({ ...JSON.parse(JSON.stringify(e.formData)) });
+    // handleSendDataUp({ ...JSON.parse(JSON.stringify(e.formData.current)) });
+    // console.log("e", e);
   };
 
   const onBlur = async () => {
@@ -163,14 +176,9 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       type: "",
       name: "Organisation",
       id: "n" + uuidv4(),
-      uri: {
-        uri: "https://example.com/resource/" + uuidv4(),
-        uriLabel: "Default",
-        // uriDescription: "Platzhalter text",
-      },
+      uri: { uri: getURI("org") },
     };
   };
-
   const addSiblingNode = async () => {
     // @todo block second main org
     // console.log(
