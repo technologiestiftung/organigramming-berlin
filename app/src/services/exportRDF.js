@@ -36,7 +36,7 @@ function getMemberData(d) {
   const dC = d.contact;
   const newMemberJSONLD = {
     "@type": "vcard:Individual",
-    // ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
     ...(d.title && { "vcard:title": d.title }),
     ...(d.salutation && { "vcard:honorific-prefix": d.salutation }),
@@ -76,7 +76,7 @@ function getOrgData(d) {
   const newOrgJSONLD = {
     "@type": "org:Organization",
     ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
-    // ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.name && { "org:name": d.name }),
     ...(d.type && { "org:classification": d.type }),
   };
