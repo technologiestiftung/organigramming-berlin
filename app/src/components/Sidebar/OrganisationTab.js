@@ -102,6 +102,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       departments: {
         items: {
           "ui:headless": true,
+          uri: {
+            "ui:headless": true,
+            "ui:field": "UriSearch",
+          },
           employees: {
             "ui:headless": true,
             items: {
@@ -176,7 +180,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       type: "",
       name: "Organisation",
       id: "n" + uuidv4(),
-      uri: { uri: getURI("org") },
+      uri: { uri: getURI("organisation") },
     };
   };
   const addSiblingNode = async () => {

@@ -19,8 +19,14 @@ const ArrayFieldTemplate = (props) => {
       // in case an old file is opened with no uri
       employees.uri = {};
     }
+
     if (!employees.uri?.uri) {
-      employees.uri.uri = getURI("employee");
+      if (!employees.gender && !employees.lastName) {
+        // this is a sub-org
+        employees.uri.uri = getURI("organisation");
+      } else {
+        employees.uri.uri = getURI("person");
+      }
     }
   });
 

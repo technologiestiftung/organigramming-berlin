@@ -216,6 +216,9 @@
           "title": "Abteilung/Stellenbezeichnung",
           "default": "Neue Organisationsuntereinheit"
         },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
         "employees": {
           "title": "Personen",
           "type": "array",

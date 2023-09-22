@@ -94,7 +94,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
       type: "Neue",
       name: "Organisation",
       id: "n" + uuidv4(),
-      uri: { uri: getURI("mainorg") },
+      uri: { uri: getURI("organisation") },
     };
   };
 
