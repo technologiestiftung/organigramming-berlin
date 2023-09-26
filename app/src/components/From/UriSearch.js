@@ -119,22 +119,22 @@ const UriSearch = (props) => {
                 }}
                 disabled={!editURI}
               />
-              <p
+              <div
                 style={{
                   paddingTop: "0px",
                   fontSize: "12px",
+                  display: "flex",
                 }}
               >
-                {"nur ändern wenn sie sich ganz sicher sind"}
+                <p>{"nur ändern wenn sie sich ganz sicher sind"}</p>
                 <Form.Check
                   style={{
-                    display: "inline-block",
                     paddingLeft: "5px",
                   }}
                   onChange={(e) => setEditURI(!editURI)}
                   checked={editURI}
                 />
-              </p>
+              </div>
 
               <Form.Label>{schema.properties.uriSameAs.title}</Form.Label>
               <Typeahead

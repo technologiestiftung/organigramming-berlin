@@ -1,6 +1,7 @@
 import initDocument from "../data/initDocument";
 
 export const upgradeDataStructure = (data) => {
+  console.log("ÖÖÖÖÖÖ", data);
   if (!data.meta) {
     data.meta = initDocument.meta;
   }
