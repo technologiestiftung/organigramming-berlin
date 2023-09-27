@@ -28,9 +28,11 @@ const initdata = () => {
       return JSON.parse(localStorage.getItem("data"));
     } catch (error) {
       localStorage.setItem("data", "");
+      initDocument = upgradeDataStructure(initDocument);
       return initDocument;
     }
   } else {
+    initDocument = upgradeDataStructure(initDocument);
     return initDocument;
   }
 };
@@ -198,7 +200,7 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
-      upgradeDataStructure(result);
+      result = upgradeDataStructure(result);
       const [valid, errors] = validateData(result);
 
       if (!valid) {

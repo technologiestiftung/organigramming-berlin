@@ -78,6 +78,8 @@ function getOrgData(d) {
     ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.name && { "org:name": d.name }),
+    // for the doc org
+    ...(d.title && { "org:name": d.title }),
     ...(d.type && { "org:classification": d.type }),
   };
   const cD = d.contact;
@@ -153,19 +155,22 @@ export const exportRDF = (data) => {
       });
     }
 
-    return traverseOrganizations(inputJSON)[0];
+    return traverseOrganizations(inputJSON);
   }
 
+  // get the document data which will the the main org
+  const docOrg = getOrgData(data.document);
   const orgs = createNestedOrganizations(data.organisations);
+
   let rdf = {
     "@context": {
       org: "http://www.w3.org/ns/org#",
       vcard: "http://www.w3.org/2006/vcard/ns#",
       owl: "http://www.w3.org/2002/07/owl#",
     },
-    ...orgs,
+    ...docOrg,
+    ...(orgs && { "org:hasSubOrganization": orgs }),
   };
 
-  console.log(rdf);
   downloadData(data, rdf);
 };

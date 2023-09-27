@@ -10,6 +10,6 @@ function generateHexCode(hexLength) {
 // add type: Org or person
 export default function getURI(text) {
   return (
-    `https://berlin.github.io/lod-organigramm/${text}-` + generateHexCode(10)
+    `https://berlin.github.io/lod-organigram/${text}-` + generateHexCode(10)
   );
 }

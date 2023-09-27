@@ -47,6 +47,9 @@
         "note": {
           "type": "string",
           "title": "Fußzeile"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
         }
       },
       "required": ["title"],

@@ -14,7 +14,8 @@ const NewDocumetModal = (props) => {
   const onCreateNew = () => {
     setHideModal(true);
     setAlertModalShow(true);
-    setImportData(initDocument);
+    const newInitDocument = upgradeDataStructure(initDocument);
+    setImportData(newInitDocument);
   };
 
   const onFileImportChange = (e) => {
@@ -22,8 +23,8 @@ const NewDocumetModal = (props) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
       const text = e.target.result;
-      const data = JSON.parse(text);
-      upgradeDataStructure(data);
+      let data = JSON.parse(text);
+      data = upgradeDataStructure(data);
       const [valid, errors] = validateData(data);
       if (!valid) {
         setImportError(errors);
