@@ -1,12 +1,13 @@
 import { toSnakeCase } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
+import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
   const rdfType = data.export.rdfType;
   let fileData;
-  let fileType = "application/n-quads";
-  let fileExtension = ".nq";
+  let fileType = "";
+  let fileExtension = "";
 
   if (rdfType === "json-ld") {
     fileData = JSON.stringify(rdf);
@@ -14,9 +15,15 @@ const downloadData = async (data, rdf) => {
     fileExtension = ".jsonld";
   }
   if (rdfType === "nquads") {
+    fileType = "application/n-quads";
+    fileExtension = ".nq";
     fileData = await convertJsonLdToRdfXml(rdf);
   }
-
+  if (rdfType === "turtle") {
+    fileData = await convertJsonLdToTurtle(rdf);
+    fileType = "application/ttl";
+    fileExtension = ".ttl";
+  }
   const blob = new Blob([fileData], { type: fileType });
   const href = await URL.createObjectURL(blob);
   const link = document.createElement("a");
