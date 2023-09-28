@@ -15,21 +15,14 @@
         "type": {
           "type": "string",
           "examples": [
-            "Abteilung",
-            "Amt",
-            "Bezirksamt",
-            "Büro",
-            "Fachbereich",
-            "Fachdienst",
-            "Landesamt",
             "Landesstelle",
-            "Museum",
-            "Other",
-            "Referat",
-            "Senatskanzlei",
             "Senatsverwaltung",
-            "Serviceeinheit",
+            "Senatskanzlei",
             "Öffentliches Unternehmen",
+            "Museum",
+            "Amt",
+            "Landesamt",
+            "Bezirksamt",
             "Unternehmen"
           ],
           "title": "Art der Organisation"
