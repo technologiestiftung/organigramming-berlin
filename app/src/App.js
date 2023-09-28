@@ -23,17 +23,18 @@ import JSONDigger from "./services/jsonDigger";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
 
 const initdata = () => {
+  let doc = initDocument;
   if (localStorage.getItem("data") !== null) {
     try {
       return JSON.parse(localStorage.getItem("data"));
     } catch (error) {
       localStorage.setItem("data", "");
-      initDocument = upgradeDataStructure(initDocument);
-      return initDocument;
+      doc = upgradeDataStructure(doc);
+      return doc;
     }
   } else {
-    initDocument = upgradeDataStructure(initDocument);
-    return initDocument;
+    doc = upgradeDataStructure(doc);
+    return doc;
   }
 };
 

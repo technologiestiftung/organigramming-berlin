@@ -12,6 +12,28 @@
           "type": "string",
           "title": "Titel"
         },
+        "type": {
+          "type": "string",
+          "examples": [
+            "Abteilung",
+            "Amt",
+            "Bezirksamt",
+            "Büro",
+            "Fachbereich",
+            "Fachdienst",
+            "Landesamt",
+            "Landesstelle",
+            "Museum",
+            "Other",
+            "Referat",
+            "Senatskanzlei",
+            "Senatsverwaltung",
+            "Serviceeinheit",
+            "Öffentliches Unternehmen",
+            "Unternehmen"
+          ],
+          "title": "Art der Organisation"
+        },
         "paperSize": {
           "type": "string",
           "title": "Ausgabegröße",
@@ -79,7 +101,6 @@
             "Senatskanzlei",
             "Senatsverwaltung",
             "Serviceeinheit",
-
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],

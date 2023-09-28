@@ -51,9 +51,8 @@ const preuploads = importAll(
 
 const DocumentTab = ({ data, sendDataUp }) => {
   const [formData, setFormData] = useState({ ...data });
-  
-  const timerRef = useRef(null);
 
+  const timerRef = useRef(null);
 
   const properties = {
     properties: {
@@ -93,6 +92,9 @@ const DocumentTab = ({ data, sendDataUp }) => {
       uri: {
         "ui:headless": true,
         "ui:field": "UriSearch",
+      },
+      type: {
+        "ui:placeholder": "Auswählen o. eingeben z.B. 'Abteilung'",
       },
     },
   };

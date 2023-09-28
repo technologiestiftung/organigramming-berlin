@@ -7,6 +7,7 @@ function addUrisToOrgsAndEmployees(data) {
     if (!org.uri && !org.uri?.uri) {
       org.uri = { uri: getURI("organisation") };
     }
+
     // add an URI to all employees
     org.employees?.forEach((employee) => {
       if (!employee.uri && !employee.uri?.uri) {
@@ -55,6 +56,10 @@ export const upgradeDataStructure = (data) => {
   // add uri to document if not there
   if (!data.document?.uri) {
     data.document.uri = { uri: getURI("organisation") };
+  }
+  // Add a type to the document
+  if (!data.document.type) {
+    data.document.type = "";
   }
   // traverse all orgs and add uris to orgs and employees
   addUrisToOrgsAndEmployees(data);
