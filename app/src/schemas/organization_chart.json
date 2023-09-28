@@ -69,21 +69,17 @@
             "Amt",
             "Bezirksamt",
             "Büro",
-            "Büroleiter:in",
             "Fachbereich",
             "Fachdienst",
             "Landesamt",
             "Landesstelle",
             "Museum",
             "Other",
-            "Pressesprecher:in",
             "Referat",
-            "Referent:in",
             "Senatskanzlei",
-            "Senator:in",
             "Senatsverwaltung",
             "Serviceeinheit",
-            "Staatssekretär:in",
+
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],
@@ -260,7 +256,14 @@
         },
         "position": {
           "type": "string",
-          "title": "Position"
+          "title": "Position",
+          "examples": [
+            "Büroleiter:in",
+            "Pressesprecher:in",
+            "Referent:in",
+            "Senator:in",
+            "Staatssekretär:in"
+          ]
         },
         "uri": {
           "$ref": "#/definitions/uri"
@@ -281,7 +284,7 @@
           "type": "string"
         },
         "uriSameAs": {
-          "title": "Externe Verknüfung",
+          "title": "Externe Verknüpfung",
           "type": "string"
         },
         "uriSameAsLabel": {
