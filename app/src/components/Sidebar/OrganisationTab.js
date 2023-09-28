@@ -41,6 +41,9 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       id: {
         "ui:widget": "hidden",
       },
+      type: {
+        "ui:placeholder": "Auswählen o. eingeben z.B. 'Abteilung'",
+      },
       relationship: {
         "ui:widget": "hidden",
       },
@@ -54,6 +57,9 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           uri: {
             "ui:headless": true,
             "ui:field": "UriSearch",
+          },
+          position: {
+            "ui:placeholder": "z.B. Senator:in",
           },
         },
       },
