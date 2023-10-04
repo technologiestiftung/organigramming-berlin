@@ -10,6 +10,8 @@ const ExportModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
   const [showPDFInfo, setShowPDFInfo] = useState(false);
   const [showRDFInfo, setShowRDFInfo] = useState(false);
+  const [warningMultiMainOrgs, setWarningMultiMainOrgs] = useState(false);
+
   const properties = {
     properties: {
       export: {
@@ -19,6 +21,19 @@ const ExportModal = (props) => {
   };
 
   useEffect(() => {
+    // check if there are more than one main org
+    if (formData?.organisations) {
+      let mainCounter = 0;
+      formData.organisations.forEach((org) => {
+        if (org.isMainOrganisation) {
+          mainCounter++;
+        }
+      });
+      if (mainCounter > 1) {
+        setWarningMultiMainOrgs(true);
+      }
+    }
+
     if (
       formData.export.exportType === "pdf" &&
       formData.export.pdfType === "print" &&
@@ -185,6 +200,15 @@ const ExportModal = (props) => {
               <Alert variant="success">
                 <p>Info über RDF</p>
               </Alert>
+              {warningMultiMainOrgs && (
+                <Alert variant="warning">
+                  <p>
+                    Sie haben mehrer Organisationen als Hauptorganisation
+                    ausgewählt. Bitte wählen Sie nur <b>eine Organisation</b>{" "}
+                    als Hauptorganisation aus.
+                  </p>
+                </Alert>
+              )}
             </Col>
           </Row>
         )}
@@ -193,7 +217,10 @@ const ExportModal = (props) => {
         <Button className="btn btn-danger" onClick={props.onHide}>
           Abbrechen
         </Button>
-        <Button onClick={onExport}>
+        <Button
+          onClick={onExport}
+          disabled={showRDFInfo && warningMultiMainOrgs}
+        >
           {formData &&
           formData.export &&
           formData.export.saveExport === "export"
