@@ -61,7 +61,8 @@
         },
         "isMainOrganisation": {
           "type": "boolean",
-          "title": "ist Hauptorganisation"
+          "default": false,
+          "title": "Als Hauptorganisation festlegen"
         },
         "type": {
           "type": "string",

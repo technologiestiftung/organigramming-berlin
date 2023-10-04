@@ -181,7 +181,6 @@ export const exportRDF = (data) => {
   } else {
     subOrgs = [];
     data.organisations.forEach((org) => {
-      console.log("!!org", org);
       if (org.isMainOrganisation) {
         mainOrg = getOrgData(org);
         if (org.organisations) {
