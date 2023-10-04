@@ -4,7 +4,6 @@ import React, { useState, useRef } from "react";
 import FileSelect from "../From/FileSelect";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import MDEditorWidget from "../From/MDEditor";
-import UriSearch from "../From/UriSearch";
 
 const importAll = (r) => {
   let images = [];
@@ -62,10 +61,6 @@ const DocumentTab = ({ data, sendDataUp }) => {
     },
   };
 
-  const fields = {
-    UriSearch: UriSearch,
-  };
-
   const schema = { ...definitions, ...properties };
 
   const uiSchema = {
@@ -88,13 +83,6 @@ const DocumentTab = ({ data, sendDataUp }) => {
         "ui:options": {
           inline: true,
         },
-      },
-      uri: {
-        "ui:headless": true,
-        "ui:field": "UriSearch",
-      },
-      type: {
-        "ui:placeholder": "Auswählen o. eingeben z.B. 'Abteilung'",
       },
     },
   };
@@ -130,7 +118,6 @@ const DocumentTab = ({ data, sendDataUp }) => {
         // onBlur={onBlur}
         liveValidate
         showErrorList={false}
-        fields={fields}
       >
         <br />
       </Form>

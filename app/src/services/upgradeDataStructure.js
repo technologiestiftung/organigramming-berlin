@@ -53,14 +53,6 @@ export const upgradeDataStructure = (data) => {
     });
   }
 
-  // add uri to document if not there
-  if (!data.document?.uri) {
-    data.document.uri = { uri: getURI("organisation") };
-  }
-  // Add a type to the document
-  if (!data.document.type) {
-    data.document.type = "";
-  }
   // traverse all orgs and add uris to orgs and employees
   addUrisToOrgsAndEmployees(data);
 

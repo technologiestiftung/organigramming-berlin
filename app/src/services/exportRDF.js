@@ -164,12 +164,18 @@ export const exportRDF = (data) => {
       });
     }
 
+    // return traverseOrganizations(inputJSON);
     return traverseOrganizations(inputJSON);
   }
 
   // get the document data which will the the main org
-  const docOrg = getOrgData(data.document);
-  const orgs = createNestedOrganizations(data.organisations);
+  // const docOrg = getOrgData(data.document);
+  let orgs;
+
+  // if (data.organisations.length > 1) {
+  // } else {
+  orgs = createNestedOrganizations([data.organisations[0]])[0];
+  // }
 
   let rdf = {
     "@context": {
@@ -178,9 +184,11 @@ export const exportRDF = (data) => {
       owl: "http://www.w3.org/2002/07/owl#",
       xyzxyz: "https://berlin.github.io/lod-vocabulary/xyzxyz#",
     },
-    ...docOrg,
-    ...(orgs && { "org:hasSubOrganization": orgs }),
+    ...orgs,
+    // ...(orgs && { "org:hasSubOrganization": orgs }),
   };
+
+  console.log("rdf", rdf, "data", data);
 
   downloadData(data, rdf);
 };

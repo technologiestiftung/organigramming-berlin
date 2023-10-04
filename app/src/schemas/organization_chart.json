@@ -12,21 +12,6 @@
           "type": "string",
           "title": "Titel"
         },
-        "type": {
-          "type": "string",
-          "examples": [
-            "Landesstelle",
-            "Senatsverwaltung",
-            "Senatskanzlei",
-            "Öffentliches Unternehmen",
-            "Museum",
-            "Amt",
-            "Landesamt",
-            "Bezirksamt",
-            "Unternehmen"
-          ],
-          "title": "Art der Organisation"
-        },
         "paperSize": {
           "type": "string",
           "title": "Ausgabegröße",
@@ -62,9 +47,6 @@
         "note": {
           "type": "string",
           "title": "Fußzeile"
-        },
-        "uri": {
-          "$ref": "#/definitions/uri"
         }
       },
       "required": ["title"],
