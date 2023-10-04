@@ -59,6 +59,10 @@
         "id": {
           "type": "string"
         },
+        "isMainOrganisation": {
+          "type": "boolean",
+          "title": "ist Hauptorganisation"
+        },
         "type": {
           "type": "string",
           "examples": [

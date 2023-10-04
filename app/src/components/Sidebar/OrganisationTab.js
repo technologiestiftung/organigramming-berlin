@@ -10,6 +10,7 @@ import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 import UriSearch from "../From/UriSearch";
+import MainOrganisation from "../From/MainOrganisation";
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
@@ -31,6 +32,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     CollapsibleField: CollapsibleField,
     ArrayFieldTemplate: ArrayFieldTemplate,
     UriSearch: UriSearch,
+    MainOrganisation: MainOrganisation,
   };
 
   const schema = { ...definitions, ...properties };
@@ -43,6 +45,12 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       },
       type: {
         "ui:placeholder": "Auswählen o. eingeben z.B. 'Abteilung'",
+      },
+      isMainOrganisation: {
+        "ui:headless": true,
+        "ui:field": "MainOrganisation",
+        dsDigger: dsDigger,
+        selected: selected,
       },
       relationship: {
         "ui:widget": "hidden",

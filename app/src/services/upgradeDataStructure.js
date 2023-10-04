@@ -32,6 +32,24 @@ function addUrisToOrgsAndEmployees(data) {
   });
 }
 
+function addNewPropsToOrgs(data) {
+  data.organisations?.forEach((org) => {
+    // add an URI to all orgs
+    if (org.isMainOrganisation === undefined) {
+      org.isMainOrganisation = false;
+    }
+
+    if (!data.organisations?.background) {
+      org.background = {
+        color: "",
+        style: "default",
+      };
+    }
+
+    addNewPropsToOrgs(org);
+  });
+}
+
 // this functions adds new properties to the imported data if its missing.
 // e.g. the uri property has been added later to the tool
 export const upgradeDataStructure = (data) => {
@@ -40,18 +58,8 @@ export const upgradeDataStructure = (data) => {
     data.meta = initDocument.meta;
   }
 
-  if (
-    data.organisations &&
-    data.organisations.length &&
-    !data.organisations.background
-  ) {
-    data.organisations.forEach((org) => {
-      org.background = {
-        color: "",
-        style: "default",
-      };
-    });
-  }
+  // add new props to orgs if missing
+  addNewPropsToOrgs(data);
 
   // traverse all orgs and add uris to orgs and employees
   addUrisToOrgsAndEmployees(data);

@@ -23,6 +23,7 @@
     {
       "id": "n3",
       "name": "Oberste Organisationseinheit",
+      "isMainOrganisation": true,
       "organisations": [
         {
           "style": "default",
@@ -62,6 +63,7 @@
           "organisations": [],
           "id": "n5",
           "name": "Organisationsuntereinheit",
+          "isMainOrganisation": false,
           "type": "Abteilung"
         },
         {
@@ -87,7 +89,8 @@
             }
           ],
           "id": "n4",
-          "name": "Organisationsuntereinheit"
+          "name": "Organisationsuntereinheit",
+          "isMainOrganisation": false
         }
       ],
       "style": "emphasized",
@@ -121,7 +124,8 @@
       "address": {},
       "organisations": [],
       "id": "n2",
-      "name": "Nebengeordnete Organisationseinheit"
+      "name": "Nebengeordnete Organisationseinheit",
+      "isMainOrganisation": false
     }
   ]
 }
