@@ -198,7 +198,10 @@ const ExportModal = (props) => {
           <Row>
             <Col className="mb-3">
               <Alert variant="success">
-                <p>Info über RDF</p>
+                <p>
+                  Diese Funktion erlaubt es die Daten in verschienden RDF
+                  Formaten zu exportieren{" "}
+                </p>
               </Alert>
               {warningMultiMainOrgs && (
                 <Alert variant="warning">
