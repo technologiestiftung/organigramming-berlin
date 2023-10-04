@@ -88,6 +88,8 @@ function getOrgData(d) {
     // for the doc org
     ...(d.title && { "org:name": d.title }),
     ...(d.type && { "org:classification": d.type }),
+    // @todo
+    ...(d.type && { "xyzxyz:classification": d.type }),
   };
   const cD = d.contact;
   const aD = d.address;
@@ -174,6 +176,7 @@ export const exportRDF = (data) => {
       org: "http://www.w3.org/ns/org#",
       vcard: "http://www.w3.org/2006/vcard/ns#",
       owl: "http://www.w3.org/2002/07/owl#",
+      xyzxyz: "https://berlin.github.io/lod-vocabulary/xyzxyz#",
     },
     ...docOrg,
     ...(orgs && { "org:hasSubOrganization": orgs }),

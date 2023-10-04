@@ -9,6 +9,7 @@ function parseNQuads(nquads) {
       org: "http://www.w3.org/ns/org#",
       vcard: "http://www.w3.org/2006/vcard/ns#",
       owl: "http://www.w3.org/2002/07/owl#",
+      xyzxyz: "https://berlin.github.io/lod-vocabulary/xyzxyz#",
     },
   });
 
