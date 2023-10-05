@@ -148,14 +148,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     if (!e.formData.current.background.color) {
       e.formData.current.background.style = "default";
     }
-
-    // // when a new employee is added
-    // e.formData.current.employees?.forEach((employees) => {
-    //   if (!employees.uri?.uri) {
-    //     employees.uri.uri = getURI("employee");
-    //   }
-    //   // employees.salutation = "??";
-    // });
   }
 
   useEffect(() => {
@@ -179,10 +171,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     whenDataChanges(e);
     setFormData({ ...e.formData });
     handleSendDataUp({ ...e.formData.current });
-
-    // setFormData({ ...JSON.parse(JSON.stringify(e.formData)) });
-    // handleSendDataUp({ ...JSON.parse(JSON.stringify(e.formData.current)) });
-    // console.log("e", e);
   };
 
   const onBlur = async () => {
@@ -198,15 +186,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     };
   };
   const addSiblingNode = async () => {
-    // @todo block second main org
-    // console.log(
-    //   dsDigger,
-    //   selected
-    //    dsDigger.ds.organisations.length
-    // );
-    // if (dsDigger.ds.organisations.length > 0) {
-    //   return;
-    // }
     const newNode = getNewNode();
     await dsDigger.addSiblings(selected.id, newNode);
     sendDataUp({ ...dsDigger.ds });

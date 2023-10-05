@@ -1,6 +1,7 @@
 import { toSnakeCase } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
+import typeVocabLookup from "./typeVocabLookup.json";
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
@@ -51,6 +52,7 @@ function getMemberData(d) {
     ...(d.lastName && { "vcard:family-name": d.lastName }),
     ...(d.position && { "vcard:role": d.position }),
     ...(d.gender && { "vcard:Gender": d.gender }),
+    // @todo berlinorgs type
     ...(dC.telephone && {
       "vcard:tel": {
         "@type": "vcard:Work",
@@ -89,8 +91,10 @@ function getOrgData(d) {
     ...(d.title && { "org:name": d.title }),
     ...(d.type && { "org:classification": d.type }),
     // @todo
-    ...(d.type && { "xyzxyz:classification": d.type }),
+    // typeVocabLookup[d.type]
+    // ...(d.type && { "berorgs:classification": d.type }),
   };
+
   const cD = d.contact;
   const aD = d.address;
   if (hasKeys(aD) || hasKeys(cD)) {
@@ -197,7 +201,7 @@ export const exportRDF = (data) => {
       org: "http://www.w3.org/ns/org#",
       vcard: "http://www.w3.org/2006/vcard/ns#",
       owl: "http://www.w3.org/2002/07/owl#",
-      xyzxyz: "https://berlin.github.io/lod-vocabulary/xyzxyz#",
+      berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
     },
     ...mainOrg,
     ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
