@@ -1,47 +1,47 @@
 {
   "Abteilung": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Amt": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Bezirksamt": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Büro": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Fachbereich": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Fachdienst": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Landesamt": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Landesstelle": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Museum": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "museum"
   },
   "Referat": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Senatskanzlei": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "senateChancellery"
   },
   "Senatsverwaltung": {
     "vocab": "berorgs",
@@ -49,34 +49,34 @@
   },
   "Serviceeinheit": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Öffentliches Unternehmen": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "publicEnterprise"
   },
   "Unternehmen": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Büroleiter:in": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Pressesprecher:in": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Referent:in": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Senator:in": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   },
   "Staatssekretär:in": {
     "vocab": "berorgs",
-    "name": ""
+    "name": "placehodertext"
   }
 }

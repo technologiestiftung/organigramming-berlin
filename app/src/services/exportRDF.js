@@ -43,16 +43,24 @@ function hasKeys(obj) {
 function getMemberData(d) {
   const dC = d.contact;
   const newMemberJSONLD = {
-    "@type": "vcard:Individual",
+    "@type": typeVocabLookup[d.position]
+      ? [
+          "vcard:Individual",
+          `${typeVocabLookup[d.position].vocab}:${
+            typeVocabLookup[d.position].name
+          }`,
+        ]
+      : "vcard:Individual",
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
     ...(d.title && { "vcard:title": d.title }),
     ...(d.salutation && { "vcard:honorific-prefix": d.salutation }),
     ...(d.firstName && { "vcard:given-name": d.firstName }),
     ...(d.lastName && { "vcard:family-name": d.lastName }),
-    ...(d.position && { "vcard:role": d.position }),
+    ...(d.position &&
+      !typeVocabLookup[d.position] && { "vcard:role": d.position }),
     ...(d.gender && { "vcard:Gender": d.gender }),
-    // @todo berlinorgs type
+
     ...(dC.telephone && {
       "vcard:tel": {
         "@type": "vcard:Work",
@@ -83,16 +91,17 @@ function getMemberData(d) {
 
 function getOrgData(d) {
   const newOrgJSONLD = {
-    "@type": "org:Organization",
+    "@type": typeVocabLookup[d.type]
+      ? [
+          "org:Organization",
+          `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
+        ]
+      : "org:Organization",
     ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.name && { "org:name": d.name }),
-    // for the doc org
     ...(d.title && { "org:name": d.title }),
-    ...(d.type && { "org:classification": d.type }),
-    // @todo
-    // typeVocabLookup[d.type]
-    // ...(d.type && { "berorgs:classification": d.type }),
+    ...(d.type && !typeVocabLookup[d.type] && { "org:classification": d.type }),
   };
 
   const cD = d.contact;
