@@ -59,7 +59,7 @@ function getMemberData(d) {
     ...(d.lastName && { "vcard:family-name": d.lastName }),
     ...(d.position &&
       !typeVocabLookup[d.position] && { "vcard:role": d.position }),
-    ...(d.gender && { "vcard:Gender": d.gender }),
+    ...(d.gender && { "vcard:hasGender": d.gender }),
 
     ...(dC.telephone && {
       "vcard:tel": {
