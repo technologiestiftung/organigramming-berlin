@@ -52,7 +52,8 @@ function getMemberData(d) {
         ]
       : "vcard:Individual",
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
-    ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
+    ...(d.uri &&
+      d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
     ...(d.title && { "vcard:title": d.title }),
     ...(d.salutation && { "vcard:honorific-prefix": d.salutation }),
     ...(d.firstName && { "vcard:given-name": d.firstName }),
@@ -97,7 +98,9 @@ function getOrgData(d) {
           `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
         ]
       : "org:Organization",
-    ...(d.uri && d.uri.uriSameAs && { "owl:sameAs": d.uri.uriSameAs }),
+    ...(d.uri &&
+      d.uri.uriSameAs &&
+      d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.name && { "org:name": d.name }),
     ...(d.title && { "org:name": d.title }),
