@@ -1,35 +1,35 @@
 {
   "Abteilung": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Amt": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "amt"
   },
   "Bezirksamt": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "bezirksAmt"
   },
   "Büro": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Fachbereich": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Fachdienst": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Landesamt": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "landesAmt"
   },
   "Landesstelle": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "landesStelle"
   },
   "Museum": {
     "vocab": "berorgs",
@@ -37,46 +37,46 @@
   },
   "Referat": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Senatskanzlei": {
     "vocab": "berorgs",
-    "name": "senateChancellery"
+    "name": "senatsKanzlei"
   },
   "Senatsverwaltung": {
     "vocab": "berorgs",
-    "name": "senateDepartment"
+    "name": "senatsVerwaltung"
   },
   "Serviceeinheit": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Öffentliches Unternehmen": {
     "vocab": "berorgs",
-    "name": "publicEnterprise"
+    "name": "öffentlichesUnternehmen"
   },
   "Unternehmen": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Büroleiter:in": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "büroLeitung"
   },
   "Pressesprecher:in": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "presseSprecherin"
   },
   "Referent:in": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "!!placehoderText!!"
   },
   "Senator:in": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "senatorin"
   },
   "Staatssekretär:in": {
     "vocab": "berorgs",
-    "name": "placehodertext"
+    "name": "staatssekretär"
   }
 }
