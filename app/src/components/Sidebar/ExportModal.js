@@ -86,7 +86,7 @@ const ExportModal = (props) => {
 
   const onExport = () => {
     onBlur();
-    console.log("formData.organisations", formData.organisations);
+    console.log("formData", formData);
     if (formData.export.saveExport === "save") {
       props.onSave(true);
     } else {

@@ -10,6 +10,7 @@ function parseNQuads(nquads) {
       vcard: "http://www.w3.org/2006/vcard/ns#",
       owl: "http://www.w3.org/2002/07/owl#",
       berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
+      dcterms: "http://purl.org/dc/terms#",
     },
   });
 
