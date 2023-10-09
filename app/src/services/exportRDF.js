@@ -102,8 +102,8 @@ function getOrgData(d) {
       d.uri.uriSameAs &&
       d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
-    ...(d.name && { "org:name": d.name }),
-    ...(d.title && { "org:name": d.title }),
+    ...(d.name && { "skos:prefLabel": d.name }),
+    ...(d.altName && { "skos:altLabel": d.altName }),
     ...(d.type && !typeVocabLookup[d.type] && { "org:classification": d.type }),
   };
 
@@ -215,6 +215,7 @@ export const exportRDF = (data) => {
       owl: "http://www.w3.org/2002/07/owl#",
       berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
       dcterms: "http://purl.org/dc/terms#",
+      skos: "http://www.w3.org/2004/02/skos/core#",
     },
     ...(data.document?.version && {
       "dcterms:created": data.document?.version,

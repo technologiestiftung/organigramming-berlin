@@ -11,6 +11,7 @@ function parseNQuads(nquads) {
       owl: "http://www.w3.org/2002/07/owl#",
       berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
       dcterms: "http://purl.org/dc/terms#",
+      skos: "http://www.w3.org/2004/02/skos/core#",
     },
   });
 
