@@ -170,14 +170,23 @@ export const exportRDF = (data) => {
     function traverseOrganizations(organizations) {
       if (!organizations) return;
       return organizations.map((org) => {
-        const { organisations } = org;
-        const result = getOrgData(org);
-        delete result.organisations;
-        const subOrganizations = traverseOrganizations(organisations);
-        if (subOrganizations && subOrganizations.length > 0) {
-          result["org:hasSubOrganization"] = subOrganizations;
+        if (org.style === "hide") {
+          const { organisations } = org;
+          return traverseOrganizations(organisations);
+        } else {
+          const { organisations } = org;
+          const result = getOrgData(org);
+          delete result.organisations;
+          const subOrganizations = traverseOrganizations(organisations);
+          if (subOrganizations && subOrganizations.length > 0) {
+            if (subOrganizations[0]["@type"]) {
+              result["org:hasSubOrganization"] = subOrganizations;
+            } else {
+              result["org:hasSubOrganization"] = subOrganizations[0];
+            }
+          }
+          return result;
         }
-        return result;
       });
     }
 
@@ -189,8 +198,8 @@ export const exportRDF = (data) => {
   // const docOrg = getOrgData(data.document);
   let mainOrg;
   let subOrgs;
-
   if (data.organisations.length === 1) {
+    // case: there is only ONE org. Searching for the main org is not needed
     mainOrg = getOrgData(data.organisations[0]);
     if (data.organisations[0].organisations) {
       subOrgs = createNestedOrganizations(data.organisations[0].organisations);
