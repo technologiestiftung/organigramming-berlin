@@ -39,6 +39,10 @@ function addNewPropsToOrgs(data) {
       org.isMainOrganisation = false;
     }
 
+    if (org.purpose === undefined) {
+      org.purpose = "";
+    }
+
     if (!data.organisations?.background) {
       org.background = {
         color: "",

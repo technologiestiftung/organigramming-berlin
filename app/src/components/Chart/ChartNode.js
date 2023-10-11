@@ -215,8 +215,18 @@ const ChartNode = forwardRef(
             >
               <h1>{ds.name}</h1>
               {ds.altName && (
-                <h3 className="text-end">
-                  <span>{ds.altName}</span>
+                <h3 className="text-start">
+                  <span>({ds.altName})</span>
+                </h3>
+              )}
+              {ds.purpose && (
+                <h3
+                  className="text-end"
+                  style={{
+                    fontStyle: "normal",
+                  }}
+                >
+                  <span>{ds.purpose}</span>
                 </h3>
               )}
             </div>
@@ -326,11 +336,21 @@ const ChartNode = forwardRef(
                       )}
                   </ul>
                 )}
+                {ds.departments && <hr className="mb-2"></hr>}
                 <ul className="departments">
                   {ds.departments &&
                     ds.departments.map((department, i) => (
-                      <li key={i + ds.name + "-" + department.name}>
-                        <h3>{department.name}</h3>
+                      <li
+                        key={i + ds.name + "-" + department.name}
+                        className="mb-3"
+                      >
+                        <h3 className="mb-1">{department.name}</h3>
+                        {ds.purpose && (
+                          <h3 className="fw-normal mb-2 mt-0">
+                            {department.purpose}
+                          </h3>
+                        )}
+
                         {department.employees && (
                           <ul className="employees">
                             {department.employees &&

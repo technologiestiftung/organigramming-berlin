@@ -104,6 +104,7 @@ function getOrgData(d) {
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
     ...(d.name && { "skos:prefLabel": d.name }),
     ...(d.altName && { "skos:altLabel": d.altName }),
+    ...(d.purpose && { "org:purpose": d.purpose }),
     ...(d.type && !typeVocabLookup[d.type] && { "org:classification": d.type }),
   };
 

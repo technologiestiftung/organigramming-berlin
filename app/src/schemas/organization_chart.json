@@ -94,6 +94,10 @@
           "type": "string",
           "title": "Alternative Bezeichnung"
         },
+        "purpose": {
+          "type": "string",
+          "title": "Beschreibung"
+        },
         "style": {
           "type": "string",
           "title": "Stil",
@@ -216,6 +220,32 @@
           "title": "Abteilung/Stellenbezeichnung",
           "default": "Neue Organisationsuntereinheit"
         },
+        "purpose": {
+          "type": "string",
+          "title": "Beschreibung"
+        },
+        "type": {
+          "type": "string",
+          "examples": [
+            "Abteilung",
+            "Amt",
+            "Bezirksamt",
+            "Büro",
+            "Fachbereich",
+            "Fachdienst",
+            "Landesamt",
+            "Landesstelle",
+            "Museum",
+            "Other",
+            "Referat",
+            "Senatskanzlei",
+            "Senatsverwaltung",
+            "Serviceeinheit",
+            "Öffentliches Unternehmen",
+            "Unternehmen"
+          ],
+          "title": "Art"
+        },
         "uri": {
           "$ref": "#/definitions/uri"
         },
@@ -266,11 +296,11 @@
             "Staatssekretär:in"
           ]
         },
-        "uri": {
-          "$ref": "#/definitions/uri"
-        },
         "contact": {
           "$ref": "#/definitions/contact"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
         }
       },
       "title": "Person"
