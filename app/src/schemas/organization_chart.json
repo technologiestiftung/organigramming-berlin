@@ -131,10 +131,15 @@
                 "#db9f29",
                 "#e5bbd0",
                 "#988bc2",
-                "#999999",
                 "#00b140",
                 "#97d700",
-                "#c4d600"
+                "#c4d600",
+                "#333333",
+                "#666666",
+                "#999999",
+                "#cccccc",
+                "#e6e6e6",
+                "#f2f2f2"
               ],
               "enumNames": [
                 "Standard",
@@ -149,10 +154,15 @@
                 "Orange",
                 "Rosa",
                 "Violett",
-                "Grau",
                 "Pantone 354",
                 "Pantone 375",
-                "Pantone 382"
+                "Pantone 382",
+                "Schwarz 80%",
+                "Schwarz 60%",
+                "Schwarz 40%",
+                "Schwarz 20%",
+                "Schwarz 10%",
+                "Schwarz 5%"
               ]
             },
             "style": {
