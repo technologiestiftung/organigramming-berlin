@@ -12,6 +12,7 @@ import {
   dragNodeService,
   selectNodeService,
   isDefiend,
+  getContrastTextColor,
 } from "../../services/service";
 import "./ChartNode.scss";
 
@@ -211,6 +212,7 @@ const ChartNode = forwardRef(
                   ds.background.style === "half"
                     ? `linear-gradient(to bottom left, rgba(0,0,0,0) 50%,${ds.background.color} 50%)`
                     : "",
+                color: `${getContrastTextColor(ds.background?.color)}`,
               }}
             >
               <h1>{ds.name}</h1>

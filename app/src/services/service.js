@@ -103,3 +103,17 @@ export const validateData = (data) => {
   const validate = ajv.compile(definitions);
   return [validate(data), validate.errors];
 };
+
+export const getContrastTextColor = (bgColor) => {
+  if (!bgColor) return "white";
+  // Convert hex color to RGB values
+  let color = bgColor.charAt(0) === "#" ? bgColor.substring(1, 7) : bgColor;
+  let r = parseInt(color.substring(0, 2), 16); // Red
+  let g = parseInt(color.substring(2, 4), 16); // Green
+  let b = parseInt(color.substring(4, 6), 16); // Blue
+
+  // Calculate brightness (luminance)
+  let brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  return brightness > 155 ? "#333" : "white";
+};
