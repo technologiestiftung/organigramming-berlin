@@ -193,7 +193,7 @@ const ChartNode = forwardRef(
           onContextMenu={ds.style !== "root" ? contextMenuHandler : null}
         >
           <div
-            className="oc-container"
+            className="oc-container grid"
             style={{
               backgroundColor: ds.background ? ds.background.color : "",
             }}
@@ -233,7 +233,7 @@ const ChartNode = forwardRef(
             {(ds.departments || ds.employees || ds.contact || ds.address) && (
               <div className="oc-content">
                 {ds.employees && (
-                  <ul className="employees">
+                  <ul className="employees grid">
                     {ds.employees &&
                       ds.employees.map(
                         (employee, j) =>

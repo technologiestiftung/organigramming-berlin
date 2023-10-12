@@ -66,6 +66,9 @@
         .oc-container {
           font-size: 1rem;
           width: 14rem;
+          &.grid {
+            width: 28rem;
+          }
           background-color: $currentColor;
           padding: 2px;
           border-radius: $border-radius;
@@ -141,6 +144,12 @@
             }
             ul.employees {
               display: block;
+              &.grid {
+                display: grid;
+                grid-template-rows: repeat(4, auto);
+                grid-auto-flow: column;
+                gap: 10px; /* Adjust this for spacing between rows */
+              }
               li {
                 width: 100%;
                 display: block;
@@ -219,6 +228,9 @@
           }
           .oc-container {
             width: 17rem;
+            &.grid {
+              width: 28rem;
+            }
             font-size: 1.5rem;
             background-color: $supCurrentColor;
             .oc-heading {
