@@ -336,7 +336,9 @@ const ChartNode = forwardRef(
                       )}
                   </ul>
                 )}
-                {ds.departments && <hr className="mb-2"></hr>}
+                {ds.departments && ds.departments.length > 0 && (
+                  <hr className="mb-2"></hr>
+                )}
                 <ul className="departments">
                   {ds.departments &&
                     ds.departments.map((department, i) => (

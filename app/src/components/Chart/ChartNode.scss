@@ -39,6 +39,9 @@
         margin: 0 4px;
         transition: box-shadow 300ms ease-out, opacity 300ms ease-in-out;
         margin-bottom: 20px;
+        &.hide {
+          margin-bottom: 14px;
+        }
         &:hover {
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
@@ -251,7 +254,7 @@
           .oc-container {
             background-color: $supCurrentColor;
             height: 1rem;
-            width: 1rem;
+            width: 0rem;
             border-radius: 10px;
             .oc-heading {
               display: none;
@@ -682,7 +685,6 @@ body.drag-demo {
     }
   }
 }
-
 
 body.context-demo {
   #n3 {
