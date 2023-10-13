@@ -67,7 +67,7 @@
           font-size: 1rem;
           width: 14rem;
           &.grid {
-            width: 28rem;
+            width: auto;
           }
           background-color: $currentColor;
           padding: 2px;
@@ -116,6 +116,12 @@
             text-align: left;
             background-color: $white;
             ul.departments {
+              &.grid {
+                display: grid;
+                grid-template-rows: repeat(3, auto);
+                grid-auto-flow: column;
+                gap: 0px; /* Adjust this for spacing between rows */
+              }
               display: block;
               padding-top: 0.3rem;
               padding-bottom: 0.2rem;
@@ -146,12 +152,12 @@
               display: block;
               &.grid {
                 display: grid;
-                grid-template-rows: repeat(4, auto);
+                grid-template-rows: repeat(3, auto);
                 grid-auto-flow: column;
-                gap: 10px; /* Adjust this for spacing between rows */
+                gap: 0px; /* Adjust this for spacing between rows */
               }
               li {
-                width: 100%;
+                width: 13.8rem;
                 display: block;
                 &::before {
                   display: none;
@@ -229,7 +235,7 @@
           .oc-container {
             width: 17rem;
             &.grid {
-              width: 28rem;
+              width: auto;
             }
             font-size: 1.5rem;
             background-color: $supCurrentColor;

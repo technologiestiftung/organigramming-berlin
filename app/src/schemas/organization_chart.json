@@ -110,13 +110,6 @@
             "Verbindungspunkt"
           ]
         },
-        "xyz": {
-          "type": "string",
-          "title": "Darstellung",
-          "default": "horizontal",
-          "enum": ["vertical", "horizontal"],
-          "enumNames": ["Vertikal", "Horizontal"]
-        },
         "background": {
           "type": "object",
           "additionalProperties": false,

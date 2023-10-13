@@ -193,7 +193,7 @@ const ChartNode = forwardRef(
           onContextMenu={ds.style !== "root" ? contextMenuHandler : null}
         >
           <div
-            className="oc-container grid"
+            className={`oc-container${ds.employees?.length > 3 ? " grid" : ""}`}
             style={{
               backgroundColor: ds.background ? ds.background.color : "",
             }}
@@ -233,7 +233,11 @@ const ChartNode = forwardRef(
             {(ds.departments || ds.employees || ds.contact || ds.address) && (
               <div className="oc-content">
                 {ds.employees && (
-                  <ul className="employees grid">
+                  <ul
+                    className={`employees${
+                      ds.employees?.length > 3 ? " grid" : ""
+                    }`}
+                  >
                     {ds.employees &&
                       ds.employees.map(
                         (employee, j) =>
@@ -339,7 +343,11 @@ const ChartNode = forwardRef(
                 {ds.departments && ds.departments.length > 0 && (
                   <hr className="mb-2"></hr>
                 )}
-                <ul className="departments">
+                <ul
+                  className={`departments${
+                    ds.departments?.length > 3 ? " grid" : ""
+                  }`}
+                >
                   {ds.departments &&
                     ds.departments.map((department, i) => (
                       <li
