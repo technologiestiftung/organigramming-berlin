@@ -60,7 +60,12 @@ function getMemberData(d) {
     ...(d.firstName && { "vcard:given-name": d.firstName }),
     ...(d.lastName && { "vcard:family-name": d.lastName }),
     ...(d.position &&
-      !typeVocabLookup[d.position] && { "vcard:role": d.position }),
+      !typeVocabLookup[d.position] && {
+        "vcard:role": {
+          "@value": d.position,
+          "@language": "de",
+        },
+      }),
     ...(d.gender && { "vcard:hasGender": d.gender }),
 
     ...(dC.telephone && {
@@ -103,10 +108,31 @@ function getOrgData(d) {
       d.uri.uriSameAs &&
       d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
-    ...(d.name && { "skos:prefLabel": d.name }),
-    ...(d.altName && { "skos:altLabel": d.altName }),
-    ...(d.purpose && { "org:purpose": d.purpose }),
-    ...(d.type && !typeVocabLookup[d.type] && { "org:classification": d.type }),
+    ...(d.name && {
+      "skos:prefLabel": {
+        "@value": d.name,
+        "@language": "de",
+      },
+    }),
+    ...(d.altName && {
+      "skos:altLabel": {
+        "@value": d.altName,
+        "@language": "de",
+      },
+    }),
+    ...(d.purpose && {
+      "org:purpose": {
+        "@value": d.purpose,
+        "@language": "de",
+      },
+    }),
+    ...(d.type &&
+      !typeVocabLookup[d.type] && {
+        "org:classification": {
+          "@value": d.type,
+          "@language": "de",
+        },
+      }),
   };
 
   const cD = d.contact;
