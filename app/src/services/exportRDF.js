@@ -69,28 +69,16 @@ function getMemberData(d) {
     ...(d.gender && { "vcard:hasGender": d.gender }),
 
     ...(dC.telephone && {
-      "vcard:tel": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": `tel:${dC.telephone}`,
-      },
+      "vcard:tel": dC.telephone,
     }),
     ...(dC.fax && {
-      "vcard:fax": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": `fax:${dC.fax}`,
-      },
+      "vcard:fax": dC.fax,
     }),
     ...(dC.email && {
-      "vcard:email": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": dC.email,
-      },
+      "vcard:email": dC.email,
     }),
     ...(dC.website && {
-      "vcard:url": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": dC.website,
-      },
+      "vcard:url": dC.website,
     }),
   };
   return newMemberJSONLD;
@@ -141,28 +129,16 @@ function getOrgData(d) {
     newOrgJSONLD["org:hasSite"] = {
       "@type": "org:Site",
       ...(cD.telephone && {
-        "vcard:tel": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": `tel:${cD.telephone}`,
-        },
+        "vcard:tel": cD.telephone,
       }),
       ...(cD.fax && {
-        "vcard:fax": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": `fax:${cD.fax}`,
-        },
+        "vcard:fax": cD.fax,
       }),
       ...(cD.email && {
-        "vcard:email": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": cD.email,
-        },
+        "vcard:email": cD.email,
       }),
       ...(cD.website && {
-        "vcard:url": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": cD.website,
-        },
+        "vcard:url": cD.website,
       }),
     };
     if (hasKeys(aD)) {
