@@ -2,6 +2,7 @@ import { toSnakeCase } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
+import rdfVocab from "./rdfVocab.json";
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
@@ -219,14 +220,7 @@ export const exportRDF = (data) => {
   }
 
   let rdf = {
-    "@context": {
-      org: "http://www.w3.org/ns/org#",
-      vcard: "http://www.w3.org/2006/vcard/ns#",
-      owl: "http://www.w3.org/2002/07/owl#",
-      berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
-      dcterms: "http://purl.org/dc/terms#",
-      skos: "http://www.w3.org/2004/02/skos/core#",
-    },
+    "@context": rdfVocab,
     ...(data.document?.version && {
       "dcterms:created": data.document?.version,
     }),
