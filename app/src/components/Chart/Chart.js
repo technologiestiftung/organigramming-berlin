@@ -91,7 +91,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
 
   const getNewNode = () => {
     return {
-      type: "Neue",
+      type: "",
       name: "Organisation",
       id: "n" + uuidv4(),
       uri: { uri: getURI("organisation") },
