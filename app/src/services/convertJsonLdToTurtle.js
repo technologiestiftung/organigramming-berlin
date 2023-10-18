@@ -1,18 +1,12 @@
 const jsonld = require("jsonld");
 const N3 = require("n3");
+const rdfVocab = require("./rdfVocab.json");
 
 function parseNQuads(nquads) {
   const parser = new N3.Parser({ format: "N-Quads" });
   const writer = new N3.Writer({
     format: "Turtle",
-    prefixes: {
-      org: "http://www.w3.org/ns/org#",
-      vcard: "http://www.w3.org/2006/vcard/ns#",
-      owl: "http://www.w3.org/2002/07/owl#",
-      berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
-      dcterms: "http://purl.org/dc/terms#",
-      skos: "http://www.w3.org/2004/02/skos/core#",
-    },
+    prefixes: rdfVocab,
   });
 
   return new Promise((resolve, reject) => {

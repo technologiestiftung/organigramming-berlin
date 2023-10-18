@@ -2,6 +2,7 @@ import { toSnakeCase } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
+import rdfVocab from "./rdfVocab.json";
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
@@ -59,32 +60,25 @@ function getMemberData(d) {
     ...(d.firstName && { "vcard:given-name": d.firstName }),
     ...(d.lastName && { "vcard:family-name": d.lastName }),
     ...(d.position &&
-      !typeVocabLookup[d.position] && { "vcard:role": d.position }),
+      !typeVocabLookup[d.position] && {
+        "vcard:role": {
+          "@value": d.position,
+          "@language": "de",
+        },
+      }),
     ...(d.gender && { "vcard:hasGender": d.gender }),
 
     ...(dC.telephone && {
-      "vcard:tel": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": `tel:${dC.telephone}`,
-      },
+      "vcard:tel": dC.telephone,
     }),
     ...(dC.fax && {
-      "vcard:fax": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": `fax:${dC.fax}`,
-      },
+      "vcard:fax": dC.fax,
     }),
     ...(dC.email && {
-      "vcard:email": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": dC.email,
-      },
+      "vcard:email": dC.email,
     }),
     ...(dC.website && {
-      "vcard:url": {
-        "@type": "vcard:Work",
-        "vcard:hasValue": dC.website,
-      },
+      "vcard:url": dC.website,
     }),
   };
   return newMemberJSONLD;
@@ -102,10 +96,31 @@ function getOrgData(d) {
       d.uri.uriSameAs &&
       d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
     ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
-    ...(d.name && { "skos:prefLabel": d.name }),
-    ...(d.altName && { "skos:altLabel": d.altName }),
-    ...(d.purpose && { "org:purpose": d.purpose }),
-    ...(d.type && !typeVocabLookup[d.type] && { "org:classification": d.type }),
+    ...(d.name && {
+      "skos:prefLabel": {
+        "@value": d.name,
+        "@language": "de",
+      },
+    }),
+    ...(d.altName && {
+      "skos:altLabel": {
+        "@value": d.altName,
+        "@language": "de",
+      },
+    }),
+    ...(d.purpose && {
+      "org:purpose": {
+        "@value": d.purpose,
+        "@language": "de",
+      },
+    }),
+    ...(d.type &&
+      !typeVocabLookup[d.type] && {
+        "org:classification": {
+          "@value": d.type,
+          "@language": "de",
+        },
+      }),
   };
 
   const cD = d.contact;
@@ -114,28 +129,16 @@ function getOrgData(d) {
     newOrgJSONLD["org:hasSite"] = {
       "@type": "org:Site",
       ...(cD.telephone && {
-        "vcard:tel": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": `tel:${cD.telephone}`,
-        },
+        "vcard:tel": cD.telephone,
       }),
       ...(cD.fax && {
-        "vcard:fax": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": `fax:${cD.fax}`,
-        },
+        "vcard:fax": cD.fax,
       }),
       ...(cD.email && {
-        "vcard:email": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": cD.email,
-        },
+        "vcard:email": cD.email,
       }),
       ...(cD.website && {
-        "vcard:url": {
-          "@type": "vcard:Work",
-          "vcard:hasValue": cD.website,
-        },
+        "vcard:url": cD.website,
       }),
     };
     if (hasKeys(aD)) {
@@ -219,14 +222,7 @@ export const exportRDF = (data) => {
   }
 
   let rdf = {
-    "@context": {
-      org: "http://www.w3.org/ns/org#",
-      vcard: "http://www.w3.org/2006/vcard/ns#",
-      owl: "http://www.w3.org/2002/07/owl#",
-      berorgs: "https://berlin.github.io/lod-vocabulary/berorgs#",
-      dcterms: "http://purl.org/dc/terms#",
-      skos: "http://www.w3.org/2004/02/skos/core#",
-    },
+    "@context": rdfVocab,
     ...(data.document?.version && {
       "dcterms:created": data.document?.version,
     }),
