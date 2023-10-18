@@ -3,6 +3,7 @@ import { Button, Modal, Row, Col, Alert } from "react-bootstrap";
 import definitions from "../../schemas/organization_chart";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import { toSnakeCase } from "../../services/service";
+import checkForDuplicatePersons from "../../services/checkForDuplicatePersons";
 
 import Form from "@rjsf/bootstrap-4";
 
@@ -11,6 +12,7 @@ const ExportModal = (props) => {
   const [showPDFInfo, setShowPDFInfo] = useState(false);
   const [showRDFInfo, setShowRDFInfo] = useState(false);
   const [warningMultiMainOrgs, setWarningMultiMainOrgs] = useState(false);
+  const [duplicatePersons, setDuplicatePersons] = useState([]);
 
   const properties = {
     properties: {
@@ -33,6 +35,9 @@ const ExportModal = (props) => {
         setWarningMultiMainOrgs(true);
       }
     }
+
+    const personsDuplicates = checkForDuplicatePersons(formData);
+    setDuplicatePersons(personsDuplicates);
 
     if (
       formData.export.exportType === "pdf" &&
@@ -199,17 +204,43 @@ const ExportModal = (props) => {
             <Col className="mb-3">
               <Alert variant="success">
                 <p>
-                  Diese Funktion erlaubt es die Daten in verschienden RDF
-                  Formaten zu exportieren{" "}
+                  Diese Funktion erlaubt es die Daten in verschiedenen
+                  RDF-Formaten zu exportieren.{" "}
                 </p>
               </Alert>
               {warningMultiMainOrgs && (
-                <Alert variant="warning">
+                <Alert variant="danger">
                   <p>
                     Sie haben mehrer Organisationen als Hauptorganisation
                     ausgewählt. Bitte wählen Sie nur <b>eine Organisation</b>{" "}
                     als Hauptorganisation aus.
                   </p>
+                </Alert>
+              )}
+
+              {duplicatePersons && (
+                <Alert variant="warning">
+                  Achtung. Folgende Personen-Einträge haben den gleichen Namen
+                  aber unterschiedliche URIs. Bitte passen sie die URIs
+                  gegebenfalls an.
+                  <br /> <br />
+                  <ul>
+                    {Object.keys(duplicatePersons).map((name) => (
+                      <li key={name}>
+                        <b>{name}</b> erscheint {duplicatePersons[name].counter}{" "}
+                        mal mit verschiedenen URIs in folgenden Organisationen
+                        <br />
+                        <ul>
+                          {duplicatePersons[name].orgNames.map((aName, i) => (
+                            <li>
+                              {/* style={"paddingLeft":"10px"} */}
+                              <span key={"span" + aName}>{aName}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
                 </Alert>
               )}
             </Col>
