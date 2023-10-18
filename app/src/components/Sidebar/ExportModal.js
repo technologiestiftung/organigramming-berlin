@@ -218,7 +218,7 @@ const ExportModal = (props) => {
                 </Alert>
               )}
 
-              {duplicatePersons && (
+              {Object.keys(duplicatePersons).length !== 0 && (
                 <Alert variant="warning">
                   Achtung. Folgende Personen-Einträge haben den gleichen Namen
                   aber unterschiedliche URIs. Bitte passen sie die URIs

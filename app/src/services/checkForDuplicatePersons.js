@@ -7,7 +7,8 @@ export default function checkForDuplicatePersons(formData) {
       (e.firstName ? e.firstName.trim() : "") +
       " " +
       (e.lastName ? e.lastName.trim() : "");
-    return name;
+
+    return name ? name.trim() : "";
   }
 
   function getPersonData(orgs) {
@@ -21,15 +22,17 @@ export default function checkForDuplicatePersons(formData) {
       org?.employees?.forEach((e) => {
         const name = getName(e);
         if (name === " ") return;
-        if (!persons[name] && persons[name]?.uri !== e.uri.uri) {
+        if (!persons[name]) {
           persons[name] = {
             uri: e.uri.uri,
             orgNames: [org.name],
             counter: 1,
           };
         } else {
-          persons[name].counter++;
-          persons[name].orgNames.push(org.name);
+          if (persons[name]?.uri !== e.uri.uri) {
+            persons[name].counter++;
+            persons[name].orgNames.push(org.name);
+          }
         }
       });
       if (org.organisations) {
