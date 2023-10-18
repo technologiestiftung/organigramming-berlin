@@ -39,9 +39,6 @@
         margin: 0 4px;
         transition: box-shadow 300ms ease-out, opacity 300ms ease-in-out;
         margin-bottom: 20px;
-        &.hide {
-          margin-bottom: 14px;
-        }
         &:hover {
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
@@ -66,9 +63,6 @@
         .oc-container {
           font-size: 1rem;
           width: 14rem;
-          &.grid {
-            width: auto;
-          }
           background-color: $currentColor;
           padding: 2px;
           border-radius: $border-radius;
@@ -81,6 +75,10 @@
           &:hover {
             transform: translateY(-1px);
             box-shadow: rgba($gray-600, 0.5) 0px 8px 24px;
+          }
+          &.grid {
+            width: auto;
+            min-width: 14rem;
           }
           .oc-heading {
             width: 100%;
@@ -115,13 +113,24 @@
             // white-space: nowrap;
             text-align: left;
             background-color: $white;
-            ul.departments {
+            ul.departments,
+            ul.employees {
               &.grid {
                 display: grid;
-                grid-template-rows: repeat(3, auto);
-                grid-auto-flow: column;
                 gap: 0px; /* Adjust this for spacing between rows */
+                ul {
+                  width: 12.1rem;
+                }
+
+                li {
+                  width: 12.1rem;
+                }
               }
+              &.grid2 {
+                grid-template-columns: repeat(2, auto);
+              }
+            }
+            ul.departments {
               display: block;
               padding-top: 0.3rem;
               padding-bottom: 0.2rem;
@@ -150,14 +159,8 @@
             }
             ul.employees {
               display: block;
-              &.grid {
-                display: grid;
-                grid-template-rows: repeat(3, auto);
-                grid-auto-flow: column;
-                gap: 0px; /* Adjust this for spacing between rows */
-              }
               li {
-                width: 13.8rem;
+                width: 100%;
                 display: block;
                 &::before {
                   display: none;
@@ -272,7 +275,7 @@
           .oc-container {
             background-color: $supCurrentColor;
             height: 1rem;
-            width: 0rem;
+            width: 1rem;
             border-radius: 10px;
             .oc-heading {
               display: none;

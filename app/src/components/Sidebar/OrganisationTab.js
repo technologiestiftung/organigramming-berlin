@@ -89,25 +89,23 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           field: "ObjectField",
         },
       },
-      background: {
+      layout: {
         "ui:headless": true,
         "ui:field": "CollapsibleField",
         collapse: {
           field: "ObjectField",
         },
-        color: {},
         style: {
-          "ui:disabled": !formData.current.background
-            ? false
-            : !formData.current.background.color,
+          title: "Stil",
+        },
+        bgColor: {},
+        bgStyle: {
+          "ui:disabled": !formData.current.layout?.bgColor,
           "ui:widget": "radio",
           "ui:options": {
             inline: true,
           },
         },
-      },
-      style: {
-        title: "Stil",
       },
       organisations: {
         "ui:headless": true,
@@ -145,9 +143,9 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   };
 
   function whenDataChanges(e) {
-    if (!e.formData.current.background.color) {
-      e.formData.current.background.style = "default";
-    }
+    // if (!e.formData.current.layout.bgColor) {
+    //   e.formData.current.layout.style = "default";
+    // }
   }
 
   useEffect(() => {
