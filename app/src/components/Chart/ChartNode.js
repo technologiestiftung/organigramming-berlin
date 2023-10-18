@@ -176,7 +176,7 @@ const ChartNode = forwardRef(
             "oc-node " +
             (allowedDrop ? " allowedDrop" : "") +
             (selected ? " selected" : "") +
-            (ds.style ? " " + ds.style : "") +
+            (ds.layout?.style ? " " + ds.layout?.style : "") +
             (ds.organisations && ds.organisations.length > 0
               ? ds.organisations.length > 1
                 ? " has-children"
@@ -184,33 +184,42 @@ const ChartNode = forwardRef(
               : " end-node")
           }
           draggable={
-            ds.style !== "root" ? (draggable ? "true" : undefined) : undefined
+            ds.layout?.style !== "root"
+              ? draggable
+                ? "true"
+                : undefined
+              : undefined
           }
-          onClick={ds.style !== "root" ? clickNodeHandler : null}
-          onDragStart={ds.style !== "root" ? dragStartHandler : null}
+          onClick={ds.layout?.style !== "root" ? clickNodeHandler : null}
+          onDragStart={ds.layout?.style !== "root" ? dragStartHandler : null}
           onDragOver={dragOverHandler}
           onDragEnd={dragendHandler}
           onDrop={dropHandler}
-          onContextMenu={ds.style !== "root" ? contextMenuHandler : null}
+          onContextMenu={
+            ds.layout?.style !== "root" ? contextMenuHandler : null
+          }
         >
           <div
-            className="oc-container"
+            className={`oc-container${
+              ds.layout?.grid !== "none" ? " grid" : ""
+            }`}
             style={{
-              backgroundColor: ds.background ? ds.background.color : "",
+              backgroundColor:
+                ds?.layout && ds.layout?.bgColor ? ds.layout?.bgColor : "",
             }}
           >
             <div
               className="oc-heading"
               style={{
                 backgroundColor:
-                  ds.background && ds.background.style === "default"
-                    ? ds.background.color
+                  ds.layout && ds.layout?.bgStyle === "default"
+                    ? ds.layout?.bgColor
                     : "",
                 backgroundImage:
-                  ds.background &&
-                  ds.background.color &&
-                  ds.background.style === "half"
-                    ? `linear-gradient(to bottom left, rgba(0,0,0,0) 50%,${ds.background.color} 50%)`
+                  ds.layout &&
+                  ds.layout?.bgColor &&
+                  ds.layout?.bgStyle === "half"
+                    ? `linear-gradient(to bottom left, rgba(0,0,0,0) 50%,${ds.layout.bgColor} 50%)`
                     : "",
                 color: `${getContrastTextColor(ds.background?.color)}`,
               }}
@@ -235,7 +244,13 @@ const ChartNode = forwardRef(
             {(ds.departments || ds.employees || ds.contact || ds.address) && (
               <div className="oc-content">
                 {ds.employees && (
-                  <ul className="employees">
+                  <ul
+                    className={`employees${
+                      ds.layout?.grid !== "none"
+                        ? " grid " + ds.layout?.grid
+                        : ""
+                    }`}
+                  >
                     {ds.employees &&
                       ds.employees.map(
                         (employee, j) =>
@@ -341,7 +356,11 @@ const ChartNode = forwardRef(
                 {ds.departments && ds.departments.length > 0 && (
                   <hr className="mb-2"></hr>
                 )}
-                <ul className="departments">
+                <ul
+                  className={`departments${
+                    ds.layout?.grid !== "none" ? " grid " + ds.layout?.grid : ""
+                  }`}
+                >
                   {ds.departments &&
                     ds.departments.map((department, i) => (
                       <li
@@ -643,7 +662,7 @@ const ChartNode = forwardRef(
 
         {ds.organisations &&
           ds.organisations.length < 1 &&
-          ds.style === "root" && (
+          ds.layout?.style === "root" && (
             <Button variant="outline-success" onClick={() => onAddInitNode()}>
               Neue Organisation anlegen
             </Button>

@@ -98,23 +98,23 @@
           "type": "string",
           "title": "Zusatzbezeichnung"
         },
-        "style": {
-          "type": "string",
-          "title": "Stil",
-          "default": "default",
-          "enum": ["default", "emphasized", "light", "hide"],
-          "enumNames": [
-            "Standard",
-            "Hervorgehoben",
-            "Zurückgenommen",
-            "Verbindungspunkt"
-          ]
-        },
-        "background": {
+        "layout": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "color": {
+            "style": {
+              "type": "string",
+              "title": "Stil",
+              "default": "default",
+              "enum": ["default", "emphasized", "light", "hide"],
+              "enumNames": [
+                "Standard",
+                "Hervorgehoben",
+                "Zurückgenommen",
+                "Verbindungspunkt"
+              ]
+            },
+            "bgColor": {
               "title": "Hintergrundfarbe",
               "type": "string",
               "default": "",
@@ -165,15 +165,22 @@
                 "Schwarz 5%"
               ]
             },
-            "style": {
+            "bgStyle": {
               "title": "Hintergrund Stil",
               "type": "string",
               "default": "default",
               "enum": ["default", "half"],
               "enumNames": ["Voll", "Halb"]
+            },
+            "grid": {
+              "title": "Anordnung",
+              "type": "string",
+              "default": "none",
+              "enum": ["none", "grid2"],
+              "enumNames": ["Untereinander", "2 Reihen"]
             }
           },
-          "title": "Hintergrund"
+          "title": "Gestaltung"
         },
         "address": {
           "$ref": "#/definitions/address"

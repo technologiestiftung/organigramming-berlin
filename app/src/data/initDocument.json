@@ -26,7 +26,7 @@
       "isMainOrganisation": true,
       "organisations": [
         {
-          "style": "default",
+          "layout": { "style": "default" },
           "address": {},
           "contact": {},
           "employees": [
@@ -67,7 +67,7 @@
           "type": "Abteilung"
         },
         {
-          "style": "default",
+          "layout": { "style": "default" },
           "address": {},
           "contact": {},
           "type": "",
@@ -75,12 +75,12 @@
           "id": "n6"
         },
         {
-          "style": "default",
+          "layout": { "style": "default" },
           "address": {},
           "contact": {},
           "organisations": [
             {
-              "style": "light",
+              "layout": { "style": "light" },
               "address": {},
               "contact": {},
               "organisations": [],
@@ -93,7 +93,7 @@
           "isMainOrganisation": false
         }
       ],
-      "style": "emphasized",
+      "layout": { "style": "emphasized" },
       "contact": { "website": "www.berlin.de" },
       "address": {
         "street": "Unter den Linden",
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "style": "default",
+      "layout": { "style": "default" },
       "contact": {},
       "address": {},
       "organisations": [],

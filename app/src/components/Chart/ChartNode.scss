@@ -39,9 +39,6 @@
         margin: 0 4px;
         transition: box-shadow 300ms ease-out, opacity 300ms ease-in-out;
         margin-bottom: 20px;
-        &.hide {
-          margin-bottom: 14px;
-        }
         &:hover {
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
@@ -79,6 +76,10 @@
             transform: translateY(-1px);
             box-shadow: rgba($gray-600, 0.5) 0px 8px 24px;
           }
+          &.grid {
+            width: auto;
+            min-width: 14rem;
+          }
           .oc-heading {
             width: 100%;
             padding: 0.5rem;
@@ -112,6 +113,23 @@
             // white-space: nowrap;
             text-align: left;
             background-color: $white;
+            ul.departments,
+            ul.employees {
+              &.grid {
+                display: grid;
+                gap: 0px; /* Adjust this for spacing between rows */
+                ul {
+                  width: 12.1rem;
+                }
+
+                li {
+                  width: 12.1rem;
+                }
+              }
+              &.grid2 {
+                grid-template-columns: repeat(2, auto);
+              }
+            }
             ul.departments {
               display: block;
               padding-top: 0.3rem;
@@ -219,6 +237,9 @@
           }
           .oc-container {
             width: 17rem;
+            &.grid {
+              width: auto;
+            }
             font-size: 1.5rem;
             background-color: $supCurrentColor;
             .oc-heading {
@@ -254,7 +275,7 @@
           .oc-container {
             background-color: $supCurrentColor;
             height: 1rem;
-            width: 0rem;
+            width: 1rem;
             border-radius: 10px;
             .oc-heading {
               display: none;

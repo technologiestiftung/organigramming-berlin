@@ -94,7 +94,7 @@ const ChartContainer = forwardRef(
     const [node, setNode] = useState({
       id: "n-root",
       name: "TOP LEVEL",
-      style: "root",
+      layout: { style: "root" },
       organisations: JSON.parse(JSON.stringify(data.organisations)),
     });
 
@@ -111,7 +111,7 @@ const ChartContainer = forwardRef(
       setNode({
         id: "n-root",
         name: "TOP LEVEL",
-        style: "root",
+        layout: { style: "root" },
         organisations: JSON.parse(JSON.stringify(data.organisations)),
       });
 

@@ -50,6 +50,27 @@ function addNewPropsToOrgs(data) {
       };
     }
 
+    // background has moved to layout.
+    // migrate it and delete it
+    if (org.background) {
+      org.layout = {
+        bgColor: org.background.color,
+        bgStyle: org.background.style,
+      };
+      delete org.background;
+    }
+    // style has moved to layout.
+    // migrate it and delete it
+    if (org.style) {
+      if (!org.layout) {
+        org.layout = {};
+      }
+      org.layout.style = org.style;
+      org.layout.grid = "none";
+
+      delete org.style;
+    }
+
     addNewPropsToOrgs(org);
   });
 }
