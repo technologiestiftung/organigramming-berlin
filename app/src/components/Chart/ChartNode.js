@@ -221,7 +221,7 @@ const ChartNode = forwardRef(
                   ds.layout?.bgStyle === "half"
                     ? `linear-gradient(to bottom left, rgba(0,0,0,0) 50%,${ds.layout.bgColor} 50%)`
                     : "",
-                color: `${getContrastTextColor(ds.background?.color)}`,
+                color: `${getContrastTextColor(ds.layout?.bgColor)}`,
               }}
             >
               <h1>{ds.name}</h1>

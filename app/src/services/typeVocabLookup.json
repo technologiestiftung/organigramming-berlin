@@ -1,7 +1,7 @@
 {
   "Abteilung": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "abteilung"
   },
   "Amt": {
     "vocab": "berorgs",
@@ -9,27 +9,27 @@
   },
   "Bezirksamt": {
     "vocab": "berorgs",
-    "name": "bezirksAmt"
+    "name": "bezirksamt"
   },
   "Büro": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "büro"
   },
   "Fachbereich": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "fachbereich"
   },
   "Fachdienst": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "fachdienst"
   },
   "Landesamt": {
     "vocab": "berorgs",
-    "name": "landesAmt"
+    "name": "landesamt"
   },
   "Landesstelle": {
     "vocab": "berorgs",
-    "name": "landesStelle"
+    "name": "landesstelle"
   },
   "Museum": {
     "vocab": "berorgs",
@@ -37,27 +37,23 @@
   },
   "Referat": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "referat"
   },
   "Senatskanzlei": {
     "vocab": "berorgs",
-    "name": "senatsKanzlei"
+    "name": "senatskanzlei"
   },
   "Senatsverwaltung": {
     "vocab": "berorgs",
-    "name": "senatsVerwaltung"
+    "name": "senatsverwaltung"
   },
   "Serviceeinheit": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "serviceeinheit"
   },
   "Öffentliches Unternehmen": {
     "vocab": "berorgs",
     "name": "öffentlichesUnternehmen"
-  },
-  "Unternehmen": {
-    "vocab": "berorgs",
-    "name": "!!placehoderText!!"
   },
   "Büroleiter:in": {
     "vocab": "berorgs",
@@ -65,18 +61,50 @@
   },
   "Pressesprecher:in": {
     "vocab": "berorgs",
-    "name": "presseSprecherIn"
+    "name": "pressesprecherIn"
+  },
+  "Referatsleiter:in": {
+    "vocab": "berorgs",
+    "name": "referatsleiterIn"
   },
   "Referent:in": {
     "vocab": "berorgs",
-    "name": "!!placehoderText!!"
+    "name": "referentIn"
   },
   "Senator:in": {
     "vocab": "berorgs",
-    "name": "senatorin"
+    "name": "senatorIn"
   },
   "Staatssekretär:in": {
     "vocab": "berorgs",
-    "name": "staatssekretär"
+    "name": "staatssekretärIn"
+  },
+  "Abteilungsleiter:in": {
+    "vocab": "berorgs",
+    "name": "abteilungsleiterIn"
+  },
+  "Datenschutzbeauftragte:r": {
+    "vocab": "berorgs",
+    "name": "datenschutzbeauftragte"
+  },
+  "BüroLeiter:in": {
+    "vocab": "berorgs",
+    "name": "büroLeiterIn"
+  },
+  "Organisationseinheit": {
+    "vocab": "berorgs",
+    "name": "organisationseinheit"
+  },
+  "Stabsstelle": {
+    "vocab": "berorgs",
+    "name": "stabsstelle"
+  },
+  "Ressort": {
+    "vocab": "berorgs",
+    "name": "ressort"
+  },
+  "Justitiariat": {
+    "vocab": "berorgs",
+    "name": "justitiariat"
   }
 }

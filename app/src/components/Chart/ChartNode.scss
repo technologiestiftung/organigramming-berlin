@@ -43,6 +43,9 @@
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
         }
+        &.hide {
+          margin-bottom: 14px;
+        }
         &:not(:only-child) {
           &::after {
             content: "";
@@ -275,7 +278,7 @@
           .oc-container {
             background-color: $supCurrentColor;
             height: 1rem;
-            width: 1rem;
+            width: 0rem;
             border-radius: 10px;
             .oc-heading {
               display: none;
