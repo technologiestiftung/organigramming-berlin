@@ -91,7 +91,7 @@ function getOrgData(d) {
           "org:Organization",
           `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
         ]
-      : "org:Organization",
+      : ["org:Organization", "rdfs:Class"],
     ...(d.uri &&
       d.uri.uriSameAs &&
       d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
@@ -114,9 +114,18 @@ function getOrgData(d) {
         "@language": "de",
       },
     }),
+    // ...(d.type &&
+    //   !typeVocabLookup[d.type] && {
+    //     "org:classification": {
+    //       "@value": d.type,
+    //       "@language": "de",
+    //     },
+    //   }),
+    // in case the type can not be foun in berlinorgs
     ...(d.type &&
       !typeVocabLookup[d.type] && {
-        "org:classification": {
+        "rdfs:subClassOf": "org:Organization",
+        "rdfs:label": {
           "@value": d.type,
           "@language": "de",
         },
