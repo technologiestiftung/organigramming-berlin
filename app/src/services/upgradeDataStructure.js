@@ -43,7 +43,7 @@ function addNewPropsToOrgs(data) {
       org.purpose = "";
     }
 
-    if (!org?.background) {
+    if (!org?.background && !org?.layout) {
       org.background = {
         color: "",
         style: "default",
