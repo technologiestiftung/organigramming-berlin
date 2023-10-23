@@ -21,6 +21,9 @@ const CollapsibleField = (_ref) => {
   ) {
     const contact = _ref.formData;
     let personName = [];
+    if (contact.position) {
+      personName.push(contact.position + " - ");
+    }
     if (contact.title) {
       personName.push(contact.title);
     }

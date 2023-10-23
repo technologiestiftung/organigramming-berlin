@@ -8,7 +8,7 @@
 
 This repository contains an app for creating and editing administrative organization charts in machine-readable json format and as a graphical representation in pdf format. The online tool was developed with the aim to provide a simple yet sufficient tool to create organisational charts to export human as well as machine readable files.
 
-Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, this means that they cannot be read by machines or code, or can only be read inadequately. However, the organigrams contain a lot of valuable information and a machine-readable preparation could enable various uses and applications. 
+Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, this means that they cannot be read by machines or code, or can only be read inadequately. However, the organigrams contain a lot of valuable information and a machine-readable preparation could enable various uses and applications.
 The json file format allows the data entered to be stored in a simple text format and made available as Open Data. The organizational chart tool also aims to simplify the creation of organizational charts for the Berlin administration and to bring the organizational charts into a more uniform format.
 
 More information and the protoype is accessible through the [ODIS website](https://odis-berlin.de/projekte/organigramme/) (only in German).
@@ -23,19 +23,16 @@ Then install the required dependencies with:
 
 `yarn install`
 
-
 ## Development
 
 To run the app in the development mode run:
 
 `yarn start`
 
-
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-
 
 ## Production
 
@@ -48,12 +45,18 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-
 ## Changelog (added, fixed, changed)
 
 - 12.03.2022 - Added: simple changelog
 - 12.03.2022 - Fixed: [Use "overflow-wrap: break-word" for organisation units](https://github.com/technologiestiftung/organigramming-berlin/pull/41)
 - 12.03.2022 - Added: [Metadata "about the tool" has been added to the export file](https://github.com/technologiestiftung/organigramming-berlin/pull/37)
+
+## Development Notes
+
+The Charts data structure is defined in:
+./app/src/schemas/organization_chart.json
+The Organisation UI is defined in:
+./app/src/components/Sidebar/OrganisationTab.js
 
 ## Acknowledgement
 

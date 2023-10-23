@@ -192,7 +192,7 @@
           "$ref": "#/definitions/uri"
         },
         "employees": {
-          "title": "Personen",
+          "title": "Positionen",
           "type": "array",
           "items": {
             "$ref": "#/definitions/employee"
@@ -267,7 +267,7 @@
           "$ref": "#/definitions/uri"
         },
         "employees": {
-          "title": "Personen",
+          "title": "Positionen",
           "type": "array",
           "items": {
             "$ref": "#/definitions/employee"
@@ -279,6 +279,20 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "position": {
+          "type": "string",
+          "title": "Position/Rolle",
+          "description": "<strong>Position/Rolle</strong>",
+
+          "default": "Neue Position",
+          "examples": [
+            "Büroleiter:in",
+            "Pressesprecher:in",
+            "Referent:in",
+            "Senator:in",
+            "Staatssekretär:in"
+          ]
+        },
         "salutation": {
           "type": "string",
           "title": "Anrede"
@@ -301,17 +315,6 @@
           "default": "1",
           "enum": ["m", "w", "d", "1"],
           "enumNames": ["Männlich", "Weiblich", "Divers", "ohne Angabe"]
-        },
-        "position": {
-          "type": "string",
-          "title": "Position",
-          "examples": [
-            "Büroleiter:in",
-            "Pressesprecher:in",
-            "Referent:in",
-            "Senator:in",
-            "Staatssekretär:in"
-          ]
         },
         "contact": {
           "$ref": "#/definitions/contact"
