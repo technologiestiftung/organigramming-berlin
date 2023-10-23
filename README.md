@@ -55,7 +55,7 @@ Your app is ready to be deployed!
 
 The Charts data structure is defined in:
 ./app/src/schemas/organization_chart.json
-The Organisation UI is defined in :
+The Organisation UI is defined in:
 ./app/src/components/Sidebar/OrganisationTab.js
 
 ## Acknowledgement
