@@ -62,6 +62,16 @@ body {
   }
 }
 
+.customDropdown {
+  position: relative;
+  svg {
+    right: 10px;
+    position: relative;
+    float: right;
+    top: 40px;
+    pointer-events: none;
+  }
+}
 .react-joyride {
   &-portal {
     overflow: hidden;

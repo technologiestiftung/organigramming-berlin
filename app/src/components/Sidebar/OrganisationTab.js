@@ -12,6 +12,8 @@ import CollapsibleField from "../From/CollapsibleField";
 import UriSearch from "../From/UriSearch";
 import MainOrganisation from "../From/MainOrganisation";
 
+import CustomDropdown from "../From/CustomDropdown";
+
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
   const [idPrefix, setIdPrefix] = useState("root");
@@ -33,6 +35,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     ArrayFieldTemplate: ArrayFieldTemplate,
     UriSearch: UriSearch,
     MainOrganisation: MainOrganisation,
+    CustomDropdown: CustomDropdown,
   };
 
   const schema = { ...definitions, ...properties };
@@ -68,6 +71,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           },
           position: {
             "ui:placeholder": "z.B. Senator:in",
+            "ui:field": CustomDropdown,
           },
         },
       },

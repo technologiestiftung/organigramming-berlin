@@ -192,7 +192,7 @@
           "$ref": "#/definitions/uri"
         },
         "employees": {
-          "title": "Positionen",
+          "title": "Personen",
           "type": "array",
           "items": {
             "$ref": "#/definitions/employee"
@@ -267,7 +267,7 @@
           "$ref": "#/definitions/uri"
         },
         "employees": {
-          "title": "Positionen",
+          "title": "Personen",
           "type": "array",
           "items": {
             "$ref": "#/definitions/employee"
@@ -281,10 +281,7 @@
       "properties": {
         "position": {
           "type": "string",
-          "title": "Position/Rolle",
-          "description": "<strong>Position/Rolle</strong>",
-
-          "default": "Neue Position",
+          "title": "Position",
           "examples": [
             "Büroleiter:in",
             "Pressesprecher:in",
