@@ -117,3 +117,15 @@ export const getContrastTextColor = (bgColor) => {
 
   return brightness > 155 ? "#333" : "white";
 };
+
+export const getHalfData = (data, position) => {
+  const half = Math.ceil(data.length / 2);
+  if (position === "right") {
+    const right = data.slice(half);
+    return right;
+  }
+  if (position === "left") {
+    const left = data.slice(0, half);
+    return left;
+  }
+};

@@ -116,23 +116,16 @@
             // white-space: nowrap;
             text-align: left;
             background-color: $white;
-            ul.departments,
-            ul.employees {
-              &.grid {
-                display: grid;
-                gap: 30px; /* Adjust this for spacing between rows */
-                ul {
-                  width: 12.1rem;
-                }
 
-                li {
-                  width: 12.1rem;
-                }
-              }
-              &.grid2 {
-                grid-template-columns: repeat(2, auto);
+            .grid-container {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              ul {
+                width: 13.1rem;
               }
             }
+
             ul.departments {
               display: block;
               padding-top: 0.3rem;
