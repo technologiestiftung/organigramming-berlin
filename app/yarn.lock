@@ -7379,6 +7379,11 @@
     "relateurl" "0.2.x"
     "uglify-js" "3.4.x"
 
+"html-to-image@^1.11.11":
+  "integrity" "sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA=="
+  "resolved" "https://registry.npmjs.org/html-to-image/-/html-to-image-1.11.11.tgz"
+  "version" "1.11.11"
+
 "html-void-elements@^2.0.0":
   "integrity" "sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A=="
   "resolved" "https://registry.npmjs.org/html-void-elements/-/html-void-elements-2.0.1.tgz"

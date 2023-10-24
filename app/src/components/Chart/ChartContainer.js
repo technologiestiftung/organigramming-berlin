@@ -13,6 +13,8 @@ import rehypeSanitize from "rehype-sanitize";
 import { selectNodeService } from "../../services/service";
 import JSONDigger from "../../services/jsonDigger";
 import html2canvas from "html2canvas";
+import { toPng, toSvg } from "html-to-image";
+import * as htmlToImage from "html-to-image";
 import { elementToSVG, inlineResources } from "dom-to-svg";
 import jsPDF from "jspdf";
 import ChartNode from "./ChartNode";
@@ -417,6 +419,18 @@ const ChartContainer = forwardRef(
           exportSVG(canvas, exportFilename, true).then(() => {
             setExporting(false);
           });
+
+          // not working with new lib - not a true svg
+
+          // const svgDocument = elementToSVG(canvas, true);
+          // function filter(node) {
+          //   return node.className !== "paper-size-label";
+          // }
+          // const node = chart.current.querySelector("#paper");
+          // htmlToImage.toSvg(node, { filter: filter }).then(function (dataUrl) {
+          //   download(dataUrl, exportFilename);
+          //   setExporting(false);
+          // });
         } else if (exportFileextension === "rdf") {
           exportRDF(data);
           setExporting(false);
@@ -426,36 +440,41 @@ const ChartContainer = forwardRef(
             setExporting(false);
           });
         } else {
-          html2canvas(canvas, {
-            width: canvas.clientWidth,
-            height: canvas.clientHeight,
-            onclone: function (clonedDoc) {
-              clonedDoc.querySelector("#paper").style.background = "none";
-              clonedDoc.querySelector("#paper").style.transform = "";
-            },
-          }).then(
-            (canvas) => {
-              if (exportFileextension === "pdf") {
-                exportPDF(canvas, exportFilename);
-              } else {
-                exportPNG(canvas, exportFilename);
-              }
-              setExporting(false);
-              container.current.scrollLeft = originalScrollLeft;
-              container.current.scrollTop = originalScrollTop;
-            },
-            () => {
-              setExporting(false);
-              container.current.scrollLeft = originalScrollLeft;
-              container.current.scrollTop = originalScrollTop;
-              if (!includeLogo && data.document.logo) {
-                const logo = canvas.querySelector("#logo");
-                if (logo) {
-                  logo.style.display = "none";
-                }
-              }
-            }
-          );
+          const node = chart.current.querySelector("#paper");
+          htmlToImage.toPng(node).then(function (dataUrl) {
+            download(dataUrl, "my-node.png");
+          });
+
+          // html2canvas(canvas, {
+          //   width: canvas.clientWidth,
+          //   height: canvas.clientHeight,
+          //   onclone: function (clonedDoc) {
+          //     clonedDoc.querySelector("#paper").style.background = "none";
+          //     clonedDoc.querySelector("#paper").style.transform = "";
+          //   },
+          // }).then(
+          //   (canvas) => {
+          //     if (exportFileextension === "pdf") {
+          //       exportPDF(canvas, exportFilename);
+          //     } else {
+          //       exportPNG(canvas, exportFilename);
+          //     }
+          //     setExporting(false);
+          //     container.current.scrollLeft = originalScrollLeft;
+          //     container.current.scrollTop = originalScrollTop;
+          //   },
+          //   () => {
+          //     setExporting(false);
+          //     container.current.scrollLeft = originalScrollLeft;
+          //     container.current.scrollTop = originalScrollTop;
+          //     if (!includeLogo && data.document.logo) {
+          //       const logo = canvas.querySelector("#logo");
+          //       if (logo) {
+          //         logo.style.display = "none";
+          //       }
+          //     }
+          //   }
+          // );
         }
       },
       resetViewHandler: () => {
