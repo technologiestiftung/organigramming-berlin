@@ -13,6 +13,7 @@ import {
   selectNodeService,
   getContrastTextColor,
   getHalfData,
+  computeBackgroundColor,
 } from "../../services/service";
 import "./ChartNode.scss";
 
@@ -222,11 +223,9 @@ const ChartNode = forwardRef(
                   ds.layout &&
                   ds.layout?.bgColor &&
                   ds.layout?.bgStyle === "half"
-                    ? `linear-gradient(to bottom left, ${
-                        getContrastTextColor(ds.layout?.bgColor) === "#333"
-                          ? "white"
-                          : "#333"
-                      } 50%,${ds.layout.bgColor} 50%)`
+                    ? `linear-gradient(to bottom left, ${computeBackgroundColor(
+                        ds.layout?.bgColor
+                      )} 50%,${ds.layout.bgColor} 50%)`
                     : "",
                 color: `${getContrastTextColor(ds.layout?.bgColor)}`,
               }}

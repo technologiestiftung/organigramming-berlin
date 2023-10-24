@@ -129,3 +129,36 @@ export const getHalfData = (data, position) => {
     return left;
   }
 };
+
+export const computeBackgroundColor = (userColor) => {
+  const r = parseInt(userColor.substring(1, 3), 16);
+  const g = parseInt(userColor.substring(3, 5), 16);
+  const b = parseInt(userColor.substring(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  let adjustmentFactor = 40; // You can adjust this value based on how much you want to darken or lighten
+
+  if (brightness > 155) {
+    // If it's bright, darken the color
+    return `#${clamp(r - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(g - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(b - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}`;
+  } else {
+    // If it's dark, lighten the color
+    return `#${clamp(r + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(g + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(b + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}`;
+  }
+};
+
+function clamp(value, min = 0, max = 255) {
+  return Math.min(Math.max(value, min), max);
+}
