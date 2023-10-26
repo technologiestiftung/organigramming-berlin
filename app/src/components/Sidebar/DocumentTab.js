@@ -1,9 +1,10 @@
-import definitions from "../../schemas/organization_chart";
 import Form from "@rjsf/bootstrap-4";
 import React, { useState, useRef } from "react";
 import FileSelect from "../From/FileSelect";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import MDEditorWidget from "../From/MDEditor";
+import { getDefinitions } from "../../services/getDefinitions";
+const definitions = getDefinitions();
 
 const importAll = (r) => {
   let images = [];

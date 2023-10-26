@@ -1,110 +1,132 @@
 {
   "Abteilung": {
     "vocab": "berorgs",
-    "name": "abteilung"
+    "name": "abteilung",
+    "type": "org"
   },
   "Amt": {
     "vocab": "berorgs",
-    "name": "amt"
+    "name": "amt",
+    "type": "org"
   },
   "Bezirksamt": {
     "vocab": "berorgs",
-    "name": "bezirksamt"
+    "name": "bezirksamt",
+    "type": "org"
   },
   "Büro": {
     "vocab": "berorgs",
-    "name": "büro"
+    "name": "büro",
+    "type": "org"
   },
   "Fachbereich": {
     "vocab": "berorgs",
-    "name": "fachbereich"
+    "name": "fachbereich",
+    "type": "org"
   },
   "Fachdienst": {
     "vocab": "berorgs",
-    "name": "fachdienst"
+    "name": "fachdienst",
+    "type": "org"
   },
   "Landesamt": {
     "vocab": "berorgs",
-    "name": "landesamt"
+    "name": "landesamt",
+    "type": "org"
   },
   "Landesstelle": {
     "vocab": "berorgs",
-    "name": "landesstelle"
+    "name": "landesstelle",
+    "type": "org"
   },
   "Museum": {
     "vocab": "berorgs",
-    "name": "museum"
+    "name": "museum",
+    "type": "org"
   },
   "Referat": {
     "vocab": "berorgs",
-    "name": "referat"
+    "name": "referat",
+    "type": "org"
   },
   "Senatskanzlei": {
     "vocab": "berorgs",
-    "name": "senatskanzlei"
+    "name": "senatskanzlei",
+    "type": "org"
   },
   "Senatsverwaltung": {
     "vocab": "berorgs",
-    "name": "senatsverwaltung"
+    "name": "senatsverwaltung",
+    "type": "org"
   },
   "Serviceeinheit": {
     "vocab": "berorgs",
-    "name": "serviceeinheit"
+    "name": "serviceeinheit",
+    "type": "org"
   },
   "Öffentliches Unternehmen": {
     "vocab": "berorgs",
-    "name": "öffentlichesUnternehmen"
+    "name": "öffentlichesUnternehmen",
+    "type": "org"
   },
   "Büroleiter:in": {
     "vocab": "berorgs",
-    "name": "büroLeitung"
+    "name": "büroLeitung",
+    "type": "person"
   },
   "Pressesprecher:in": {
     "vocab": "berorgs",
-    "name": "pressesprecherIn"
+    "name": "pressesprecherIn",
+    "type": "person"
   },
   "Referatsleiter:in": {
     "vocab": "berorgs",
-    "name": "referatsleiterIn"
+    "name": "referatsleiterIn",
+    "type": "person"
   },
   "Referent:in": {
     "vocab": "berorgs",
-    "name": "referentIn"
+    "name": "referentIn",
+    "type": "person"
   },
   "Senator:in": {
     "vocab": "berorgs",
-    "name": "senatorIn"
+    "name": "senatorIn",
+    "type": "person"
   },
   "Staatssekretär:in": {
     "vocab": "berorgs",
-    "name": "staatssekretärIn"
+    "name": "staatssekretärIn",
+    "type": "person"
   },
   "Abteilungsleiter:in": {
     "vocab": "berorgs",
-    "name": "abteilungsleiterIn"
+    "name": "abteilungsleiterIn",
+    "type": "person"
   },
   "Datenschutzbeauftragte:r": {
     "vocab": "berorgs",
-    "name": "datenschutzbeauftragte"
+    "name": "datenschutzbeauftragte",
+    "type": "person"
   },
   "BüroLeiter:in": {
     "vocab": "berorgs",
-    "name": "büroLeiterIn"
-  },
-  "Organisationseinheit": {
-    "vocab": "berorgs",
-    "name": "organisationseinheit"
+    "name": "büroLeiterIn",
+    "type": "person"
   },
   "Stabsstelle": {
     "vocab": "berorgs",
-    "name": "stabsstelle"
+    "name": "stabsstelle",
+    "type": "org"
   },
   "Ressort": {
     "vocab": "berorgs",
-    "name": "ressort"
+    "name": "ressort",
+    "type": "org"
   },
   "Justitiariat": {
     "vocab": "berorgs",
-    "name": "justitiariat"
+    "name": "justitiariat",
+    "type": "org"
   }
 }

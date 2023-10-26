@@ -1,4 +1,3 @@
-import definitions from "../../schemas/organization_chart";
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
@@ -13,6 +12,9 @@ import UriSearch from "../From/UriSearch";
 import MainOrganisation from "../From/MainOrganisation";
 
 import CustomDropdown from "../From/CustomDropdown";
+
+import { getDefinitions } from "../../services/getDefinitions";
+const definitions = getDefinitions();
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });

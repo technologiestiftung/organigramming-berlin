@@ -1,7 +1,9 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import definitions from "../schemas/organization_chart";
 import { Subject } from "rxjs";
+
+import { getDefinitions } from "./getDefinitions";
+const definitions = getDefinitions();
 
 const subject1 = new Subject();
 const subject2 = new Subject();
