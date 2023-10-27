@@ -50,6 +50,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       },
       type: {
         "ui:placeholder": "Auswählen o. eingeben z.B. 'Abteilung'",
+        "ui:field": CustomDropdown,
       },
       isMainOrganisation: {
         "ui:headless": true,
@@ -130,6 +131,10 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
               "ui:field": "CollapsibleField",
               collapse: {
                 field: "ObjectField",
+              },
+              position: {
+                "ui:placeholder": "z.B. Referent:in",
+                "ui:field": CustomDropdown,
               },
               uri: {
                 "ui:headless": true,
