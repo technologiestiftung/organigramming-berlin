@@ -16,6 +16,7 @@ export function getDefinitions() {
 
   orgChart.definitions.organisation.properties.type.examples = orgs.sort();
   orgChart.definitions.department.properties.type.examples = orgs.sort();
-  orgChart.definitions.employee.properties.position.examples = persons.sort();
+  orgChart.definitions.position.properties.positionType.examples =
+    persons.sort();
   return orgChart;
 }

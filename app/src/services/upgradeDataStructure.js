@@ -15,6 +15,16 @@ function addUrisToOrgsAndEmployees(data) {
       }
     });
 
+    // add an URI to all positions
+    org.positions?.forEach((position) => {
+      if (!position.uri && !position.uri?.uri) {
+        position.uri = { uri: getURI("position") };
+      }
+      if (!position?.person?.uri && !position.person?.uri?.uri) {
+        position.person.uri = { uri: getURI("person") };
+      }
+    });
+
     // add an URI to all departments
     org.departments?.forEach((department) => {
       if (!department.uri && !department.uri?.uri) {
@@ -24,6 +34,15 @@ function addUrisToOrgsAndEmployees(data) {
       department.employees?.forEach((employee) => {
         if (!employee.uri && !employee.uri?.uri) {
           employee.uri = { uri: getURI("person") };
+        }
+      });
+
+      department.positions?.forEach((position) => {
+        if (!position.uri && !position.uri?.uri) {
+          position.uri = { uri: getURI("position") };
+        }
+        if (!position?.person?.uri && !position.person?.uri?.uri) {
+          position.person.uri = { uri: getURI("person") };
         }
       });
     });
@@ -75,6 +94,38 @@ function addNewPropsToOrgs(data) {
   });
 }
 
+function migrateEmployeesToPositionLogic(data) {
+  function eachEmployee(employees, orgOrDepartment) {
+    // if there are employees
+    if (employees) {
+      orgOrDepartment.positions = [];
+    } else {
+      return;
+    }
+    employees?.forEach((employee) => {
+      const employeePosition = employee.position;
+      delete employee.position;
+      orgOrDepartment.positions.push({
+        ...(employeePosition && { positionType: employeePosition }),
+        // position is new so a URI is added
+        uri: { uri: getURI("position") },
+        // "positionStatus" is a new attribute. it i therefor not migrated
+        person: employee,
+      });
+    });
+  }
+
+  data.organisations?.forEach((org) => {
+    eachEmployee(org.employees, org);
+    delete org.employees;
+    org.departments?.forEach((department) => {
+      eachEmployee(department.employees, department);
+      delete department.employees;
+    });
+    migrateEmployeesToPositionLogic(org);
+  });
+}
+
 // this functions adds new properties to the imported data if its missing.
 // e.g. the uri property has been added later to the tool
 export const upgradeDataStructure = (data) => {
@@ -88,6 +139,9 @@ export const upgradeDataStructure = (data) => {
 
   // traverse all orgs and add uris to orgs and employees
   addUrisToOrgsAndEmployees(data);
+
+  // rearrange data to move employees to position.person logic
+  migrateEmployeesToPositionLogic(data);
 
   return data;
 };

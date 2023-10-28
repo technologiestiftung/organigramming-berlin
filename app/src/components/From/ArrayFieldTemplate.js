@@ -13,19 +13,28 @@ const ArrayFieldTemplate = (props) => {
     }
   };
 
-  // add a uri for each employee
-  props.formData?.forEach((employees) => {
-    if (!employees.uri) {
+  // add a uri for each position and employee
+  props.formData?.forEach((positionOrDepartment) => {
+    if (!positionOrDepartment.uri) {
       // in case an old file is opened with no uri
-      employees.uri = {};
+      positionOrDepartment.uri = {};
+    }
+    if (!positionOrDepartment.uri?.uri) {
+      if (!positionOrDepartment.person) {
+        // this is a sub-org
+        positionOrDepartment.uri.uri = getURI("organisation");
+      } else {
+        positionOrDepartment.uri.uri = getURI("position");
+      }
     }
 
-    if (!employees.uri?.uri) {
-      if (!employees.gender && !employees.lastName) {
-        // this is a sub-org
-        employees.uri.uri = getURI("organisation");
-      } else {
-        employees.uri.uri = getURI("person");
+    if (positionOrDepartment.person) {
+      // in case an old file is opened with no uri
+      if (!positionOrDepartment.person.uri) {
+        positionOrDepartment.person.uri = {};
+      }
+      if (!positionOrDepartment.person.uri?.uri) {
+        positionOrDepartment.person.uri.uri = getURI("person");
       }
     }
   });

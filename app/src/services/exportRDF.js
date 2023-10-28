@@ -41,32 +41,60 @@ function hasKeys(obj) {
   return Object.keys(obj).length === 0 ? false : true;
 }
 
-function getMemberData(d) {
-  const dC = d.contact;
-  const newMemberJSONLD = {
-    "@type": typeVocabLookup[d.position]
-      ? [
-          "vcard:Individual",
-          `${typeVocabLookup[d.position].vocab}:${
-            typeVocabLookup[d.position].name
-          }`,
-        ]
-      : "vcard:Individual",
-    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
-    ...(d.uri &&
-      d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
-    ...(d.title && { "vcard:title": d.title }),
-    ...(d.salutation && { "vcard:honorific-prefix": d.salutation }),
-    ...(d.firstName && { "vcard:given-name": d.firstName }),
-    ...(d.lastName && { "vcard:family-name": d.lastName }),
-    ...(d.position &&
-      !typeVocabLookup[d.position] && {
-        "vcard:role": {
-          "@value": d.position,
+function getPositionData(position) {
+  const newPositionJSONLD = {
+    // "@type": "org:Post",
+    // // if the position IS in the vocab
+    // ...(position.positionType &&
+    //   typeVocabLookup[position.positionType] && {
+    //     "org:role": `${typeVocabLookup[position.positionType].vocab}:${
+    //       typeVocabLookup[position.positionType].name
+    //     }`,
+    //   }),
+    "@type":
+      position.positionType && typeVocabLookup[position.positionType]
+        ? [
+            "org:Post",
+            `${typeVocabLookup[position.positionType].vocab}:${
+              typeVocabLookup[position.positionType].name
+            }`,
+          ]
+        : ["org:Post"],
+    // if the position is NOT in the vocab
+    ...(position.positionType &&
+      !typeVocabLookup[position.positionType] && {
+        "@type": "org:Role",
+        "skos:prefLabel": {
+          "@value": position.positionType,
           "@language": "de",
         },
       }),
-    ...(d.gender && { "vcard:hasGender": d.gender }),
+    ...(position.positionStatus && { "rdfs:comment": position.positionStatus }),
+    ...(position.uri && position.uri.uri && { "@id": position.uri.uri }),
+    ...(position.uri &&
+      position.uri.uriSameAs && {
+        "owl:sameAs": { "@id": position.uri.uriSameAs },
+      }),
+  };
+
+  return newPositionJSONLD;
+}
+
+function getMemberData(d) {
+  const person = d.person;
+  const dC = person.contact;
+  const newMemberJSONLD = {
+    "@type": "vcard:Individual",
+    ...(person.uri && person.uri.uri && { "@id": person.uri.uri }),
+    ...(person.uri &&
+      person.uri.uriSameAs && {
+        "owl:sameAs": { "@id": person.uri.uriSameAs },
+      }),
+    ...(person.title && { "vcard:title": person.title }),
+    ...(person.salutation && { "vcard:honorific-prefix": person.salutation }),
+    ...(person.firstName && { "vcard:given-name": person.firstName }),
+    ...(person.lastName && { "vcard:family-name": person.lastName }),
+    ...(person.gender && { "vcard:hasGender": person.gender }),
 
     ...(dC.telephone && {
       "vcard:tel": dC.telephone,
@@ -80,6 +108,7 @@ function getMemberData(d) {
     ...(dC.website && {
       "vcard:url": dC.website,
     }),
+    "org:holds": { "@id": d.uri.uri },
   };
   return newMemberJSONLD;
 }
@@ -164,9 +193,14 @@ function getOrgData(d) {
       };
     }
   }
-  if (d.employees && d.employees.length) {
-    newOrgJSONLD["org:hasMember"] = d.employees.map((d) => {
+  if (d.positions && d.positions.length) {
+    newOrgJSONLD["org:hasMember"] = d.positions.map((d) => {
       return getMemberData(d);
+    });
+  }
+  if (d.positions && d.positions.length) {
+    newOrgJSONLD["org:hasPost"] = d.positions.map((d) => {
+      return getPositionData(d);
     });
   }
   if (d.departments && d.departments.length) {

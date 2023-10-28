@@ -61,7 +61,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       relationship: {
         "ui:widget": "hidden",
       },
-      employees: {
+      positions: {
         "ui:headless": true,
         items: {
           "ui:field": "CollapsibleField",
@@ -72,9 +72,21 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
             "ui:headless": true,
             "ui:field": "UriSearch",
           },
-          position: {
+          positionType: {
             "ui:placeholder": "z.B. Senator:in",
             "ui:field": CustomDropdown,
+          },
+          positionStatus: {
+            "ui:placeholder": "z.B. kommisarisch",
+            "ui:field": CustomDropdown,
+          },
+          person: {
+            // "ui:headless": true,
+            // add a title to the person field
+            uri: {
+              "ui:headless": true,
+              "ui:field": "UriSearch",
+            },
           },
         },
       },
@@ -121,24 +133,39 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       departments: {
         items: {
           "ui:headless": true,
+          type: {
+            "ui:placeholder": "z.B. Büro",
+            "ui:field": CustomDropdown,
+          },
           uri: {
             "ui:headless": true,
             "ui:field": "UriSearch",
           },
-          employees: {
+          positions: {
             "ui:headless": true,
             items: {
               "ui:field": "CollapsibleField",
               collapse: {
                 field: "ObjectField",
               },
-              position: {
+              positionType: {
                 "ui:placeholder": "z.B. Referent:in",
+                "ui:field": CustomDropdown,
+              },
+              positionStatus: {
+                "ui:placeholder": "z.B. kommisarisch",
                 "ui:field": CustomDropdown,
               },
               uri: {
                 "ui:headless": true,
                 "ui:field": "UriSearch",
+              },
+              person: {
+                // "ui:headless": true,
+                uri: {
+                  "ui:headless": true,
+                  "ui:field": "UriSearch",
+                },
               },
             },
           },
