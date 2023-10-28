@@ -17,7 +17,7 @@ import {
 } from "../../services/service";
 import "./ChartNode.scss";
 
-import ChartNodeEmployees from "./ChartNodeEmployees";
+import ChartNodePositions from "./ChartNodePositions";
 import ChartNodeDepartments from "./ChartNodeDepartments";
 
 const propTypes = {
@@ -205,7 +205,7 @@ const ChartNode = forwardRef(
         >
           <div
             className={`oc-container${
-              ds.layout?.grid !== "none" ? " grid" : ""
+              ds.layout?.grid === "grid2" ? " grid" : ""
             }`}
             style={{
               backgroundColor:
@@ -247,35 +247,36 @@ const ChartNode = forwardRef(
                 </h3>
               )}
             </div>
-            {(ds.departments || ds.employees || ds.contact || ds.address) && (
+            {(ds.departments || ds.positions || ds.contact || ds.address) && (
               <div className="oc-content">
-                {ds.employees && ds.layout?.grid !== "none" && (
+                {ds.positions && ds.layout?.grid === "grid2" && (
                   <div className="grid-container">
-                    <ChartNodeEmployees
+                    <ChartNodePositions
                       ds={ds}
                       data={data}
-                      employees={getHalfData(data.employees, "left")}
+                      positions={getHalfData(data.positions, "left")}
                     />
 
-                    <ChartNodeEmployees
+                    <ChartNodePositions
                       ds={ds}
                       data={data}
-                      employees={getHalfData(data.employees, "right")}
+                      positions={getHalfData(data.positions, "right")}
                     />
                   </div>
                 )}
-                {ds.employees && ds.layout?.grid === "none" && (
-                  <ChartNodeEmployees
-                    ds={ds}
-                    data={data}
-                    employees={data.employees}
-                  />
-                )}
+                {ds.positions &&
+                  (!ds.layout?.grid || ds.layout?.grid === "none") && (
+                    <ChartNodePositions
+                      ds={ds}
+                      data={data}
+                      positions={data.positions}
+                    />
+                  )}
                 {ds.departments && ds.departments.length > 0 && (
                   <hr className="mb-2"></hr>
                 )}
 
-                {ds.departments && ds.layout?.grid !== "none" && (
+                {ds.departments && ds.layout?.grid === "grid2" && (
                   <div className="grid-container">
                     <ChartNodeDepartments
                       ds={ds}
@@ -290,7 +291,7 @@ const ChartNode = forwardRef(
                     />
                   </div>
                 )}
-                {ds.departments && ds.layout?.grid === "none" && (
+                {(!ds.layout?.grid || ds.layout?.grid === "none") && (
                   <ChartNodeDepartments
                     ds={ds}
                     data={data}

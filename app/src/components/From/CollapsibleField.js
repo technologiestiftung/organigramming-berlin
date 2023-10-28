@@ -3,7 +3,8 @@ import react, { useState } from "react";
 import { Collapse, Button } from "react-bootstrap";
 
 const CollapsibleField = (_ref) => {
-  var title = _ref.schema.title ? _ref.schema.title : "";
+  let title = _ref.schema.title ? _ref.schema.title : "";
+  let personName = [];
   const uiSchema = _ref.uiSchema,
     fields = _ref.registry.fields,
     name = _ref.name;
@@ -13,14 +14,29 @@ const CollapsibleField = (_ref) => {
 
   title = uiSchema["ui:title"] ? uiSchema["ui:title"] : title ? title : name;
 
-  //For employee object
+  if (_ref.formData?.person) {
+    title = "Position";
+  }
+
+  //For person object
   if (
-    _ref.formData?.title ||
-    _ref.formData?.firstName ||
-    _ref.formData?.lastName
+    _ref.formData.positionType ||
+    _ref.formData?.person?.salutation ||
+    _ref.formData?.person?.title ||
+    _ref.formData?.person?.firstName ||
+    _ref.formData?.person?.lastName
   ) {
-    const contact = _ref.formData;
-    let personName = [];
+    const contact = _ref.formData?.person;
+    // let personName = [];
+    if (_ref.formData?.positionType) {
+      // add position
+      title = _ref.formData.positionType;
+    } else {
+      title = "Position";
+    }
+    if (contact.salutation) {
+      personName.push(contact.salutation);
+    }
     if (contact.title) {
       personName.push(contact.title);
     }
@@ -30,12 +46,13 @@ const CollapsibleField = (_ref) => {
     if (contact.lastName) {
       personName.push(contact.lastName);
     }
-    title = personName.join(" ");
+    personName = personName.join(" ");
   }
   //For employee object
-  if (_ref.formData?.name) {
-    title = _ref.formData.name;
-  }
+  // if (_ref.formData?.name) {
+  //   title = _ref.formData.name;
+  // }
+  // personName
 
   const [open, setOpen] = useState(false);
 
@@ -47,6 +64,7 @@ const CollapsibleField = (_ref) => {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-controls={title + "-collapse"}
+        style={{ textAlign: "left" }}
       >
         {open ? (
           <svg
@@ -78,6 +96,12 @@ const CollapsibleField = (_ref) => {
           </svg>
         )}
         {title}
+        {personName && (
+          <>
+            <br></br>
+            <small className="person-name">{personName}</small>
+          </>
+        )}
       </Button>
       <Collapse in={open}>
         <div>{react.createElement(CollapseElement, _props)}</div>

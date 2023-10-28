@@ -191,11 +191,11 @@
         "uri": {
           "$ref": "#/definitions/uri"
         },
-        "employees": {
-          "title": "Personen",
+        "positions": {
+          "title": "Positionen",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/employee"
+            "$ref": "#/definitions/position"
           }
         },
         "departments": {
@@ -266,22 +266,22 @@
         "uri": {
           "$ref": "#/definitions/uri"
         },
-        "employees": {
-          "title": "Personen",
+        "positions": {
+          "title": "Positionen",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/employee"
+            "$ref": "#/definitions/position"
           }
         }
       }
     },
-    "employee": {
+    "position": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "position": {
+        "positionType": {
           "type": "string",
-          "title": "Position",
+          "title": "Art der Position",
           "examples": [
             "Büroleiter:in",
             "Pressesprecher:in",
@@ -290,6 +290,23 @@
             "Staatssekretär:in"
           ]
         },
+        "positionStatus": {
+          "type": "string",
+          "title": "Zusatzbezeichnung",
+          "examples": ["stellvertretend", "kommissarisch", "N.N"]
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
+        "person": {
+          "$ref": "#/definitions/person"
+        }
+      }
+    },
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "salutation": {
           "type": "string",
           "title": "Anrede"
