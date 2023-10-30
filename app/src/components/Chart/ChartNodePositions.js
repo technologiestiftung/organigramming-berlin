@@ -27,7 +27,11 @@ const ChartNodePositions = forwardRef(({ ds, data, positions }, ref) => {
               >
                 <div className="ms-1 mb-1">
                   {position.positionType && (
-                    <span className="position">{position.positionType}</span>
+                    <span className="position">
+                      {position.positionType}
+                      {position.positionStatus &&
+                        " (" + position.positionStatus + ")"}
+                    </span>
                   )}
                   <h4 className="person">
                     {position?.person?.salutation}

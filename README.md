@@ -58,6 +58,11 @@ The Charts data structure is defined in:
 The Organisation UI is defined in:
 ./app/src/components/Sidebar/OrganisationTab.js
 
+## RDF Notes
+
+upload and run SPARQL
+https://atomgraph.github.io/SPARQL-Playground/
+
 ## Acknowledgement
 
 This project relies on the projects of Dabeng's [react-orgchart](https://github.com/dabeng/react-orgchart) and therefore on its precursor, Wesnolte's [jOrgChart](https://github.com/wesnolte/jOrgChart).

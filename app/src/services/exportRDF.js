@@ -218,7 +218,8 @@ export const exportRDF = (data) => {
       return organizations.map((org) => {
         if (org.layout.style === "hide") {
           const { organisations } = org;
-          return traverseOrganizations(organisations);
+          const result = traverseOrganizations(organisations);
+          return result[0];
         } else {
           const { organisations } = org;
           const result = getOrgData(org);

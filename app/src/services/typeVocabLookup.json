@@ -69,50 +69,45 @@
     "name": "öffentlichesUnternehmen",
     "type": "org"
   },
-  "Büroleiter:in": {
-    "vocab": "berorgs",
-    "name": "büroLeitung",
-    "type": "person"
-  },
   "Pressesprecher:in": {
     "vocab": "berorgs",
     "name": "pressesprecherIn",
-    "type": "person"
+    "type": "position"
   },
-  "Referatsleiter:in": {
+  "Referatsleitung": {
     "vocab": "berorgs",
-    "name": "referatsleiterIn",
-    "type": "person"
+    "name": "referatsleitung",
+    "type": "position"
   },
   "Referent:in": {
     "vocab": "berorgs",
     "name": "referentIn",
-    "type": "person"
+    "type": "position"
   },
   "Senator:in": {
     "vocab": "berorgs",
     "name": "senatorIn",
-    "type": "person"
+    "type": "position"
   },
   "Staatssekretär:in": {
     "vocab": "berorgs",
     "name": "staatssekretärIn",
-    "type": "person"
+    "type": "position"
   },
-  "Abteilungsleiter:in": {
+  "Abteilungsleitung": {
     "vocab": "berorgs",
-    "name": "abteilungsleiterIn",
-    "type": "person"
+    "name": "abteilungsleitung",
+    "type": "position"
   },
   "Datenschutzbeauftragte:r": {
     "vocab": "berorgs",
     "name": "datenschutzbeauftragte",
-    "type": "person"
+    "type": "position"
   },
-  "BüroLeiter:in": {
+  "BüroLeitung": {
     "vocab": "berorgs",
-    "name": "büroLeiterIn",
-    "type": "person"
+    "name": "büroLeitung",
+    "type": "position"
   },
   "Stabsstelle": {
     "vocab": "berorgs",

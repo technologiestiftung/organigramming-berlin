@@ -9,7 +9,7 @@ export function getDefinitions() {
     if (typeVocabLookup[type].type === "org") {
       orgs.push(type);
     }
-    if (typeVocabLookup[type].type === "person") {
+    if (typeVocabLookup[type].type === "position") {
       persons.push(type);
     }
   });
