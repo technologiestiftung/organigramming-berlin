@@ -133,6 +133,10 @@ export const upgradeDataStructure = (data) => {
   if (!data.meta) {
     data.meta = initDocument.meta;
   }
+  // add uri to document if not there
+  if (!data.document?.uri) {
+    data.document.uri = { uri: getURI("organigram") };
+  }
 
   // add new props to orgs if missing
   addNewPropsToOrgs(data);

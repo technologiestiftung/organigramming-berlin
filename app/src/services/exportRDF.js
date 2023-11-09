@@ -267,11 +267,30 @@ export const exportRDF = (data) => {
 
   let rdf = {
     "@context": rdfVocab,
-    ...(data.document?.version && {
-      "dcterms:created": data.document?.version,
+    "@id": data.document?.uri?.uri,
+    "@type": "berorgs:Organigramm",
+    "rdfs:label": {
+      "@value": data.document?.title || "",
+      "@language": "de",
+    },
+    ...(data.document?.creator && {
+      "dcterms:creator": {
+        "schema:name": {
+          "@value": data.document?.creator,
+          "@language": "de",
+        },
+      },
     }),
-    ...mainOrg,
-    ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
+    ...(data.document?.version && {
+      "dcterms:created": {
+        "@value": data.document?.version,
+        "@type": "xsd:date",
+      },
+    }),
+    "berorgs:contains": {
+      ...mainOrg,
+      ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
+    },
   };
 
   downloadData(data, rdf);

@@ -123,5 +123,20 @@
     "vocab": "berorgs",
     "name": "justitiariat",
     "type": "org"
+  },
+  "Leitungsstab": {
+    "vocab": "berorgs",
+    "name": "Leitungsstab",
+    "type": "position"
+  },
+  "Leitung des Leitungsstabes": {
+    "vocab": "berorgs",
+    "name": "LeitungDesLeitungsstabes",
+    "type": "position"
+  },
+  "Nachgeordnete Einrichtung": {
+    "vocab": "berorgs",
+    "name": "NachgeordneteEinrichtung",
+    "type": "org"
   }
 }
