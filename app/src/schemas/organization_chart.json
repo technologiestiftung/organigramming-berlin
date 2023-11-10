@@ -538,6 +538,11 @@
                   "default": "json-ld",
                   "enum": ["json-ld", "nquads", "turtle"],
                   "enumNames": ["JSON-LD", "N-Quads", "Turtle"]
+                },
+                "baseUri": {
+                  "type": "string",
+                  "title": "Basis URI ändern",
+                  "default": ""
                 }
               }
             }

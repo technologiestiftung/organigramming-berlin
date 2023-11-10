@@ -164,3 +164,17 @@ export const computeBackgroundColor = (userColor) => {
 function clamp(value, min = 0, max = 255) {
   return Math.min(Math.max(value, min), max);
 }
+
+export function replaceUrlParts(json, newBaseUri) {
+  for (let key in json) {
+    if (key === "@id") {
+      json[key] = json[key].replace(
+        "https://berlin.github.io/lod-organigram/",
+        newBaseUri
+      );
+    } else if (typeof json[key] === "object" && json[key] !== null) {
+      replaceUrlParts(json[key], newBaseUri);
+    }
+  }
+  return json;
+}

@@ -88,6 +88,9 @@ const ExportModal = (props) => {
           "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
         "ui:widget": "radio",
       },
+      baseUri: {
+        "ui:placeholder": "https://berlin.github.io/lod-organigram/",
+      },
     },
   };
 

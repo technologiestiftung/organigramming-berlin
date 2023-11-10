@@ -1,4 +1,4 @@
-import { toSnakeCase } from "./service";
+import { toSnakeCase, replaceUrlParts } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
@@ -7,9 +7,15 @@ import rdfVocab from "./rdfVocab.json";
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
   const rdfType = data.export.rdfType;
+  const baseUri = data.export?.baseUri;
+
   let fileData;
   let fileType = "";
   let fileExtension = "";
+
+  if (!baseUri || baseUri !== "https://berlin.github.io/lod-organigram/") {
+    rdf = replaceUrlParts(rdf, baseUri);
+  }
 
   if (rdfType === "json-ld") {
     fileData = JSON.stringify(rdf);
