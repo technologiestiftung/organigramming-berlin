@@ -13,7 +13,7 @@ const downloadData = async (data, rdf) => {
   let fileType = "";
   let fileExtension = "";
 
-  if (!baseUri || baseUri !== "https://berlin.github.io/lod-organigram/") {
+  if (baseUri && baseUri !== "https://berlin.github.io/lod-organigram/") {
     rdf = replaceUrlParts(rdf, baseUri);
   }
 
@@ -57,15 +57,13 @@ function getPositionData(position) {
     //       typeVocabLookup[position.positionType].name
     //     }`,
     //   }),
-    "@type":
-      position.positionType && typeVocabLookup[position.positionType]
-        ? [
-            "org:Post",
-            `${typeVocabLookup[position.positionType].vocab}:${
-              typeVocabLookup[position.positionType].name
-            }`,
-          ]
-        : ["org:Post"],
+    "@type": "org:Post",
+    ...(position.positionType &&
+      typeVocabLookup[position.positionType] && {
+        "org:role": `${typeVocabLookup[position.positionType].vocab}:${
+          typeVocabLookup[position.positionType].name
+        }`,
+      }),
     // if the position is NOT in the vocab
     ...(position.positionType &&
       !typeVocabLookup[position.positionType] && {
@@ -86,6 +84,12 @@ function getPositionData(position) {
   return newPositionJSONLD;
 }
 
+const genderHelper = {
+  m: "schema:Male",
+  f: "schema:Female",
+  d: "berorgs:Divers",
+};
+
 function getMemberData(d) {
   const person = d.person;
   const dC = person.contact;
@@ -100,8 +104,10 @@ function getMemberData(d) {
     ...(person.salutation && { "vcard:honorific-prefix": person.salutation }),
     ...(person.firstName && { "vcard:given-name": person.firstName }),
     ...(person.lastName && { "vcard:family-name": person.lastName }),
-    ...(person.gender && { "vcard:hasGender": person.gender }),
-
+    ...(person.gender &&
+      person.gender !== "1" && {
+        "schema:gender": genderHelper[person.gender],
+      }),
     ...(dC.telephone && {
       "vcard:tel": dC.telephone,
     }),
