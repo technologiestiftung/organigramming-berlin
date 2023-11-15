@@ -1,8 +1,14 @@
-import { toSnakeCase, replaceUrlParts } from "./service";
+import {
+  toSnakeCase,
+  replaceUrlParts,
+  getRoleTypeDescription,
+} from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
 import rdfVocab from "./rdfVocab.json";
+import getURI from "./getURI";
+const subClasses = {};
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
@@ -48,29 +54,36 @@ function hasKeys(obj) {
 }
 
 function getPositionData(position) {
+  // const vocab = {};
+
+  // if (position.positionType && typeVocabLookup[position.positionType]) {
+  //   vocab[typeVocabLookup[position.positionType].vocab] =
+  //     typeVocabLookup[position.positionType].name;
+  // }
+
   const newPositionJSONLD = {
-    // "@type": "org:Post",
-    // // if the position IS in the vocab
-    // ...(position.positionType &&
-    //   typeVocabLookup[position.positionType] && {
-    //     "org:role": `${typeVocabLookup[position.positionType].vocab}:${
-    //       typeVocabLookup[position.positionType].name
-    //     }`,
-    //   }),
     "@type": "org:Post",
     ...(position.positionType &&
       typeVocabLookup[position.positionType] && {
-        "org:role": `${typeVocabLookup[position.positionType].vocab}:${
-          typeVocabLookup[position.positionType].name
-        }`,
+        "org:role": {
+          "@id": `${typeVocabLookup[position.positionType].vocab}:${
+            typeVocabLookup[position.positionType].name
+          }`,
+        },
       }),
     // if the position is NOT in the vocab
     ...(position.positionType &&
       !typeVocabLookup[position.positionType] && {
-        "@type": "org:Role",
-        "skos:prefLabel": {
-          "@value": position.positionType,
-          "@language": "de",
+        "@type": "org:Post",
+        "org:role": {
+          "@type": "org:Role",
+          "@id": getURI("role", getRoleTypeDescription(position)),
+          "skos:prefLabel": {
+            "@value":
+              position.positionType +
+              (position?.positionStatus ? ` (${position.positionStatus})` : ""),
+            "@language": "de",
+          },
         },
       }),
     ...(position.positionStatus && { "rdfs:comment": position.positionStatus }),
@@ -89,7 +102,6 @@ const genderHelper = {
   f: "schema:Female",
   d: "berorgs:Divers",
 };
-
 function getMemberData(d) {
   const person = d.person;
   const dC = person.contact;
@@ -106,7 +118,7 @@ function getMemberData(d) {
     ...(person.lastName && { "vcard:family-name": person.lastName }),
     ...(person.gender &&
       person.gender !== "1" && {
-        "schema:gender": genderHelper[person.gender],
+        "schema:gender": { "@id": genderHelper[person.gender] },
       }),
     ...(dC.telephone && {
       "vcard:tel": dC.telephone,
@@ -126,13 +138,30 @@ function getMemberData(d) {
 }
 
 function getOrgData(d) {
+  const orgTypeUri = "berorgs:" + getURI("orgtype", d.type, true);
+  console.log("orgTypeUri", orgTypeUri);
+
+  if (!typeVocabLookup[d.type]) {
+    subClasses[orgTypeUri] = {
+      "@id": orgTypeUri,
+      "@type": "rdfs:Class",
+      "rdfs:subClassOf": {
+        "@id": "org:Organization",
+      },
+      "rdfs:label": {
+        "@value": d.type,
+        "@language": "de",
+      },
+    };
+  }
+
   const newOrgJSONLD = {
     "@type": typeVocabLookup[d.type]
       ? [
           "org:Organization",
           `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
         ]
-      : ["org:Organization", "rdfs:Class"],
+      : orgTypeUri,
     ...(d.uri &&
       d.uri.uriSameAs &&
       d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
@@ -163,14 +192,14 @@ function getOrgData(d) {
     //     },
     //   }),
     // in case the type can not be foun in berlinorgs
-    ...(d.type &&
-      !typeVocabLookup[d.type] && {
-        "rdfs:subClassOf": "org:Organization",
-        "rdfs:label": {
-          "@value": d.type,
-          "@language": "de",
-        },
-      }),
+    // ...(d.type &&
+    //   !typeVocabLookup[d.type] && {
+    //     "rdfs:subClassOf": "org:Organization",
+    //     "rdfs:label": {
+    //       "@value": d.type,
+    //       "@language": "de",
+    //     },
+    //   }),
   };
 
   const cD = d.contact;
@@ -248,8 +277,6 @@ export const exportRDF = (data) => {
         }
       });
     }
-
-    // return traverseOrganizations(inputJSON);
     return traverseOrganizations(inputJSON);
   }
 
@@ -303,6 +330,7 @@ export const exportRDF = (data) => {
       ...mainOrg,
       ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
     },
+    ...(subClasses && { berorgs: Object.values(subClasses) }),
   };
 
   downloadData(data, rdf);

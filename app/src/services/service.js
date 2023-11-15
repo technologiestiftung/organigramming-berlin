@@ -178,3 +178,16 @@ export function replaceUrlParts(json, newBaseUri) {
   }
   return json;
 }
+
+export function comparableString(inputString) {
+  if (!inputString) return "";
+
+  // Convert to lowercase and remove all spaces
+  return inputString.toLowerCase().replace(/\s/g, "");
+}
+
+export function getRoleTypeDescription(pos) {
+  return comparableString(
+    (pos?.positionType || "") + (pos?.positionStatus || "")
+  );
+}
