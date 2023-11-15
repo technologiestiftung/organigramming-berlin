@@ -107,7 +107,7 @@ const UriSearch = (props) => {
         <Collapse in={open}>
           <div>
             {" "}
-            <Form.Group className={"org-uri"}>
+            <Form.Group className={"org-uri"} style={{ overflow: "auto" }}>
               <Form.Label>{schema.properties.uri.title}</Form.Label>
               <Form.Control
                 type="text"
