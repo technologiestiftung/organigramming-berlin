@@ -167,7 +167,7 @@ function clamp(value, min = 0, max = 255) {
 
 export function replaceUrlParts(json, newBaseUri) {
   for (let key in json) {
-    if (key === "@id") {
+    if (key === "@id" || (key === "organigram" && !json["@context"])) {
       json[key] = json[key].replace(
         "https://berlin.github.io/lod-organigram/",
         newBaseUri

@@ -8,7 +8,7 @@ import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
 import rdfVocab from "./rdfVocab.json";
 import getURI from "./getURI";
-const subClasses = {};
+const subClasses = [];
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
@@ -138,11 +138,10 @@ function getMemberData(d) {
 }
 
 function getOrgData(d) {
-  const orgTypeUri = "berorgs:" + getURI("orgtype", d.type, true);
-  console.log("orgTypeUri", orgTypeUri);
+  const orgTypeUri = "organigram:" + getURI("orgtype", d.type, true);
 
-  if (!typeVocabLookup[d.type]) {
-    subClasses[orgTypeUri] = {
+  if (!typeVocabLookup[d.type] && d.type) {
+    subClasses.push({
       "@id": orgTypeUri,
       "@type": "rdfs:Class",
       "rdfs:subClassOf": {
@@ -152,7 +151,7 @@ function getOrgData(d) {
         "@value": d.type,
         "@language": "de",
       },
-    };
+    });
   }
 
   const newOrgJSONLD = {
@@ -306,31 +305,35 @@ export const exportRDF = (data) => {
 
   let rdf = {
     "@context": rdfVocab,
-    "@id": data.document?.uri?.uri,
-    "@type": "berorgs:Organigramm",
-    "rdfs:label": {
-      "@value": data.document?.title || "",
-      "@language": "de",
-    },
-    ...(data.document?.creator && {
-      "dcterms:creator": {
-        "schema:name": {
-          "@value": data.document?.creator,
+    "@graph": [
+      ...(subClasses && subClasses),
+      {
+        "@id": data.document?.uri?.uri,
+        "@type": "berorgs:Organigramm",
+        "rdfs:label": {
+          "@value": data.document?.title || "",
           "@language": "de",
         },
+        ...(data.document?.creator && {
+          "dcterms:creator": {
+            "schema:name": {
+              "@value": data.document?.creator,
+              "@language": "de",
+            },
+          },
+        }),
+        ...(data.document?.version && {
+          "dcterms:created": {
+            "@value": data.document?.version,
+            "@type": "xsd:date",
+          },
+        }),
+        "berorgs:contains": {
+          ...mainOrg,
+          ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
+        },
       },
-    }),
-    ...(data.document?.version && {
-      "dcterms:created": {
-        "@value": data.document?.version,
-        "@type": "xsd:date",
-      },
-    }),
-    "berorgs:contains": {
-      ...mainOrg,
-      ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
-    },
-    ...(subClasses && { berorgs: Object.values(subClasses) }),
+    ],
   };
 
   downloadData(data, rdf);
