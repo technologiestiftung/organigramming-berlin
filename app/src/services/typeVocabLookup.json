@@ -127,7 +127,7 @@
   "Leitungsstab": {
     "vocab": "berorgs",
     "name": "Leitungsstab",
-    "type": "position"
+    "type": "org"
   },
   "Leitung des Leitungsstabs": {
     "vocab": "berorgs",
@@ -152,6 +152,6 @@
   "Sekretär:in": {
     "vocab": "berorgs",
     "name": "SekretaerIn",
-    "type": "org"
+    "type": "position"
   }
 }

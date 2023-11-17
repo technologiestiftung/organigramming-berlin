@@ -143,7 +143,7 @@ function getOrgData(d) {
         "@id": "org:Organization",
       },
       "rdfs:label": {
-        "@value": d.type,
+        "@value": d.type || "",
         "@language": "de",
       },
     };
