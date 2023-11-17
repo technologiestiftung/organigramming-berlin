@@ -296,7 +296,7 @@
         "positionStatus": {
           "type": "string",
           "title": "Zusatzbezeichnung",
-          "examples": ["stellvertretend", "kommissarisch", "N.N"]
+          "examples": ["stellvertretend", "kommissarisch", "N.N."]
         },
         "uri": {
           "$ref": "#/definitions/uri"

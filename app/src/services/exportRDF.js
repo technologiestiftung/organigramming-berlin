@@ -2,6 +2,7 @@ import {
   toSnakeCase,
   replaceUrlParts,
   getRoleTypeDescription,
+  nameExists,
 } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
@@ -54,13 +55,6 @@ function hasKeys(obj) {
 }
 
 function getPositionData(position) {
-  // const vocab = {};
-
-  // if (position.positionType && typeVocabLookup[position.positionType]) {
-  //   vocab[typeVocabLookup[position.positionType].vocab] =
-  //     typeVocabLookup[position.positionType].name;
-  // }
-
   const newPositionJSONLD = {
     "@type": "org:Post",
     ...(position.positionType &&
@@ -103,6 +97,7 @@ const genderHelper = {
   d: "berorgs:Divers",
 };
 function getMemberData(d) {
+  if (!nameExists(d)) return;
   const person = d.person;
   const dC = person.contact;
   const newMemberJSONLD = {
@@ -183,22 +178,6 @@ function getOrgData(d) {
         "@language": "de",
       },
     }),
-    // ...(d.type &&
-    //   !typeVocabLookup[d.type] && {
-    //     "org:classification": {
-    //       "@value": d.type,
-    //       "@language": "de",
-    //     },
-    //   }),
-    // in case the type can not be foun in berlinorgs
-    // ...(d.type &&
-    //   !typeVocabLookup[d.type] && {
-    //     "rdfs:subClassOf": "org:Organization",
-    //     "rdfs:label": {
-    //       "@value": d.type,
-    //       "@language": "de",
-    //     },
-    //   }),
   };
 
   const cD = d.contact;
@@ -280,7 +259,6 @@ export const exportRDF = (data) => {
   }
 
   // get the document data which will the the main org
-  // const docOrg = getOrgData(data.document);
   let mainOrg;
   let subOrgs;
   if (data.organisations.length === 1) {

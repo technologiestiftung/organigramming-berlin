@@ -181,13 +181,19 @@ export function replaceUrlParts(json, newBaseUri) {
 
 export function comparableString(inputString) {
   if (!inputString) return "";
-
   // Convert to lowercase and remove all spaces
-  return inputString.toLowerCase().replace(/\s/g, "");
+  return inputString.toLowerCase().replaceAll(/\s/g, "");
 }
 
 export function getRoleTypeDescription(pos) {
   return comparableString(
     (pos?.positionType || "") + (pos?.positionStatus || "")
   );
+}
+
+export function nameExists(pos) {
+  let fullName = comparableString(
+    (pos?.person?.firstName || "") + (pos?.person?.lastName || "")
+  );
+  return fullName ? true : false;
 }

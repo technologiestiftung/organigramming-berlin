@@ -22,7 +22,7 @@ export default function checkForDuplicatePersons(formData) {
       org?.positions?.forEach((e) => {
         const person = e.person;
         const name = getName(person);
-        if (name === " ") return;
+        if (name === " " || name === "") return;
         if (!persons[name]) {
           persons[name] = {
             uri: person.uri?.uri,
