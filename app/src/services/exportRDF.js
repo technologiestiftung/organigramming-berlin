@@ -135,7 +135,7 @@ function getMemberData(d) {
 function getOrgData(d) {
   const orgTypeUri = "organigram:" + getURI("orgtype", d.type, true);
 
-  if (!typeVocabLookup[d.type] && d.type) {
+  if (!typeVocabLookup[d.type]) {
     subClasses[orgTypeUri] = {
       "@id": orgTypeUri,
       "@type": "rdfs:Class",

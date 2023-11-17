@@ -29,7 +29,7 @@ function generateHexCodeByString(hexLength, str) {
 
 // add type: Org or person
 export default function getURI(type, str, noUrl) {
-  if (str) {
+  if (str || noUrl) {
     return (
       (noUrl
         ? `${type}-`
