@@ -93,7 +93,7 @@ function getPositionData(position) {
 
 const genderHelper = {
   m: "schema:Male",
-  f: "schema:Female",
+  w: "schema:Female",
   d: "berorgs:Divers",
 };
 function getMemberData(d) {
