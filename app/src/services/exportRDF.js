@@ -9,7 +9,7 @@ import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
 import rdfVocab from "./rdfVocab.json";
 import getURI from "./getURI";
-const subClasses = [];
+const subClasses = {};
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
@@ -136,7 +136,7 @@ function getOrgData(d) {
   const orgTypeUri = "organigram:" + getURI("orgtype", d.type, true);
 
   if (!typeVocabLookup[d.type] && d.type) {
-    subClasses.push({
+    subClasses[orgTypeUri] = {
       "@id": orgTypeUri,
       "@type": "rdfs:Class",
       "rdfs:subClassOf": {
@@ -146,7 +146,7 @@ function getOrgData(d) {
         "@value": d.type,
         "@language": "de",
       },
-    });
+    };
   }
 
   const newOrgJSONLD = {
@@ -284,7 +284,7 @@ export const exportRDF = (data) => {
   let rdf = {
     "@context": rdfVocab,
     "@graph": [
-      ...(subClasses && subClasses),
+      ...(subClasses && Object.values(subClasses)),
       {
         "@id": data.document?.uri?.uri,
         "@type": "berorgs:Organigramm",
