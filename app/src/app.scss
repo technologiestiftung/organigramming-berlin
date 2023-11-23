@@ -15,6 +15,17 @@ body {
   overflow: hidden;
 }
 
+.btn {
+  .person-name {
+    float: left;
+    margin-left: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+}
+
 .btn.btn-light {
   border: none;
   svg {
@@ -62,6 +73,16 @@ body {
   }
 }
 
+.customDropdown {
+  position: relative;
+  svg {
+    right: 10px;
+    position: relative;
+    float: right;
+    top: 40px;
+    pointer-events: none;
+  }
+}
 .react-joyride {
   &-portal {
     overflow: hidden;

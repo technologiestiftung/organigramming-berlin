@@ -1,7 +1,9 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import definitions from "../schemas/organization_chart";
 import { Subject } from "rxjs";
+
+import { getDefinitions } from "./getDefinitions";
+const definitions = getDefinitions();
 
 const subject1 = new Subject();
 const subject2 = new Subject();
@@ -103,3 +105,95 @@ export const validateData = (data) => {
   const validate = ajv.compile(definitions);
   return [validate(data), validate.errors];
 };
+
+export const getContrastTextColor = (bgColor) => {
+  if (!bgColor) return "white";
+  // Convert hex color to RGB values
+  let color = bgColor.charAt(0) === "#" ? bgColor.substring(1, 7) : bgColor;
+  let r = parseInt(color.substring(0, 2), 16); // Red
+  let g = parseInt(color.substring(2, 4), 16); // Green
+  let b = parseInt(color.substring(4, 6), 16); // Blue
+
+  // Calculate brightness (luminance)
+  let brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  return brightness > 155 ? "#333" : "white";
+};
+
+export const getHalfData = (data, position) => {
+  const half = Math.ceil(data.length / 2);
+  if (position === "right") {
+    const right = data.slice(half);
+    return right;
+  }
+  if (position === "left") {
+    const left = data.slice(0, half);
+    return left;
+  }
+};
+
+export const computeBackgroundColor = (userColor) => {
+  const r = parseInt(userColor.substring(1, 3), 16);
+  const g = parseInt(userColor.substring(3, 5), 16);
+  const b = parseInt(userColor.substring(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  let adjustmentFactor = 40; // You can adjust this value based on how much you want to darken or lighten
+
+  if (brightness > 155) {
+    // If it's bright, darken the color
+    return `#${clamp(r - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(g - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(b - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}`;
+  } else {
+    // If it's dark, lighten the color
+    return `#${clamp(r + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(g + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(b + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}`;
+  }
+};
+
+function clamp(value, min = 0, max = 255) {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function replaceUrlParts(json, newBaseUri) {
+  for (let key in json) {
+    if (key === "@id" || (key === "organigram" && !json["@context"])) {
+      json[key] = json[key].replace(
+        "https://berlin.github.io/lod-organigram/",
+        newBaseUri
+      );
+    } else if (typeof json[key] === "object" && json[key] !== null) {
+      replaceUrlParts(json[key], newBaseUri);
+    }
+  }
+  return json;
+}
+
+export function comparableString(inputString) {
+  if (!inputString) return "";
+  // Convert to lowercase and remove all spaces
+  return inputString.toLowerCase().replaceAll(/\s/g, "");
+}
+
+export function getRoleTypeDescription(pos) {
+  return comparableString(
+    (pos?.positionType || "") + (pos?.positionStatus || "")
+  );
+}
+
+export function nameExists(pos) {
+  let fullName = comparableString(
+    (pos?.person?.firstName || "") + (pos?.person?.lastName || "")
+  );
+  return fullName ? true : false;
+}

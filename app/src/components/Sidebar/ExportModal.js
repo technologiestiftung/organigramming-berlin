@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Row, Col, Alert } from "react-bootstrap";
-import definitions from "../../schemas/organization_chart";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import { toSnakeCase } from "../../services/service";
+import checkForDuplicatePersons from "../../services/checkForDuplicatePersons";
 
 import Form from "@rjsf/bootstrap-4";
 
+import { getDefinitions } from "../../services/getDefinitions";
+const definitions = getDefinitions();
+
 const ExportModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
-  const [showInfo, setShowInfo] = useState(false);
+  const [showPDFInfo, setShowPDFInfo] = useState(false);
+  const [showRDFInfo, setShowRDFInfo] = useState(false);
+  const [warningMultiMainOrgs, setWarningMultiMainOrgs] = useState(false);
+  const [duplicatePersons, setDuplicatePersons] = useState([]);
+
   const properties = {
     properties: {
       export: {
@@ -18,14 +25,38 @@ const ExportModal = (props) => {
   };
 
   useEffect(() => {
+    // check if there are more than one main org
+    if (formData?.organisations) {
+      let mainCounter = 0;
+      formData.organisations.forEach((org) => {
+        if (org.isMainOrganisation) {
+          mainCounter++;
+        }
+      });
+      if (mainCounter > 1) {
+        setWarningMultiMainOrgs(true);
+      }
+    }
+
+    const personsDuplicates = checkForDuplicatePersons(formData);
+    setDuplicatePersons(personsDuplicates);
+
     if (
       formData.export.exportType === "pdf" &&
       formData.export.pdfType === "print" &&
       formData.export.saveExport === "export"
     ) {
-      setShowInfo(true);
+      setShowPDFInfo(true);
     } else {
-      setShowInfo(false);
+      setShowPDFInfo(false);
+    }
+    if (
+      formData.export.exportType === "rdf" &&
+      formData.export.saveExport === "export"
+    ) {
+      setShowRDFInfo(true);
+    } else {
+      setShowRDFInfo(false);
     }
     if (!formData.export) {
       setFormData({
@@ -57,11 +88,15 @@ const ExportModal = (props) => {
           "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
         "ui:widget": "radio",
       },
+      baseUri: {
+        "ui:placeholder": "https://berlin.github.io/lod-organigram/",
+      },
     },
   };
 
   const onExport = () => {
     onBlur();
+    console.log("formData", formData);
     if (formData.export.saveExport === "save") {
       props.onSave(true);
     } else {
@@ -71,6 +106,9 @@ const ExportModal = (props) => {
           break;
         case "png":
           props.onExport("png", formData.export.includeLogo);
+          break;
+        case "rdf":
+          props.onExport("rdf", false, false, formData.export.rdfType);
           break;
         case "json":
           props.onSave(formData.export.includeLogo);
@@ -126,7 +164,7 @@ const ExportModal = (props) => {
             </Form>
           </Col>
         </Row>
-        {showInfo && (
+        {showPDFInfo && (
           <Row>
             <Col className="mb-3">
               <Alert variant="success">
@@ -166,12 +204,62 @@ const ExportModal = (props) => {
             </Col>
           </Row>
         )}
+        {showRDFInfo && (
+          <Row>
+            <Col className="mb-3">
+              <Alert variant="success">
+                <p>
+                  Diese Funktion erlaubt es die Daten in verschiedenen
+                  RDF-Formaten zu exportieren.{" "}
+                </p>
+              </Alert>
+              {warningMultiMainOrgs && (
+                <Alert variant="danger">
+                  <p>
+                    Sie haben mehrer Organisationen als Hauptorganisation
+                    ausgewählt. Bitte wählen Sie nur <b>eine Organisation</b>{" "}
+                    als Hauptorganisation aus.
+                  </p>
+                </Alert>
+              )}
+
+              {Object.keys(duplicatePersons).length !== 0 && (
+                <Alert variant="warning">
+                  Achtung. Folgende Personen-Einträge haben den gleichen Namen
+                  aber unterschiedliche URIs. Bitte passen sie die URIs
+                  gegebenfalls an.
+                  <br /> <br />
+                  <ul>
+                    {Object.keys(duplicatePersons).map((name) => (
+                      <li key={name}>
+                        <b>{name}</b> erscheint {duplicatePersons[name].counter}{" "}
+                        mal mit verschiedenen URIs in folgenden Organisationen
+                        <br />
+                        <ul>
+                          {duplicatePersons[name].orgNames.map((aName, i) => (
+                            <li>
+                              {/* style={"paddingLeft":"10px"} */}
+                              <span key={"span" + aName}>{aName}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </Alert>
+              )}
+            </Col>
+          </Row>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button className="btn btn-danger" onClick={props.onHide}>
           Abbrechen
         </Button>
-        <Button onClick={onExport}>
+        <Button
+          onClick={onExport}
+          disabled={showRDFInfo && warningMultiMainOrgs}
+        >
           {formData &&
           formData.export &&
           formData.export.saveExport === "export"

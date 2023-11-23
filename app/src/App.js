@@ -23,15 +23,18 @@ import JSONDigger from "./services/jsonDigger";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
 
 const initdata = () => {
+  let doc = initDocument;
   if (localStorage.getItem("data") !== null) {
     try {
       return JSON.parse(localStorage.getItem("data"));
     } catch (error) {
       localStorage.setItem("data", "");
-      return initDocument;
+      doc = upgradeDataStructure(doc);
+      return doc;
     }
   } else {
-    return initDocument;
+    doc = upgradeDataStructure(doc);
+    return doc;
   }
 };
 
@@ -119,7 +122,8 @@ const App = () => {
 
   const exportTo = (fileextension, includeLogo = true, pdfType = "") => {
     const fileName = data.export.filename || toSnakeCase(data.document.title);
-    chart.current.exportTo(fileName, fileextension, includeLogo, pdfType);
+
+    chart.current.exportTo(fileName, fileextension, includeLogo, data, pdfType);
   };
 
   useMount(() => {
@@ -197,7 +201,7 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
-      upgradeDataStructure(result);
+      result = upgradeDataStructure(result);
       const [valid, errors] = validateData(result);
 
       if (!valid) {

@@ -47,6 +47,9 @@
         "note": {
           "type": "string",
           "title": "Fußzeile"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
         }
       },
       "required": ["title"],
@@ -59,6 +62,11 @@
         "id": {
           "type": "string"
         },
+        "isMainOrganisation": {
+          "type": "boolean",
+          "default": false,
+          "title": "Als Hauptorganisation festlegen"
+        },
         "type": {
           "type": "string",
           "examples": [
@@ -66,21 +74,16 @@
             "Amt",
             "Bezirksamt",
             "Büro",
-            "Büroleiter:in",
             "Fachbereich",
             "Fachdienst",
             "Landesamt",
             "Landesstelle",
             "Museum",
             "Other",
-            "Pressesprecher:in",
             "Referat",
-            "Referent:in",
             "Senatskanzlei",
-            "Senator:in",
             "Senatsverwaltung",
             "Serviceeinheit",
-            "Staatssekretär:in",
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],
@@ -92,28 +95,29 @@
         },
         "altName": {
           "type": "string",
-          "title": "Alternative Bezeichnung"
+          "title": "Kürzel"
         },
-        "uri": {
-          "$ref": "#/definitions/uri"
-        },
-        "style": {
+        "purpose": {
           "type": "string",
-          "title": "Stil",
-          "default": "default",
-          "enum": ["default", "emphasized", "light", "hide"],
-          "enumNames": [
-            "Standard",
-            "Hervorgehoben",
-            "Zurückgenommen",
-            "Verbindungspunkt"
-          ]
+          "title": "Zusatzbezeichnung"
         },
-        "background": {
+        "layout": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "color": {
+            "style": {
+              "type": "string",
+              "title": "Stil",
+              "default": "default",
+              "enum": ["default", "emphasized", "light", "hide"],
+              "enumNames": [
+                "Standard",
+                "Hervorgehoben",
+                "Zurückgenommen",
+                "Verbindung"
+              ]
+            },
+            "bgColor": {
               "title": "Hintergrundfarbe",
               "type": "string",
               "default": "",
@@ -130,10 +134,15 @@
                 "#db9f29",
                 "#e5bbd0",
                 "#988bc2",
-                "#999999",
                 "#00b140",
                 "#97d700",
-                "#c4d600"
+                "#c4d600",
+                "#333333",
+                "#666666",
+                "#999999",
+                "#cccccc",
+                "#e6e6e6",
+                "#f2f2f2"
               ],
               "enumNames": [
                 "Standard",
@@ -148,21 +157,33 @@
                 "Orange",
                 "Rosa",
                 "Violett",
-                "Grau",
                 "Pantone 354",
                 "Pantone 375",
-                "Pantone 382"
+                "Pantone 382",
+                "Schwarz 80%",
+                "Schwarz 60%",
+                "Schwarz 40%",
+                "Schwarz 20%",
+                "Schwarz 10%",
+                "Schwarz 5%"
               ]
             },
-            "style": {
+            "bgStyle": {
               "title": "Hintergrund Stil",
               "type": "string",
               "default": "default",
               "enum": ["default", "half"],
               "enumNames": ["Voll", "Halb"]
+            },
+            "grid": {
+              "title": "Anordnung",
+              "type": "string",
+              "default": "none",
+              "enum": ["none", "grid2"],
+              "enumNames": ["Untereinander", "2 Reihen"]
             }
           },
-          "title": "Hintergrund"
+          "title": "Gestaltung"
         },
         "address": {
           "$ref": "#/definitions/address"
@@ -170,11 +191,14 @@
         "contact": {
           "$ref": "#/definitions/contact"
         },
-        "employees": {
-          "title": "Personen",
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
+        "positions": {
+          "title": "Positionen",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/employee"
+            "$ref": "#/definitions/position"
           }
         },
         "departments": {
@@ -216,16 +240,73 @@
           "title": "Abteilung/Stellenbezeichnung",
           "default": "Neue Organisationsuntereinheit"
         },
-        "employees": {
-          "title": "Personen",
+        "purpose": {
+          "type": "string",
+          "title": "Beschreibung"
+        },
+        "type": {
+          "type": "string",
+          "examples": [
+            "Abteilung",
+            "Amt",
+            "Bezirksamt",
+            "Büro",
+            "Fachbereich",
+            "Fachdienst",
+            "Landesamt",
+            "Landesstelle",
+            "Museum",
+            "Other",
+            "Referat",
+            "Senatskanzlei",
+            "Senatsverwaltung",
+            "Serviceeinheit",
+            "Öffentliches Unternehmen",
+            "Unternehmen"
+          ],
+          "title": "Art"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
+        "positions": {
+          "title": "Positionen",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/employee"
+            "$ref": "#/definitions/position"
           }
         }
       }
     },
-    "employee": {
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "positionType": {
+          "type": "string",
+          "title": "Art der Position",
+          "examples": [
+            "Büroleiter:in",
+            "Pressesprecher:in",
+            "Referent:in",
+            "Senator:in",
+            "Staatssekretär:in"
+          ]
+        },
+        "positionStatus": {
+          "type": "string",
+          "title": "Zusatzbezeichnung",
+          "examples": ["stellvertretend", "kommissarisch", "N.N."]
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
+        "person": {
+          "$ref": "#/definitions/person"
+        }
+      }
+    },
+    "person": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -245,21 +326,24 @@
           "type": "string",
           "title": "Nachname"
         },
-        "position": {
+        "gender": {
           "type": "string",
-          "title": "Position"
-        },
-        "uri": {
-          "$ref": "#/definitions/uri"
+          "title": "Geschlecht",
+          "default": "1",
+          "enum": ["m", "w", "d", "1"],
+          "enumNames": ["Männlich", "Weiblich", "Divers", "ohne Angabe"]
         },
         "contact": {
           "$ref": "#/definitions/contact"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
         }
       },
       "title": "Person"
     },
     "uri": {
-      "title": "Uniform Resource Identifier (URI)",
+      "title": "Verknüpfungen (URIs)",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -267,11 +351,15 @@
           "title": "URI",
           "type": "string"
         },
-        "uriLabel": {
+        "uriSameAs": {
+          "title": "Externe Verknüpfung",
+          "type": "string"
+        },
+        "uriSameAsLabel": {
           "title": "URI Label",
           "type": "string"
         },
-        "uriDescription": {
+        "uriSameAsDescription": {
           "title": "URI Description",
           "type": "string"
         }
@@ -395,8 +483,8 @@
                   "type": "string",
                   "title": "Dateiformat",
                   "default": "pdf",
-                  "enum": ["json", "svg", "png", "pdf"],
-                  "enumNames": ["JSON", "SVG", "PNG", "PDF"]
+                  "enum": ["json", "svg", "png", "pdf", "rdf"],
+                  "enumNames": ["JSON", "SVG", "PNG", "PDF", "RDF"]
                 }
               }
             }
@@ -436,6 +524,25 @@
                   "default": "print",
                   "enum": ["print", "png"],
                   "enumNames": ["Als PDF \"drucken\"", "Bidmap"]
+                }
+              }
+            },
+            {
+              "properties": {
+                "exportType": {
+                  "enum": ["rdf"]
+                },
+                "rdfType": {
+                  "type": "string",
+                  "title": "RDF Format",
+                  "default": "json-ld",
+                  "enum": ["json-ld", "nquads", "turtle"],
+                  "enumNames": ["JSON-LD", "N-Quads", "Turtle"]
+                },
+                "baseUri": {
+                  "type": "string",
+                  "title": "Basis URI ändern",
+                  "default": ""
                 }
               }
             }

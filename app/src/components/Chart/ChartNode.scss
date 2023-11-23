@@ -43,6 +43,9 @@
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
         }
+        &.hide {
+          margin-bottom: 14px;
+        }
         &:not(:only-child) {
           &::after {
             content: "";
@@ -75,6 +78,10 @@
           &:hover {
             transform: translateY(-1px);
             box-shadow: rgba($gray-600, 0.5) 0px 8px 24px;
+          }
+          &.grid {
+            width: auto;
+            min-width: 14rem;
           }
           .oc-heading {
             width: 100%;
@@ -109,6 +116,16 @@
             // white-space: nowrap;
             text-align: left;
             background-color: $white;
+
+            .grid-container {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              ul {
+                width: 13.1rem;
+              }
+            }
+
             ul.departments {
               display: block;
               padding-top: 0.3rem;
@@ -136,7 +153,7 @@
                 }
               }
             }
-            ul.employees {
+            ul.positions {
               display: block;
               li {
                 width: 100%;
@@ -216,6 +233,9 @@
           }
           .oc-container {
             width: 17rem;
+            &.grid {
+              width: auto;
+            }
             font-size: 1.5rem;
             background-color: $supCurrentColor;
             .oc-heading {
@@ -251,7 +271,7 @@
           .oc-container {
             background-color: $supCurrentColor;
             height: 1rem;
-            width: 1rem;
+            width: 0rem;
             border-radius: 10px;
             .oc-heading {
               display: none;
@@ -682,7 +702,6 @@ body.drag-demo {
     }
   }
 }
-
 
 body.context-demo {
   #n3 {

@@ -9,6 +9,7 @@ import { Button } from "react-bootstrap";
 import OrganizationChart from "./ChartContainer";
 import JSONDigger from "../../services/jsonDigger";
 import { v4 as uuidv4 } from "uuid";
+import getURI from "../../services/getURI";
 
 const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   const orgchart = useRef();
@@ -89,7 +90,12 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const getNewNode = () => {
-    return { type: "Neue", name: "Organisation", id: "n" + uuidv4() };
+    return {
+      type: "",
+      name: "Organisation",
+      id: "n" + uuidv4(),
+      uri: { uri: getURI("organisation") },
+    };
   };
 
   const addSiblingNode = async () => {

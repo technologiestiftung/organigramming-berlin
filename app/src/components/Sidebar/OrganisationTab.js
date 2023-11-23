@@ -1,14 +1,20 @@
-import definitions from "../../schemas/organization_chart";
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Stack } from "react-bootstrap";
 import Form from "@rjsf/bootstrap-4";
 import { v4 as uuidv4 } from "uuid";
 import AlertModal from "./AlertModal";
+import getURI from "../../services/getURI";
 
 import ArrayFieldTemplate from "../From/ArrayFieldTemplate";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import CollapsibleField from "../From/CollapsibleField";
 import UriSearch from "../From/UriSearch";
+import MainOrganisation from "../From/MainOrganisation";
+
+import CustomDropdown from "../From/CustomDropdown";
+
+import { getDefinitions } from "../../services/getDefinitions";
+const definitions = getDefinitions();
 
 const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const [formData, setFormData] = useState({ current: selected });
@@ -30,6 +36,8 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     CollapsibleField: CollapsibleField,
     ArrayFieldTemplate: ArrayFieldTemplate,
     UriSearch: UriSearch,
+    MainOrganisation: MainOrganisation,
+    CustomDropdown: CustomDropdown,
   };
 
   const schema = { ...definitions, ...properties };
@@ -40,10 +48,20 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       id: {
         "ui:widget": "hidden",
       },
+      type: {
+        "ui:placeholder": "Auswählen o. eingeben z.B. 'Abteilung'",
+        "ui:field": CustomDropdown,
+      },
+      isMainOrganisation: {
+        "ui:headless": true,
+        "ui:field": "MainOrganisation",
+        dsDigger: dsDigger,
+        selected: selected,
+      },
       relationship: {
         "ui:widget": "hidden",
       },
-      employees: {
+      positions: {
         "ui:headless": true,
         items: {
           "ui:field": "CollapsibleField",
@@ -53,6 +71,22 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           uri: {
             "ui:headless": true,
             "ui:field": "UriSearch",
+          },
+          positionType: {
+            "ui:placeholder": "z.B. Senator:in",
+            "ui:field": CustomDropdown,
+          },
+          positionStatus: {
+            "ui:placeholder": "z.B. kommisarisch",
+            "ui:field": CustomDropdown,
+          },
+          person: {
+            // "ui:headless": true,
+            // add a title to the person field
+            uri: {
+              "ui:headless": true,
+              "ui:field": "UriSearch",
+            },
           },
         },
       },
@@ -74,25 +108,23 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
           field: "ObjectField",
         },
       },
-      background: {
+      layout: {
         "ui:headless": true,
         "ui:field": "CollapsibleField",
         collapse: {
           field: "ObjectField",
         },
-        color: {},
         style: {
-          "ui:disabled": !formData.current.background
-            ? false
-            : !formData.current.background.color,
+          title: "Stil",
+        },
+        bgColor: {},
+        bgStyle: {
+          "ui:disabled": !formData.current.layout?.bgColor,
           "ui:widget": "radio",
           "ui:options": {
             inline: true,
           },
         },
-      },
-      style: {
-        title: "Stil",
       },
       organisations: {
         "ui:headless": true,
@@ -101,16 +133,39 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
       departments: {
         items: {
           "ui:headless": true,
-          employees: {
+          type: {
+            "ui:placeholder": "z.B. Büro",
+            "ui:field": CustomDropdown,
+          },
+          uri: {
+            "ui:headless": true,
+            "ui:field": "UriSearch",
+          },
+          positions: {
             "ui:headless": true,
             items: {
               "ui:field": "CollapsibleField",
               collapse: {
                 field: "ObjectField",
               },
+              positionType: {
+                "ui:placeholder": "z.B. Referent:in",
+                "ui:field": CustomDropdown,
+              },
+              positionStatus: {
+                "ui:placeholder": "z.B. kommisarisch",
+                "ui:field": CustomDropdown,
+              },
               uri: {
                 "ui:headless": true,
                 "ui:field": "UriSearch",
+              },
+              person: {
+                // "ui:headless": true,
+                uri: {
+                  "ui:headless": true,
+                  "ui:field": "UriSearch",
+                },
               },
             },
           },
@@ -126,9 +181,9 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   };
 
   function whenDataChanges(e) {
-    if (!e.formData.current.background.color) {
-      e.formData.current.background.style = "default";
-    }
+    // if (!e.formData.current.layout.bgColor) {
+    //   e.formData.current.layout.style = "default";
+    // }
   }
 
   useEffect(() => {
@@ -159,9 +214,13 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   };
 
   const getNewNode = () => {
-    return { type: "", name: "Organisation", id: "n" + uuidv4() };
+    return {
+      type: "",
+      name: "Organisation",
+      id: "n" + uuidv4(),
+      uri: { uri: getURI("organisation") },
+    };
   };
-
   const addSiblingNode = async () => {
     const newNode = getNewNode();
     await dsDigger.addSiblings(selected.id, newNode);

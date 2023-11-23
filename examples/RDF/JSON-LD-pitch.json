@@ -1,0 +1,101 @@
+{
+  "@context": {
+    "org": "http://www.w3.org/ns/org#",
+    "vcard": "http://www.w3.org/2006/vcard/ns#"
+  },
+  "@id": "http://example.org/organizations#MyToplevelOrganization",
+  "@type": "org:Organization",
+  "org:name": "My Toplevel Organization",
+  "org:classification": "Nonprofit",
+  "org:hasSite": {
+    "@type": "org:Site",
+    "org:siteAddress": {
+      "@type": "vcard:Address",
+      "vcard:street-address": "Hausnummer + Straße + Gebäude + Raum",
+      "vcard:postal-code": "PLZ",
+      "vcard:locality": "Berlin",
+      "vcard:region": "Berlin",
+      "vcard:country-name": "Germnay"
+    },
+    "vcard:tel": {
+      "@type": "vcard:Work",
+      "vcard:hasValue": "tel:TEL"
+    },
+    "vcard:fax": {
+      "@type": "vcard:Work",
+      "vcard:hasValue": "fax:FAX"
+    },
+    "vcard:email": {
+      "@type": "vcard:Work",
+      "vcard:hasValue": "john.doe@example.com"
+    },
+    "vcard:url": {
+      "@type": "vcard:Work",
+      "vcard:hasValue": "https://www.example.com/johndoe"
+    }
+  },
+  "org:hasMember": [
+    {
+      "@type": "vcard:Individual",
+      "vcard:title": "Mr.",
+      "vcard:given-name": "Vorname",
+      "vcard:family-name": "Namchname 1",
+      "vcard:role": "Software Engineer",
+      "vcard:additional-name": "Frau",
+      "vcard:tel": {
+        "@type": "vcard:Work",
+        "vcard:hasValue": "tel:+1-555-555-5555"
+      },
+      "vcard:fax": {
+        "@type": "vcard:Work",
+        "vcard:hasValue": "fax:+1-555-555-5556"
+      },
+      "vcard:email": {
+        "@type": "vcard:Work",
+        "vcard:hasValue": "john.doe@example.com"
+      },
+      "vcard:url": {
+        "@type": "vcard:Work",
+        "vcard:hasValue": "https://www.example.com/johndoe"
+      }
+    }
+  ],
+  "org:hasUnit": [
+    {
+      "@type": "org:OrganizationalUnit",
+      "org:name": "Associated Unit to top level",
+      "org:classification": "Nonprofit",
+      "org:unitOf": "http://example.org/organizations#MyToplevelOrganization",
+      "org:hasMember": [
+        {
+          "@type": "vcard:Individual",
+          "vcard:given-name": "Assosicated Name Example"
+        }
+      ]
+    }
+  ],
+  "org:hasSubOrganization": [
+    {
+      "@id": "http://example.org/organizations#SubOrganization1",
+      "@type": "org:Organization",
+      "org:name": "Sub-Organization 1",
+      "org:hasSubOrganization": [
+        {
+          "@id": "http://example.org/organizations#SubSubOrganization1",
+          "@type": "org:Organization",
+          "org:name": "Sub-Sub-Organization 1"
+        }
+      ]
+    },
+    {
+      "@id": "http://example.org/organizations#SubOrganization2",
+      "@type": "org:Organization",
+      "org:name": "Sub-Organization 2"
+    },
+    {
+      "@id": "http://example.org/organizations#SubOrganization3",
+      "@type": "org:Organization",
+      "org:name": "Sub-Organization 3"
+    }
+  ]
+}
