@@ -109,18 +109,18 @@ const InfoModal = (props) => {
                 }}
               >
                 <img
-                  src="images/odis.svg"
+                  src="images/logo-odis-berlin-black.svg"
                   alt="Logo der Open Data Informationsstelle Berlin"
                   style={{ width: "156px" }}
                 />
                 <img
-                  src="images/tsb.svg"
+                  src="images/TSB-2023-Logo-outline-quer-3zeilig-schwarz-RGB.svg"
                   alt="Logo der Technologiestiftung Berlin"
                   style={{ width: "116px" }}
                 />
                 <img
-                  src="images/senweb.svg"
-                  alt="Logo der Senatsverwaltung für Wirtschaft, Energie und Betriebe"
+                  src="images/logo-senatskanzlei-buergermeister-vertikal-schwarz.svg"
+                  alt="Logo der Berliner Senatskanzlei"
                   style={{ width: "96px" }}
                 />
               </div>
