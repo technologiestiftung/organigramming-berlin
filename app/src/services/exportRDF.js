@@ -287,7 +287,7 @@ export const exportRDF = (data) => {
       ...(subClasses && Object.values(subClasses)),
       {
         "@id": data.document?.uri?.uri,
-        "@type": "berorgs:Organigramm",
+        "@type": "berorgs:Organogram",
         "rdfs:label": {
           "@value": data.document?.title || "",
           "@language": "de",
