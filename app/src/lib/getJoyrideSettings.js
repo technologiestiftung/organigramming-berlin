@@ -67,7 +67,7 @@ export const getJoyrideSettings = (controlLayer) => {
       },
       {
         content:
-          "Über diese Maske können Sie den Inhalt der Box anpassen. Tragen Sie den Namen (Bezeichnung) der Organisationseinheit ein. Sie können auch eine Anschrift und Kontaktinformationen der Einheit eintragen. Zu einer Organisationseinheit können außerdem Personen und zugehörige Organisationseinheiten gehören.",
+          "Über diese Maske können Sie den Inhalt der Box anpassen. Tragen Sie den Namen (Bezeichnung) der Organisationseinheit ein. Falls Nebenorganisationen auf derselben Ebene generiert werden, muss eine Organisationseinheit als Hauptorganisation festgelegt werden. Sie können Anschrift und Kontaktinformationen der Einheit eintragen, sowie Personen und zugehörige Organisationseinheiten.",
         placement: "right",
         styles: {
           options: {
@@ -126,7 +126,7 @@ export const getJoyrideSettings = (controlLayer) => {
         target: ".expand-item",
         title: "Personeninformationen bearbeiten",
         content:
-          "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person.",
+          "Um Daten zu einer Person einzutragen, wie Anrede, Name und Kontaktdaten, öffnen Sie das Dropdown-Menü durch einen Klick auf die Person. Unter 'Verknüpfungen' kann Wikidata nach Einträgen durchsucht und bei Bedarf die URI angepasst werden ",
       },
       {
         content:
@@ -211,7 +211,7 @@ export const getJoyrideSettings = (controlLayer) => {
       },
       {
         content:
-          "Sie können ein fertiges Organigramm als PDF, als Bilddatei oder als maschinenlesbare JSON-Datei exportieren. Die JSON-Datei können Sie später nutzen, um das Organigramm wieder einzuladen und daran weiterzuarbeiten.",
+          "Sie können ein fertiges Organigramm als PDF, als Bilddatei, als maschinenlesbare JSON-Datei, oder im Linked Open Data Format RDF exportieren. Die JSON-Datei können Sie später nutzen, um das Organigramm wieder einzuladen und daran weiterzuarbeiten.",
         disableBeacon: true,
         spotlightClicks: false,
         disableOverlayClose: true,
