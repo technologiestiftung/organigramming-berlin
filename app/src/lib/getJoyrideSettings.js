@@ -83,7 +83,7 @@ export const getJoyrideSettings = (controlLayer) => {
       },
       {
         content:
-          "Über das Suchfeld lässt sich die Organisationseinheit durch einen sogenannten Unique Ressource Identifier (URI) mit einem Eintrag in Wikidata verknüpfen. So können die Daten mit dem semantischen Web verbunden werden. Es ist auch möglich andere URIs anzugeben.",
+          "Im Bereich ‚Verknüpfungen (URIs)‘ wird einer Organisationseinheit eine Art Identifikationsnummer zugeordnet. Falls für dieselbe Organisationseinheit bereits eine weitere Identifikationsnummer vergeben wurde, z.B. über die Gemeinsame Normdatei oder Wikidata, kann der Link manuell eingefügt werden, oder über die Suche aufgerufen werden.",
         placement: "right",
         styles: {
           options: {
@@ -94,8 +94,8 @@ export const getJoyrideSettings = (controlLayer) => {
         spotlightClicks: false,
         disableOverlayClose: true,
         spotlightPadding: 10,
-        target: ".org-uri",
-        title: "URI angeben",
+        target: "[aria-controls='Verknüpfungen (URIs)-collapse']",
+        title: "Verknüpfungen herstellen (optional)",
       },
       {
         placement: "right",
