@@ -133,6 +133,11 @@ const App = () => {
   const handleJoyrideCallback = (jRData) => {
     const { action, index, status, type } = jRData;
 
+    if (action === "close") {
+      setState({ run: false, stepIndex: 0 });
+      return;
+    }
+
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
       // Update state to advance the tour
       const stepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
