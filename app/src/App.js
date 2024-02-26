@@ -151,12 +151,19 @@ const App = () => {
       } else if (stepIndex > 3 && stepIndex < 9) {
         setSelected(data.organisations[0]);
         if (stepIndex === 8) {
-          // const tab = controlLayer.current;
-          // document.getElementById("organisation-tab").scrollTo(0, 0);
-          const element = document.getElementById("organisation-tab");
-          element.scrollIntoView({
-            block: "center",
-          });
+          function selectElementUntilExists(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+              element.scrollIntoView();
+              setState({ stepIndex: stepIndex });
+            } else {
+              setTimeout(function () {
+                selectElementUntilExists(elementId);
+              }, 30);
+            }
+          }
+
+          selectElementUntilExists("organisation-tab");
         }
       } else if (stepIndex === 9) {
         chart.current.orgchart.demoDragMode(true, "n6");
