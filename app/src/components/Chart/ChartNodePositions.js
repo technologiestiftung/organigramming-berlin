@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 
-import { isDefiend } from "../../services/service";
+import { isDefiend, getGenderedPosition } from "../../services/service";
 import "./ChartNode.scss";
 
 const ChartNodePositions = forwardRef(({ ds, data, positions }, ref) => {
@@ -28,7 +28,10 @@ const ChartNodePositions = forwardRef(({ ds, data, positions }, ref) => {
                 <div className="ms-1 mb-1">
                   {position.positionType && (
                     <span className="position">
-                      {position.positionType}
+                      {getGenderedPosition(
+                        position.positionType,
+                        position?.person?.gender
+                      )}
                       {position.positionStatus &&
                         " (" + position.positionStatus + ")"}
                     </span>
