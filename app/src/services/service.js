@@ -197,3 +197,22 @@ export function nameExists(pos) {
   );
   return fullName ? true : false;
 }
+
+export function getGenderedPosition(position, gender) {
+  if (gender === "m" || gender === "w") {
+    const splittedPosition = position.split(":");
+    const ending = splittedPosition[splittedPosition.length - 1];
+
+    if (ending === "in") {
+      const genderedPosition =
+        gender === "w" ? splittedPosition[0] + "in" : splittedPosition[0];
+      return genderedPosition;
+    }
+
+    if (ending === "r") {
+      return gender === "w" ? splittedPosition[0] : splittedPosition[0] + "r";
+    }
+  } else {
+    return position;
+  }
+}
