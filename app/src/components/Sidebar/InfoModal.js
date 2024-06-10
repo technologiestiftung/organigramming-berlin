@@ -86,8 +86,8 @@ const InfoModal = (props) => {
                   Open Data Informationsstelle Berlin (ODIS)
                 </a>
                 {""} entwickelt, einem Projekt der Technologiestiftung Berlin,
-                gefördert von der Senatsverwaltung für Wirtschaft, Energie und
-                Betriebe.
+                gefördert von der Senatskanzlei Berlin und der Investitionsbank
+                Berlin aus den Mitteln des Landes Berlin.
                 <a
                   target="blank"
                   href="https://www.technologiestiftung-berlin.de/impressum"
@@ -108,21 +108,31 @@ const InfoModal = (props) => {
                   paddingBottom: "12px",
                 }}
               >
-                <img
-                  src="images/logo-odis-berlin-black.svg"
-                  alt="Logo der Open Data Informationsstelle Berlin"
-                  style={{ width: "156px" }}
-                />
-                <img
-                  src="images/TSB-2023-Logo-outline-quer-3zeilig-schwarz-RGB.svg"
-                  alt="Logo der Technologiestiftung Berlin"
-                  style={{ width: "116px" }}
-                />
-                <img
-                  src="images/logo-senatskanzlei-buergermeister-vertikal-schwarz.svg"
-                  alt="Logo der Berliner Senatskanzlei"
-                  style={{ width: "96px" }}
-                />
+                <a href="https://odis-berlin.de" target="blank">
+                  <img
+                    src="images/logo-odis-berlin-black.svg"
+                    alt="Logo der Open Data Informationsstelle Berlin"
+                    style={{ width: "156px" }}
+                  />
+                </a>
+                <a
+                  href="https://www.technologiestiftung-berlin.de/"
+                  target="blank"
+                >
+                  <img
+                    src="images/TSB-2023-Logo-outline-quer-3zeilig-schwarz-RGB.svg"
+                    alt="Logo der Technologiestiftung Berlin"
+                    style={{ width: "116px" }}
+                  />{" "}
+                </a>
+
+                <a href="https://www.berlin.de/rbmskzl/" target="blank">
+                  <img
+                    src="images/logo-senatskanzlei-buergermeister-vertikal-schwarz.svg"
+                    alt="Logo der Berliner Senatskanzlei"
+                    style={{ width: "96px" }}
+                  />{" "}
+                </a>
               </div>
             </Col>
           </Row>
