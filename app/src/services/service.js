@@ -8,6 +8,11 @@ const definitions = getDefinitions();
 const subject1 = new Subject();
 const subject2 = new Subject();
 
+export const getFileNameFromURL = (url) => {
+  if (!url) return;
+  const urlSplitted = url.split("/");
+  return urlSplitted[urlSplitted.length - 1];
+};
 export const dragNodeService = {
   sendDragInfo: (id) => subject1.next({ draggedNodeId: id }),
   clearDragInfo: () => subject1.next(),

@@ -31,6 +31,7 @@ const Sidebar = forwardRef(
       onJoyrideStart,
       dsDigger,
       closeNewDocumentModal,
+      dataURL,
     },
     ref
   ) => {
@@ -47,10 +48,11 @@ const Sidebar = forwardRef(
     };
 
     useEffect(() => {
+      // if dataURL exists, do not show intro modal
       // check to show info modal
-      setInfoModalShow(data === initDocument);
+      setInfoModalShow(data === initDocument && !dataURL);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [dataURL]);
 
     useEffect(() => {
       setNewDocumentModalShow(false);
