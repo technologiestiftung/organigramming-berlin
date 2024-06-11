@@ -144,7 +144,7 @@ const UriSearch = (props) => {
                 labelKey={labelKey}
                 options={options}
                 placeholder={"Wikidata durchsuchen oder andere URI einfügen"}
-                // disabled={formData.uriSameAs}
+                disabled={formData.uriSameAs}
                 onChange={(selected) => {
                   // when something is selected
                   ref.current?.clear();
