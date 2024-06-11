@@ -144,11 +144,11 @@ const UriSearch = (props) => {
                 labelKey={labelKey}
                 options={options}
                 placeholder={"Wikidata durchsuchen oder andere URI einfügen"}
-                disabled={formData.uriSameAs}
+                // disabled={formData.uriSameAs}
                 onChange={(selected) => {
                   // when something is selected
                   ref.current?.clear();
-                  if (!selected[0]) return;
+                  if (!selected || !selected[0]) return;
                   const data = {
                     uriSameAs: selected[0][valueKey],
                     uriSameAsLabel: selected[0]["label"],
@@ -226,6 +226,8 @@ const UriSearch = (props) => {
                   </Button>
                 )}
               </Typeahead>
+              <br></br>
+              <br></br>
             </Form.Group>
           </div>
         </Collapse>
