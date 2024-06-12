@@ -51,6 +51,67 @@ function addUrisToOrgsAndEmployees(data) {
   });
 }
 
+function toSameAsArray(d) {
+  return {
+    uri: d.uri || "",
+    sameAsUris: [
+      {
+        uriSameAs: d.uriSameAs || "",
+        uriSameAsLabel: d.uriSameAsLabel || "",
+        uriSameAsDescription: d.uriSameAsDescription || "",
+      },
+    ],
+  };
+}
+
+function moveSameAsToArray(data) {
+  data.organisations?.forEach((org) => {
+    if (org.uri?.uriSameAs) {
+      org.uri = toSameAsArray(org.uri);
+    }
+
+    org.employees?.forEach((employee) => {
+      if (employee.uri.uriSameAs) {
+        employee.uri = toSameAsArray(employee.uri);
+      }
+    });
+
+    // add an URI to all positions
+    org.positions?.forEach((position) => {
+      if (position?.uri?.uriSameAs) {
+        position.uri = toSameAsArray(position.uri);
+      }
+      if (position.person?.uri?.uriSameAs) {
+        position.person.uri = toSameAsArray(position.person.uri);
+      }
+    });
+
+    org.departments?.forEach((department) => {
+      if (department?.uri?.uriSameAs) {
+        department.uri = toSameAsArray(department.uri);
+      }
+
+      department.employees?.forEach((employee) => {
+        if (employee.uri?.uriSameAs) {
+          employee.uri = toSameAsArray(employee.uri);
+        }
+      });
+
+      department.positions?.forEach((position) => {
+        if (position.uri?.uriSameAs) {
+          position.uri = toSameAsArray(position.uri);
+        }
+
+        if (position.person?.uri?.uriSameAs) {
+          position.person.uri = toSameAsArray(position.person.uri);
+        }
+      });
+    });
+
+    moveSameAsToArray(org);
+  });
+}
+
 function addNewPropsToOrgs(data) {
   data.organisations?.forEach((org) => {
     // add an URI to all orgs
@@ -138,11 +199,19 @@ export const upgradeDataStructure = (data) => {
     data.document.uri = { uri: getURI("organigram") };
   }
 
+  // if doc has prop uriSameAs -> move it to sameAsUris
+  if (data.document.uri.uriSameAs) {
+    data.document.uri = toSameAsArray(data.document.uri);
+  }
+
   // add new props to orgs if missing
   addNewPropsToOrgs(data);
 
   // traverse all orgs and add uris to orgs and employees
   addUrisToOrgsAndEmployees(data);
+
+  // traverse all orgs and employees and move prop uriSameAs ->  to sameAsUris
+  moveSameAsToArray(data);
 
   // rearrange data to move employees to position.person logic
   migrateEmployeesToPositionLogic(data);

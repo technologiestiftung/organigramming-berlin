@@ -8,6 +8,12 @@ const definitions = getDefinitions();
 const subject1 = new Subject();
 const subject2 = new Subject();
 
+export const getSameAsURIs = (sameAsUris) => {
+  return sameAsUris.map((d) => {
+    return { "@id": d.uriSameAs };
+  });
+};
+
 export const getFileNameFromURL = (url) => {
   if (!url) return;
   const urlSplitted = url.split("/");

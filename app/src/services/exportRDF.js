@@ -3,6 +3,7 @@ import {
   replaceUrlParts,
   getRoleTypeDescription,
   nameExists,
+  getSameAsURIs,
 } from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
@@ -81,11 +82,10 @@ function getPositionData(position) {
         },
       }),
     ...(position.positionStatus && { "rdfs:comment": position.positionStatus }),
-    ...(position.uri && position.uri.uri && { "@id": position.uri.uri }),
-    ...(position.uri &&
-      position.uri.uriSameAs && {
-        "owl:sameAs": { "@id": position.uri.uriSameAs },
-      }),
+    ...(position?.uri?.uri && { "@id": position.uri.uri }),
+    ...(position?.uri?.sameAsUris && {
+      "owl:sameAs": getSameAsURIs(position.uri.sameAsUris),
+    }),
   };
 
   return newPositionJSONLD;
@@ -102,11 +102,10 @@ function getMemberData(d) {
   const dC = person.contact;
   const newMemberJSONLD = {
     "@type": "vcard:Individual",
-    ...(person.uri && person.uri.uri && { "@id": person.uri.uri }),
-    ...(person.uri &&
-      person.uri.uriSameAs && {
-        "owl:sameAs": { "@id": person.uri.uriSameAs },
-      }),
+    ...(person?.uri?.uri && { "@id": person.uri.uri }),
+    ...(person?.uri?.sameAsUris && {
+      "owl:sameAs": getSameAsURIs(person.uri.sameAsUris),
+    }),
     ...(person.title && { "vcard:title": person.title }),
     ...(person.salutation && { "vcard:honorific-prefix": person.salutation }),
     ...(person.firstName && { "vcard:given-name": person.firstName }),
@@ -156,10 +155,10 @@ function getOrgData(d) {
           `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
         ]
       : orgTypeUri,
-    ...(d.uri &&
-      d.uri.uriSameAs &&
-      d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
-    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+    ...(d?.uri?.uri && { "@id": d.uri.uri }),
+    ...(d?.uri?.sameAsUris && {
+      "owl:sameAs": getSameAsURIs(d.uri.sameAsUris),
+    }),
     ...(d.name && {
       "skos:prefLabel": {
         "@value": d.name,
@@ -287,6 +286,9 @@ export const exportRDF = (data) => {
       ...(subClasses && Object.values(subClasses)),
       {
         "@id": data.document?.uri?.uri,
+        ...(data.document?.uri?.sameAsUris && {
+          "owl:sameAs": getSameAsURIs(data.document.uri.sameAsUris),
+        }),
         "@type": "berorgs:Organogram",
         "rdfs:label": {
           "@value": data.document?.title || "",

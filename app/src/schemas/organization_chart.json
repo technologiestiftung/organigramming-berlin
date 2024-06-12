@@ -342,15 +342,11 @@
       },
       "title": "Person"
     },
-    "uri": {
-      "title": "Verknüpfungen (URIs)",
+    "sameAsInfo": {
       "type": "object",
+      "title": "Information about same as URI",
       "additionalProperties": false,
       "properties": {
-        "uri": {
-          "title": "URI",
-          "type": "string"
-        },
         "uriSameAs": {
           "title": "Externe Verknüpfung",
           "type": "string"
@@ -362,6 +358,24 @@
         "uriSameAsDescription": {
           "title": "URI Description",
           "type": "string"
+        }
+      }
+    },
+    "uri": {
+      "title": "Verknüpfungen (URIs)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "URI",
+          "type": "string"
+        },
+        "sameAsUris": {
+          "type": "array",
+          "title": "Externe Verknüpfung",
+          "items": {
+            "$ref": "#/definitions/sameAsInfo"
+          }
         }
       }
     },
