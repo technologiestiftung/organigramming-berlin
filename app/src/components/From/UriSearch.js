@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Collapse } from "react-bootstrap";
-import { Typeahead, TypeaheadInputMulti } from "react-bootstrap-typeahead";
+import { Typeahead } from "react-bootstrap-typeahead";
 import { useDebounce } from "use-debounce";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
@@ -18,6 +18,8 @@ const UriSearch = (props) => {
     "https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&errorformat=plaintext&language=de&origin=*&uselang=de&type=item&search=";
   const labelKey = "label";
   const valueKey = "url";
+
+  // const urlGND = "https://lobid.org/gnd/search?q=picasso&format=json";
 
   useEffect(() => {
     if (debouncedInputValue) {
@@ -52,13 +54,15 @@ const UriSearch = (props) => {
     }
   }, [debouncedInputValue]);
 
-  function unlink() {
+  function unlink(d) {
+    let sameAsUris = formData.sameAsUris.filter(
+      (item) => item["uriSameAs"] !== d["uriSameAs"]
+    );
     const data = {
       uri: formData.uri,
-      uriSameAs: "",
-      uriSameAsLabel: "",
-      uriSameAsDescription: "",
+      sameAsUris: sameAsUris,
     };
+
     onChange(data);
     setOptions([]);
   }
@@ -136,28 +140,38 @@ const UriSearch = (props) => {
                 />
               </div>
 
-              <Form.Label>{schema.properties.uriSameAs.title}</Form.Label>
+              <Form.Label>{schema.properties.sameAsUris.title}</Form.Label>
+
               <Typeahead
                 className="uri-ui"
                 ref={ref}
                 id={"typeahead" + schema.id}
                 labelKey={labelKey}
                 options={options}
+                selectHint={(d) => {
+                  return false;
+                }}
                 placeholder={"Wikidata durchsuchen oder andere URI einfügen"}
-                disabled={formData.uriSameAs}
+                // disabled={formData.uriSameAs}
                 onChange={(selected) => {
                   // when something is selected
                   ref.current?.clear();
                   if (!selected || !selected[0]) return;
                   const data = {
-                    uriSameAs: selected[0][valueKey],
-                    uriSameAsLabel: selected[0]["label"],
-                    uriSameAsDescription: selected[0]["description"],
                     uri: formData.uri,
+                    sameAsUris: [
+                      ...(formData.sameAsUris || []),
+                      {
+                        uriSameAs: selected[0][valueKey],
+                        uriSameAsLabel: selected[0]["label"],
+                        uriSameAsDescription: selected[0]["description"],
+                      },
+                    ],
                   };
                   // remove focus from input
                   ref.current?.blur();
                   onChange(data);
+                  setOptions([]);
                 }}
                 onInputChange={(text) => {
                   setInputValue(text);
@@ -166,66 +180,76 @@ const UriSearch = (props) => {
                 isLoading={isLoading}
                 filterBy={() => true}
                 renderMenuItemChildren={(option) => (
-                  <div>
+                  <div
+                    style={{
+                      position: "relative",
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                    }}
+                    title={option.label + ": " + option.description}
+                  >
                     {option.label}
-                    <div>
+                    <div
+                      style={{
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                      }}
+                    >
                       <small>{option.description}</small>
                     </div>
-                  </div>
-                )}
-                renderInput={(inputProps, props) => (
-                  <TypeaheadInputMulti
-                    {...inputProps}
-                    selected={formData.uriSameAs}
-                  >
-                    {formData.uriSameAs && (
-                      <div
-                        style={{
-                          width: "100%",
-                          marginBottom: "5px",
-                          paddingTop: "0px",
-                          cursor: "default",
-                          paddingRight: "22px",
-                        }}
-                      >
-                        {formData.uriSameAsLabel}
-                        <br></br>
-                        <a
-                          href={formData.uriSameAs}
-                          target="blank"
-                          rel="noreferrer"
-                        >
-                          <small>{formData.uriSameAsDescription}</small>
-                        </a>
-                      </div>
-                    )}
-                  </TypeaheadInputMulti>
-                )}
-              >
-                {formData.uriSameAs && (
-                  <Button
-                    style={{
-                      top: 0,
-                      right: 0,
-                      position: "absolute",
-                      zIndex: 10,
-                    }}
-                    variant="link"
-                    onClick={unlink}
-                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
                       height="16"
                       fill="currentColor"
-                      className="bi bi-x-lg"
+                      className="bi bi-plus-circle"
                       viewBox="0 0 16 16"
+                      style={{
+                        position: "absolute",
+                        top: "0px",
+                        right: "0px",
+                        stroke: "#132458",
+                        strokeWidth: "0.5px",
+                      }}
                     >
-                      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                     </svg>
-                  </Button>
+                  </div>
                 )}
-              </Typeahead>
+              ></Typeahead>
+              {formData?.sameAsUris && (
+                <div style={{ marginTop: "20px" }}></div>
+              )}
+              {formData?.sameAsUris &&
+                formData.sameAsUris.map((d, i) => (
+                  <div className="same-as">
+                    {d.uriSameAsLabel}
+                    <br></br>
+                    <a href={d.uriSameAs} target="blank" rel="noreferrer">
+                      <small>{d.uriSameAsDescription}</small>
+                    </a>
+
+                    <Button
+                      variant="link"
+                      onClick={() => unlink(d)}
+                      title="löschen"
+                      className="btn btn-danger btn-sm m-1 btn-light flex-shrink-1"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                        style={{ marginBottom: "2px" }}
+                      >
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
+                      </svg>
+                    </Button>
+                  </div>
+                ))}
               <br></br>
               <br></br>
             </Form.Group>
