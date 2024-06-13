@@ -71,7 +71,7 @@ function moveSameAsToArray(data) {
     }
 
     org.employees?.forEach((employee) => {
-      if (employee.uri.uriSameAs) {
+      if (employee.uri?.uriSameAs) {
         employee.uri = toSameAsArray(employee.uri);
       }
     });
