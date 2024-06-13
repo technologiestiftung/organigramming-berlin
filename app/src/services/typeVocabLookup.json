@@ -153,5 +153,10 @@
     "vocab": "berorgs",
     "name": "SekretaerIn",
     "type": "position"
+  },
+  "Bezirksbürgermeister:in": {
+    "vocab": "berorgs",
+    "name": "BezirksbuergermeisterIn",
+    "type": "position"
   }
 }
