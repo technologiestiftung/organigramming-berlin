@@ -15,11 +15,11 @@ const ArrayFieldTemplate = (props) => {
 
   // add a uri for each position and employee
   props.formData?.forEach((positionOrDepartment) => {
-    if (!positionOrDepartment.uri) {
+    if (!positionOrDepartment.uri && !positionOrDepartment.uriSameAs) {
       // in case an old file is opened with no uri
       positionOrDepartment.uri = {};
     }
-    if (!positionOrDepartment.uri?.uri) {
+    if (!positionOrDepartment.uri?.uri && !positionOrDepartment.uriSameAs) {
       if (!positionOrDepartment.person) {
         // this is a sub-org
         positionOrDepartment.uri.uri = getURI("organisation");

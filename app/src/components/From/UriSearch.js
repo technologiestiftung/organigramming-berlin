@@ -179,7 +179,7 @@ const UriSearch = (props) => {
                 emptyLabel="Keine URI gefunden"
                 isLoading={isLoading}
                 filterBy={() => true}
-                renderMenuItemChildren={(option) => (
+                renderMenuItemChildren={(option, i) => (
                   <div
                     style={{
                       position: "relative",
@@ -187,6 +187,7 @@ const UriSearch = (props) => {
                       overflow: "hidden",
                     }}
                     title={option.label + ": " + option.description}
+                    key={"urikey-" + i}
                   >
                     {option.label}
                     <div
@@ -223,7 +224,7 @@ const UriSearch = (props) => {
               )}
               {formData?.sameAsUris &&
                 formData.sameAsUris.map((d, i) => (
-                  <div className="same-as">
+                  <div className="same-as" key={"uri-key-" + i}>
                     {d.uriSameAsLabel}
                     <br></br>
                     <a href={d.uriSameAs} target="blank" rel="noreferrer">
