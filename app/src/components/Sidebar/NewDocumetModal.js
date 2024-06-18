@@ -99,7 +99,7 @@ const NewDocumetModal = (props) => {
               </Col>
             </Row>
             <Row>
-              <Col className="mb-3">
+              <Col className="my-1">
                 <Form.Group controlId="formFile" className="mb-3">
                   <Form.Label>Template laden</Form.Label>
                   <Form.Select

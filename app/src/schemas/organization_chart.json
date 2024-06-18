@@ -16,7 +16,7 @@
           "type": "string",
           "title": "Ausgabegröße",
           "default": "A4",
-          "enum": ["A5", "A4", "A3", "A2"]
+          "enum": ["A5", "A4", "A3", "A2", "A1", "A0"]
         },
         "schemaVersion": {
           "type": "string",
