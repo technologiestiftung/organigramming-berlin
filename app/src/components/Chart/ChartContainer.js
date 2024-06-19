@@ -120,11 +120,11 @@ const ChartContainer = forwardRef(
         updateChartHandler();
       }, 50);
 
-      if (paperSize !== data.document.paperSize) {
+      if (paperSize && paperSize !== data.document.paperSize) {
         setPaperSize(data.document.paperSize);
         resetViewHandler();
       }
-    }, [update, data]);
+    }, [update, data, paperSize]);
 
     const changeHierarchy = async (draggedItemData, dropTargetId) => {
       await dsDigger.removeNode(draggedItemData.id);

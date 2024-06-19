@@ -13,6 +13,8 @@ import MainOrganisation from "../From/MainOrganisation";
 
 import CustomDropdown from "../From/CustomDropdown";
 
+import { validationRules } from "../../validation/validationRules";
+
 import { getDefinitions } from "../../services/getDefinitions";
 const definitions = getDefinitions();
 
@@ -241,6 +243,96 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     setSelected(null);
   };
 
+  function findPaths(obj, currentPath = "") {
+    let paths = [];
+
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        const newPath = currentPath ? `${currentPath}.${key}` : key;
+
+        if (key === "pattern") {
+          // If the current key is 'pattern', add the current path
+          paths.push(currentPath);
+        } else if (value && typeof value === "object") {
+          // Recursively search in the object
+          paths = paths.concat(findPaths(value, newPath));
+        }
+      }
+    }
+
+    return paths;
+  }
+
+  function getNestedValue(obj, path) {
+    const keys = path.split(".");
+    let current = obj;
+
+    for (const key of keys) {
+      if (current[key] !== undefined) {
+        current = current[key];
+      } else {
+        return undefined;
+      }
+    }
+
+    return current;
+  }
+
+  // Custom validation function
+  const customValidate = (formData, errors) => {
+    const validatorName = dsDigger.ds.settings.validator;
+
+    // no validator - return
+    if (validatorName === "" || !validationRules[validatorName]) {
+      console.log("wrong or no validators");
+      return errors;
+    }
+
+    const organisationValidators = validationRules[validatorName].organisation;
+
+    console.log("formData.current", formData.current);
+
+    // findPathsWithPattern(organisationValidators);
+    const paths = findPaths(organisationValidators);
+
+    console.log("paths  ", paths);
+
+    paths.forEach((path) => {
+      const value = getNestedValue(formData.current, path);
+      const regex = getNestedValue(organisationValidators, path).pattern;
+      const warning = getNestedValue(organisationValidators, path).warning;
+
+      console.log("value", value);
+      console.log("warning", warning);
+
+      if (value && !regex.test(value)) {
+        errors.current.contact.telephone.addError(
+          validationRules.phoneNumber.warning
+        );
+      }
+    });
+
+    // if()
+    //
+    // validationRules[validatorName]
+    // validationRules;
+
+    // console.log("pathsWithPattern", pathsWithPattern);
+
+    // console.log("dsDigger", dsDigger);
+
+    // const tel = formData.current.contact.telephone;
+    // const phoneRegex = validationRules.phoneNumber.pattern;
+
+    // if (tel && !phoneRegex.test(tel)) {
+    //   errors.current.contact.telephone.addError(
+    //     validationRules.phoneNumber.warning
+    //   );
+    // }
+    return errors;
+  };
+
   return (
     <div className="tab" id="organisation-tab">
       <AlertModal
@@ -291,6 +383,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         ObjectFieldTemplate={ObjectFieldTemplate}
         liveValidate
         showErrorList={false}
+        validate={customValidate}
       >
         <br />
       </Form>

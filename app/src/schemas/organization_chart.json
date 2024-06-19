@@ -563,6 +563,19 @@
           ]
         }
       }
+    },
+    "settings": {
+      "title": "Settings Options",
+      "type": "object",
+      "properties": {
+        "validator": {
+          "type": "string",
+          "title": "Daten Validierung",
+          "default": "",
+          "enum": ["", "berlinerVerwaltung", "test"],
+          "enumNames": ["kein Validierung", "Berliner Verwaltung", "Test"]
+        }
+      }
     }
   },
   "properties": {
