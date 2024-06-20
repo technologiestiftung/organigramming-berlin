@@ -16,7 +16,8 @@ const SettingsModal = (props) => {
   const hasMounted = useRef(false);
 
   function getErrorMsg(d) {
-    const validator = d.settings.validator;
+    const validator = d?.settings?.validator;
+    if (!validator) return;
     let rules = validationRules[validator];
     let warningMessages = [];
     for (const key in rules) {
@@ -90,14 +91,14 @@ const SettingsModal = (props) => {
               {" "}
             </Form>
             <p>
-              Hier können Sie eine Validierung auswählen. Die Validierung
-              überprüft, ob z.B. Telefonnummern im richtigen Format eingegeben
-              werden. Bei einer falschen Eingabe wird eine Warnmeldung
-              angezeigt.
+              Hier können Sie eine der hinterlegten Validierung auswählen. Die
+              Validierung überprüft, ob z.B. Telefonnummern im richtigen Format
+              eingegeben werden. Bei einer falschen Eingabe wird eine
+              Warnmeldung angezeigt.
             </p>
-            {warningMessages.length !== 0 && (
+            {warningMessages && warningMessages?.length !== 0 && (
               <>
-                <p>Es gelten folgende Regeln:</p>
+                <p>Für die ausgewählte Validirung gelten folgende Regeln:</p>
                 <ul>
                   {warningMessages &&
                     warningMessages.map((errorMsg, i) => (
