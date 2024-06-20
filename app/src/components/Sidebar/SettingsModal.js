@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Modal, Row, Col } from "react-bootstrap";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 
@@ -9,6 +9,7 @@ const definitions = getDefinitions();
 const SettingsModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
   const [initialFormData, setInitialFormData] = useState({});
+  const hasMounted = useRef(false);
 
   const properties = {
     properties: {
@@ -19,8 +20,12 @@ const SettingsModal = (props) => {
   };
 
   useEffect(() => {
-    setInitialFormData({ ...props.data });
-  }, []);
+    if (!hasMounted.current) {
+      // This block will only run once
+      setInitialFormData({ ...props.data });
+      hasMounted.current = true;
+    }
+  }, [props.data]); // Adding props.data to satisfy the linter
 
   const schema = { ...definitions, ...properties };
 

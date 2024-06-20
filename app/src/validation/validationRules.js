@@ -1,21 +1,41 @@
+// Possible Keys to validate
+
+//   "title",
+//   "creator",
+//   "note",
+//   "type",
+//   "name",
+//   "altName",
+//   "purpose",
+//   "address",
+//   "positionType",
+//   "salutation",
+//   "firstName",
+//   "lastName",
+//   "telephone",
+//   "fax",
+//   "email",
+//   "website",
+//   "street",
+//   "housenumber",
+//   "building",
+//   "room",
+//   "zipCode",
+//   "city"
+
 export const validationRules = {
   berlinerVerwaltung: {
-    organisation: {
-      contact: {
-        telephone: {
-          pattern: /^\d{3}-\d{3}-\d{4}$/,
-          warning:
-            "This is not a valid phone number format. Expected format: XXX-XXX-XXXX",
-        },
-      },
-      uri: {
-        uri: {
-          pattern: /^http/,
-          warning: "Die URI muss mit http beginnnen.",
-        },
-      },
+    telephone: {
+      pattern: /^\+49 30 /,
+      warning:
+        "Berliner Fesnetznummer müssen wie folgt beginnen: +49 30 . z.B.: +49 30 959996410",
+    },
+    website: {
+      pattern: /^http./,
+      warning: "Webseiten müssen mit http. beginnen",
     },
   },
+  test: {},
 
   // Add more rules here for other properties as needed
 };
