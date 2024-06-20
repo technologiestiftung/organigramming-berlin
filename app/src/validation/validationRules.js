@@ -28,11 +28,11 @@ export const validationRules = {
     telephone: {
       pattern: /^\+49 30 /,
       warning:
-        "Berliner Fesnetznummer müssen wie folgt beginnen: +49 30 . z.B.: +49 30 959996410",
+        'Berliner Fesnetznummer müssen wie folgt beginnen: "+49 30 ". z.B.: +49 30 959996410',
     },
     website: {
-      pattern: /^http./,
-      warning: "Webseiten müssen mit http. beginnen",
+      pattern: /^http/,
+      warning: 'Webseiten müssen mit "http" beginnen',
     },
   },
   test: {},

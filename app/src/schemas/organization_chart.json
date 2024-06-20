@@ -570,10 +570,10 @@
       "properties": {
         "validator": {
           "type": "string",
-          "title": "Daten Validierung",
+          "title": "Daten Validierungsregeln",
           "default": "",
-          "enum": ["", "berlinerVerwaltung", "test"],
-          "enumNames": ["kein Validierung", "Berliner Verwaltung", "Test"]
+          "enum": ["", "berlinerVerwaltung"],
+          "enumNames": ["kein Validierung", "für die Berliner Verwaltung"]
         }
       }
     }

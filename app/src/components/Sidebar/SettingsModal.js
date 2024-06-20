@@ -2,15 +2,28 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Modal, Row, Col } from "react-bootstrap";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 
+import { validationRules } from "../../validation/validationRules";
+
 import Form from "@rjsf/bootstrap-4";
 import { getDefinitions } from "../../services/getDefinitions";
 const definitions = getDefinitions();
 
 const SettingsModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
+  const [warningMessages, setWarningMessages] = useState([]);
+
   const [initialFormData, setInitialFormData] = useState({});
   const hasMounted = useRef(false);
 
+  function getErrorMsg(d) {
+    const validator = d.settings.validator;
+    let rules = validationRules[validator];
+    let warningMessages = [];
+    for (const key in rules) {
+      warningMessages.push(rules[key].warning);
+    }
+    return warningMessages;
+  }
   const properties = {
     properties: {
       settings: {
@@ -20,6 +33,9 @@ const SettingsModal = (props) => {
   };
 
   useEffect(() => {
+    const warningMessages = getErrorMsg(props.data);
+    setWarningMessages(warningMessages);
+
     if (!hasMounted.current) {
       // This block will only run once
       setInitialFormData({ ...props.data });
@@ -41,6 +57,9 @@ const SettingsModal = (props) => {
   };
 
   const onChange = (e) => {
+    const warningMessages = getErrorMsg(e.formData);
+    setWarningMessages(warningMessages);
+
     setFormData(e.formData);
   };
 
@@ -71,11 +90,22 @@ const SettingsModal = (props) => {
               {" "}
             </Form>
             <p>
-              Hier können Sie einen Validierung aussuchen. Die Validierung
-              checkt ob z.B. Telefonummern im richtigen Format eingegeben
-              werden. Bei einer flaschen Eingabe wird eine Warnhinweis
+              Hier können Sie eine Validierung auswählen. Die Validierung
+              überprüft, ob z.B. Telefonnummern im richtigen Format eingegeben
+              werden. Bei einer falschen Eingabe wird eine Warnmeldung
               angezeigt.
             </p>
+            {warningMessages.length !== 0 && (
+              <>
+                <p>Es gelten folgende Regeln:</p>
+                <ul>
+                  {warningMessages &&
+                    warningMessages.map((errorMsg, i) => (
+                      <li key={"warningkey-" + i}>{errorMsg}</li>
+                    ))}
+                </ul>
+              </>
+            )}
           </Col>
         </Row>
       </Modal.Body>
