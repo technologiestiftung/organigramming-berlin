@@ -13,6 +13,8 @@ import MainOrganisation from "../From/MainOrganisation";
 
 import CustomDropdown from "../From/CustomDropdown";
 
+import { checkErrors } from "../../services/checkErrors";
+
 import { getDefinitions } from "../../services/getDefinitions";
 const definitions = getDefinitions();
 
@@ -241,6 +243,12 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     setSelected(null);
   };
 
+  // Custom validation function
+  const customValidate = (formData, errors) => {
+    const validatorName = dsDigger?.ds?.settings?.validator;
+    return checkErrors(formData, errors, validatorName, "organisation");
+  };
+
   return (
     <div className="tab" id="organisation-tab">
       <AlertModal
@@ -291,6 +299,7 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
         ObjectFieldTemplate={ObjectFieldTemplate}
         liveValidate
         showErrorList={false}
+        validate={customValidate}
       >
         <br />
       </Form>

@@ -563,6 +563,22 @@
           ]
         }
       }
+    },
+    "settings": {
+      "title": "Settings Options",
+      "type": "object",
+      "properties": {
+        "validator": {
+          "type": "string",
+          "title": "Validierung (experimetelles Feature)",
+          "default": "",
+          "enum": ["", "berlinerVerwaltung"],
+          "enumNames": [
+            "keine Validierung",
+            "für die Berliner Verwaltung (in Bearbeitung)"
+          ]
+        }
+      }
     }
   },
   "properties": {
