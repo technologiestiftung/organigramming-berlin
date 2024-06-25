@@ -22,17 +22,15 @@ const MainOrganisation = (props) => {
 
   return (
     isTopOrg && (
-      <Form>
-        <Form.Check // prettier-ignore
-          label={schema.title}
-          type={"checkbox"}
-          id={`checkbox`}
-          checked={formData}
-          onChange={() => {
-            onChange(!formData);
-          }}
-        />
-      </Form>
+      <Form.Check // prettier-ignore
+        label={schema.title}
+        type={"checkbox"}
+        id={`checkbox`}
+        checked={formData}
+        onChange={() => {
+          onChange(!formData);
+        }}
+      />
     )
   );
 };
