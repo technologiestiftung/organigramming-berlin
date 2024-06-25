@@ -434,29 +434,6 @@
       },
       "title": "Anschrift"
     },
-    "exportNEW": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "filename": {
-          "type": "string",
-          "title": "Dateiname"
-        },
-        "saveExport": {
-          "type": "string",
-          "title": "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
-          "default": "save",
-          "enum": ["save", "export"],
-          "enumNames": ["Speichern", "Exportieren"]
-        },
-        "exportType": {
-          "type": "string",
-          "title": "Dateiformat",
-          "default": "pdf",
-          "enum": ["svg", "png", "pdf"]
-        }
-      }
-    },
     "export": {
       "title": "Export Options",
       "type": "object",
