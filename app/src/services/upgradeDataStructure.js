@@ -66,43 +66,43 @@ function toSameAsArray(d) {
 
 function moveSameAsToArray(data) {
   data.organisations?.forEach((org) => {
-    if (org.uri?.uriSameAs) {
+    if (org.uri?.uriSameAs !== undefined) {
       org.uri = toSameAsArray(org.uri);
     }
 
     org.employees?.forEach((employee) => {
-      if (employee.uri?.uriSameAs) {
+      if (employee.uri?.uriSameAs !== undefined) {
         employee.uri = toSameAsArray(employee.uri);
       }
     });
 
     // add an URI to all positions
     org.positions?.forEach((position) => {
-      if (position?.uri?.uriSameAs) {
+      if (position?.uri?.uriSameAs !== undefined) {
         position.uri = toSameAsArray(position.uri);
       }
-      if (position.person?.uri?.uriSameAs) {
+      if (position.person?.uri?.uriSameAs !== undefined) {
         position.person.uri = toSameAsArray(position.person.uri);
       }
     });
 
     org.departments?.forEach((department) => {
-      if (department?.uri?.uriSameAs) {
+      if (department?.uri?.uriSameAs !== undefined) {
         department.uri = toSameAsArray(department.uri);
       }
 
       department.employees?.forEach((employee) => {
-        if (employee.uri?.uriSameAs) {
+        if (employee.uri?.uriSameAs !== undefined) {
           employee.uri = toSameAsArray(employee.uri);
         }
       });
 
       department.positions?.forEach((position) => {
-        if (position.uri?.uriSameAs) {
+        if (position.uri?.uriSameAs !== undefined) {
           position.uri = toSameAsArray(position.uri);
         }
 
-        if (position.person?.uri?.uriSameAs) {
+        if (position.person?.uri?.uriSameAs !== undefined) {
           position.person.uri = toSameAsArray(position.person.uri);
         }
       });
@@ -200,7 +200,7 @@ export const upgradeDataStructure = (data) => {
   }
 
   // if doc has prop uriSameAs -> move it to sameAsUris
-  if (data.document.uri.uriSameAs) {
+  if (data.document.uri.uriSameAs !== undefined) {
     data.document.uri = toSameAsArray(data.document.uri);
   }
 
