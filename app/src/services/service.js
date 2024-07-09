@@ -210,8 +210,8 @@ export function nameExists(pos) {
 }
 
 export function getGenderedPosition(position, gender) {
-  if (gender === "m" || gender === "w") {
-    const splittedPosition = position.split(":");
+  const splittedPosition = position.split(":");
+  if ((gender === "m" || gender === "w") && splittedPosition.length > 1) {
     const ending = splittedPosition[splittedPosition.length - 1];
 
     if (ending === "in") {
