@@ -158,5 +158,120 @@
     "vocab": "berorgs",
     "name": "BezirksbuergermeisterIn",
     "type": "position"
+  },
+  "Geschäftsbereich": {
+    "vocab": "berorgs",
+    "name": "Geschaeftsbereich",
+    "type": "org"
+  },
+  "Geschäftsstelle": {
+    "vocab": "berorgs",
+    "name": "Geschaeftsstelle",
+    "type": "org"
+  },
+  "Sekretariat": {
+    "vocab": "berorgs",
+    "name": "Sekretariat",
+    "type": "org"
+  },
+  "Landesbetrieb": {
+    "vocab": "berorgs",
+    "name": "Landesbetrieb",
+    "type": "org"
+  },
+  "Landesinstitut": {
+    "vocab": "berorgs",
+    "name": "Landesinstitut",
+    "type": "org"
+  },
+  "Landesarchiv": {
+    "vocab": "berorgs",
+    "name": "Landesarchiv",
+    "type": "org"
+  },
+  "Landeszentrale": {
+    "vocab": "berorgs",
+    "name": "Landeszentrale",
+    "type": "org"
+  },
+  "Anstalt des öffentlichen Rechts": {
+    "vocab": "berorgs",
+    "name": "AnstaltDesOeffentlichenRechts",
+    "type": "org"
+  },
+  "Stiftung": {
+    "vocab": "berorgs",
+    "name": "Stiftung",
+    "type": "org"
+  },
+  "Gericht": {
+    "vocab": "berorgs",
+    "name": "Gericht",
+    "type": "org"
+  },
+  "Leitung": {
+    "vocab": "berorgs",
+    "name": "Leitung",
+    "type": "position"
+  },
+  "Büroleitung": {
+    "vocab": "berorgs",
+    "name": "Bueroleitung",
+    "type": "position"
+  },
+  "ehördliche:r Beauftragte:r": {
+    "vocab": "berorgs",
+    "name": "BehoerdlicheRBeauftragteR",
+    "type": "position"
+  },
+  "Behördliche:r Beauftragte:r": {
+    "vocab": "berorgs",
+    "name": "Behördliche:r Beauftragte:r",
+    "type": "position"
+  },
+  "Landesbeauftragte:r": {
+    "vocab": "berorgs",
+    "name": "LandesbeauftragteR",
+    "type": "position"
+  },
+  "Personalrat": {
+    "vocab": "berorgs",
+    "name": "Personalrat",
+    "type": "position"
+  },
+  "Frauenvertretung": {
+    "vocab": "berorgs",
+    "name": "Frauenvertretung",
+    "type": "position"
+  },
+  "Schwerbehindertenvertretung": {
+    "vocab": "berorgs",
+    "name": "Schwerbehindertenvertretung",
+    "type": "position"
+  },
+  "Auszubildendenvertretung": {
+    "vocab": "berorgs",
+    "name": "Auszubildendenvertretung",
+    "type": "position"
+  },
+  "Direktor:in": {
+    "vocab": "berorgs",
+    "name": "DirektorIn",
+    "type": "position"
+  },
+  "Präsident:in": {
+    "vocab": "berorgs",
+    "name": "PräsidentIn",
+    "type": "position"
+  },
+  "Amtsleitung": {
+    "vocab": "berorgs",
+    "name": "Amtsleitung",
+    "type": "position"
+  },
+  "Geschäftsleitung": {
+    "vocab": "berorgs",
+    "name": "Geschaeftsleitung",
+    "type": "position"
   }
 }
