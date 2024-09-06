@@ -39,8 +39,12 @@ function getNestedValue(obj, path) {
 }
 
 export function checkErrors(formData, errors, validatorName, dataToCheck) {
-  if (validatorName === "" || !validationRules[validatorName]) {
-    console.warn("unknown or no validator");
+  if (validatorName === "" || validatorName === undefined) {
+    return errors;
+  }
+
+  if (!validationRules[validatorName]) {
+    console.warn(validatorName, "unknown validator");
     return errors;
   }
 

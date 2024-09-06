@@ -52,6 +52,12 @@ function addUrisToOrgsAndEmployees(data) {
 }
 
 function toSameAsArray(d) {
+  if (!d.uriSameAs) {
+    return {
+      uri: d.uri || "",
+    };
+  }
+
   return {
     uri: d.uri || "",
     sameAsUris: [
