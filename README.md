@@ -45,18 +45,35 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-## Changelog (added, fixed, changed)
+<!-- ## Changelog (added, fixed, changed)
 
 - 12.03.2022 - Added: simple changelog
 - 12.03.2022 - Fixed: [Use "overflow-wrap: break-word" for organisation units](https://github.com/technologiestiftung/organigramming-berlin/pull/41)
-- 12.03.2022 - Added: [Metadata "about the tool" has been added to the export file](https://github.com/technologiestiftung/organigramming-berlin/pull/37)
+- 12.03.2022 - Added: [Metadata "about the tool" has been added to the export file](https://github.com/technologiestiftung/organigramming-berlin/pull/37) -->
 
 ## Development Notes
 
-The Charts data structure is defined in:
-./app/src/schemas/organization_chart.json
-The Organisation UI is defined in:
-./app/src/components/Sidebar/OrganisationTab.js
+### Schema
+
+The Charts data structure is defined in [organization_chart.json](./app/src/schemas/organization_chart.json).
+
+### UI Schema
+
+The Organisation UI schema is defined in the [OrganisationTab.js](./app/src/components/Sidebar/OrganisationTab.js) component.
+
+The document UI schema is defined in the [DocumentTab.js](./app/src/components/Sidebar/DocumentTab.js) component.
+
+### Validation rules
+
+If you want to add validation rules you will need to add a new rule to [validationRules.js](./app/src/validation/validationRules.js)
+
+If its a new set of validation rules (e.g. for a specific organisation), you will also need to add the key name of the organisation to the schema in your [organization_chart.json](./app/src/schemas/organization_chart.json)
+
+You can add validation rules to any property from the list of available properties listed in [validationRules.js](./app/src/validation/validationRules.js) by adding a regex and a waring message.
+
+### Updating RDF vocabulary
+
+New vocabulary should be added to [typeVocabLookup.json](./app/src/services/typeVocabLookup.json)
 
 ## Acknowledgement
 
@@ -122,11 +139,11 @@ This project follows the [all-contributors](https://github.com/all-contributors/
         <img width="150" src="https://logos.citylab-berlin.org/logo-technologiestiftung-berlin-en.svg" />
       </a>
     </td>
-    <td>
-      Supported by: <a href="https://www.berlin.de/sen/inneres/">
+     <td>
+      Supported by <a href="https://www.berlin.de/rbmskzl/">
         <br />
         <br />
-        <img width="100" src="https://logos.citylab-berlin.org/logo-berlin-seninnds-en.svg" />
+        <img width="80" src="https://logos.citylab-berlin.org/logo-berlin-senatskanzelei-de.svg" />
       </a>
     </td>
   </tr>

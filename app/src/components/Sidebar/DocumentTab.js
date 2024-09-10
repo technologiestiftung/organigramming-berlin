@@ -1,9 +1,11 @@
-import definitions from "../../schemas/organization_chart";
 import Form from "@rjsf/bootstrap-4";
 import React, { useState, useRef } from "react";
 import FileSelect from "../From/FileSelect";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import MDEditorWidget from "../From/MDEditor";
+import { getDefinitions } from "../../services/getDefinitions";
+import UriSearch from "../From/UriSearch";
+const definitions = getDefinitions();
 
 const importAll = (r) => {
   let images = [];
@@ -75,6 +77,11 @@ const DocumentTab = ({ data, sendDataUp }) => {
         "ui:widget": FileSelect,
         preuploads: preuploads,
       },
+      version: {
+        "ui:options": {
+          format: "DMY",
+        },
+      },
       schemaVersion: {
         "ui:widget": "hidden",
       },
@@ -84,7 +91,15 @@ const DocumentTab = ({ data, sendDataUp }) => {
           inline: true,
         },
       },
+      uri: {
+        "ui:headless": true,
+        "ui:field": "UriSearch",
+      },
     },
+  };
+
+  const fields = {
+    UriSearch: UriSearch,
   };
 
   const handleSendDataUp = (data) => {
@@ -118,6 +133,7 @@ const DocumentTab = ({ data, sendDataUp }) => {
         // onBlur={onBlur}
         liveValidate
         showErrorList={false}
+        fields={fields}
       >
         <br />
       </Form>

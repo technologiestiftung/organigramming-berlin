@@ -1,11 +1,24 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import definitions from "../schemas/organization_chart";
 import { Subject } from "rxjs";
+
+import { getDefinitions } from "./getDefinitions";
+const definitions = getDefinitions();
 
 const subject1 = new Subject();
 const subject2 = new Subject();
 
+export const getSameAsURIs = (sameAsUris) => {
+  return sameAsUris.map((d) => {
+    return { "@id": d.uriSameAs };
+  });
+};
+
+export const getFileNameFromURL = (url) => {
+  if (!url) return;
+  const urlSplitted = url.split("/");
+  return urlSplitted[urlSplitted.length - 1];
+};
 export const dragNodeService = {
   sendDragInfo: (id) => subject1.next({ draggedNodeId: id }),
   clearDragInfo: () => subject1.next(),
@@ -16,6 +29,11 @@ export const selectNodeService = {
   sendSelectedNodeInfo: (id) => subject2.next({ selectedNodeId: id }),
   clearSelectedNodeInfo: () => subject2.next(),
   getSelectedNodeInfo: () => subject2.asObservable(),
+};
+
+export const formatDate = (dateString) => {
+  const [year, month, day] = dateString.split("-");
+  return `${day}-${month}-${year}`;
 };
 
 export const toSnakeCase = (str) => {
@@ -117,3 +135,100 @@ export const getContrastTextColor = (bgColor) => {
 
   return brightness > 155 ? "#333" : "white";
 };
+
+export const getHalfData = (data, position) => {
+  const half = Math.ceil(data.length / 2);
+  if (position === "right") {
+    const right = data.slice(half);
+    return right;
+  }
+  if (position === "left") {
+    const left = data.slice(0, half);
+    return left;
+  }
+};
+
+export const computeBackgroundColor = (userColor) => {
+  const r = parseInt(userColor.substring(1, 3), 16);
+  const g = parseInt(userColor.substring(3, 5), 16);
+  const b = parseInt(userColor.substring(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  let adjustmentFactor = 40; // You can adjust this value based on how much you want to darken or lighten
+
+  if (brightness > 155) {
+    // If it's bright, darken the color
+    return `#${clamp(r - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(g - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(b - adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}`;
+  } else {
+    // If it's dark, lighten the color
+    return `#${clamp(r + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(g + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}${clamp(b + adjustmentFactor)
+      .toString(16)
+      .padStart(2, "0")}`;
+  }
+};
+
+function clamp(value, min = 0, max = 255) {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function replaceUrlParts(json, newBaseUri) {
+  for (let key in json) {
+    if (key === "@id" || (key === "organigram" && !json["@context"])) {
+      json[key] = json[key].replace(
+        "https://berlin.github.io/lod-organigram/",
+        newBaseUri
+      );
+    } else if (typeof json[key] === "object" && json[key] !== null) {
+      replaceUrlParts(json[key], newBaseUri);
+    }
+  }
+  return json;
+}
+
+export function comparableString(inputString) {
+  if (!inputString) return "";
+  // Convert to lowercase and remove all spaces
+  return inputString.toLowerCase().replaceAll(/\s/g, "");
+}
+
+export function getRoleTypeDescription(pos) {
+  return comparableString(
+    (pos?.positionType || "") + (pos?.positionStatus || "")
+  );
+}
+
+export function nameExists(pos) {
+  let fullName = comparableString(
+    (pos?.person?.firstName || "") + (pos?.person?.lastName || "")
+  );
+  return fullName ? true : false;
+}
+
+export function getGenderedPosition(position, gender) {
+  const splittedPosition = position.split(":");
+  if ((gender === "m" || gender === "w") && splittedPosition.length > 1) {
+    const ending = splittedPosition[splittedPosition.length - 1];
+
+    if (ending === "in") {
+      const genderedPosition =
+        gender === "w" ? splittedPosition[0] + "in" : splittedPosition[0];
+      return genderedPosition;
+    }
+
+    if (ending === "r") {
+      return gender === "w" ? splittedPosition[0] : splittedPosition[0] + "r";
+    }
+  } else {
+    return position;
+  }
+}

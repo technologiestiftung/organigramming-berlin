@@ -55,6 +55,22 @@
     position: relative;
     z-index: 50;
 
+    &.A0 {
+      width: 1189mm;
+      height: 841mm;
+      &.portrait {
+        height: 1189mm;
+        width: 841mm;
+      }
+    }
+    &.A1 {
+      width: 841mm;
+      height: 594mm;
+      &.portrait {
+        height: 841m;
+        width: 594mm;
+      }
+    }
     &.A2 {
       width: 594mm;
       height: 420mm;

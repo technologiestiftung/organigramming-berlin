@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Row, Col, Alert } from "react-bootstrap";
-import definitions from "../../schemas/organization_chart";
 import ObjectFieldTemplate from "../From/ObjectFieldTemplate";
 import { toSnakeCase } from "../../services/service";
 import checkForDuplicatePersons from "../../services/checkForDuplicatePersons";
 
 import Form from "@rjsf/bootstrap-4";
+
+import { getDefinitions } from "../../services/getDefinitions";
+const definitions = getDefinitions();
 
 const ExportModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
@@ -85,6 +87,9 @@ const ExportModal = (props) => {
         title:
           "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
         "ui:widget": "radio",
+      },
+      baseUri: {
+        "ui:placeholder": "https://berlin.github.io/lod-organigram/",
       },
     },
   };

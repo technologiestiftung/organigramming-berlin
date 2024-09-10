@@ -19,17 +19,18 @@ export default function checkForDuplicatePersons(formData) {
         getPersonData(org.departments);
       }
       // each employee
-      org?.employees?.forEach((e) => {
-        const name = getName(e);
-        if (name === " ") return;
+      org?.positions?.forEach((e) => {
+        const person = e.person;
+        const name = getName(person);
+        if (name === " " || name === "") return;
         if (!persons[name]) {
           persons[name] = {
-            uri: e.uri.uri,
+            uri: person.uri?.uri,
             orgNames: [org.name],
             counter: 1,
           };
         } else {
-          if (persons[name]?.uri !== e.uri.uri) {
+          if (persons[name]?.uri !== person.uri?.uri) {
             persons[name].counter++;
             persons[name].orgNames.push(org.name);
           }

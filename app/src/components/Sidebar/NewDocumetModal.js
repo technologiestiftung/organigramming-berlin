@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal, Row, Col, Form, Alert } from "react-bootstrap";
-import initDocument from "../../data/initDocument";
+import emptyDocument from "../../data/emptyDocument";
+
 import AlertModal from "./AlertModal";
 import { validateData } from "../../services/service";
 import { upgradeDataStructure } from "../../services/upgradeDataStructure";
@@ -14,8 +15,31 @@ const NewDocumetModal = (props) => {
   const onCreateNew = () => {
     setHideModal(true);
     setAlertModalShow(true);
-    const newInitDocument = upgradeDataStructure(initDocument);
+    const newInitDocument = upgradeDataStructure(emptyDocument);
     setImportData(newInitDocument);
+  };
+
+  const templateSelected = (e) => {
+    const fileToLoad = e.target?.value;
+    if (!fileToLoad) return;
+    setHideModal(true);
+    setAlertModalShow(true);
+
+    const fetchData = async (fileToLoad) => {
+      try {
+        const response = await fetch(`data/templates/${fileToLoad}.json`); // Fetch the JSON file from the public directory
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const jsonData = await response.json();
+        const newInitDocument = upgradeDataStructure(jsonData);
+        setImportData(newInitDocument);
+      } catch (error) {
+        console.error("Error fetching the JSON data:", error);
+      }
+    };
+
+    fetchData(fileToLoad);
   };
 
   const onFileImportChange = (e) => {
@@ -72,6 +96,22 @@ const NewDocumetModal = (props) => {
             <Row>
               <Col className="mb-3">
                 <Button onClick={onCreateNew}>Neues Dokument erstellen</Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="my-1">
+                <Form.Group controlId="formFile" className="mb-3">
+                  <Form.Label>Template laden</Form.Label>
+                  <Form.Select
+                    aria-label="Default select example"
+                    onChange={(e) => templateSelected(e)}
+                  >
+                    <option>Wählen Sie ein Template aus der Liste aus</option>
+                    <option value="berSen">Berliner Senatsverwaltung</option>
+                    <option value="berBez">Berliner Bezirk</option>
+                    <option value="beispielOrg">Beispiel Organisation</option>
+                  </Form.Select>
+                </Form.Group>
               </Col>
             </Row>
             <Row>

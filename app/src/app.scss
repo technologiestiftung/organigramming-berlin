@@ -15,6 +15,17 @@ body {
   overflow: hidden;
 }
 
+.btn {
+  .person-name {
+    float: left;
+    margin-left: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+}
+
 .btn.btn-light {
   border: none;
   svg {
@@ -184,5 +195,27 @@ body {
         cursor: row-resize;
       }
     }
+  }
+
+  .same-as {
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px;
+    cursor: default;
+    position: relative;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+
+    button {
+      top: 0;
+      right: 0;
+      position: absolute;
+      z-index: 10;
+    }
+  }
+
+  // Hide hint input from Typeahead which is not needed
+  .rbt-input-hint {
+    display: none;
   }
 }

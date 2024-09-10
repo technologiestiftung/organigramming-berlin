@@ -16,7 +16,7 @@
           "type": "string",
           "title": "Ausgabegröße",
           "default": "A4",
-          "enum": ["A5", "A4", "A3", "A2"]
+          "enum": ["A5", "A4", "A3", "A2", "A1", "A0"]
         },
         "schemaVersion": {
           "type": "string",
@@ -47,6 +47,9 @@
         "note": {
           "type": "string",
           "title": "Fußzeile"
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
         }
       },
       "required": ["title"],
@@ -191,11 +194,11 @@
         "uri": {
           "$ref": "#/definitions/uri"
         },
-        "employees": {
-          "title": "Personen",
+        "positions": {
+          "title": "Positionen",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/employee"
+            "$ref": "#/definitions/position"
           }
         },
         "departments": {
@@ -266,22 +269,22 @@
         "uri": {
           "$ref": "#/definitions/uri"
         },
-        "employees": {
-          "title": "Personen",
+        "positions": {
+          "title": "Positionen",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/employee"
+            "$ref": "#/definitions/position"
           }
         }
       }
     },
-    "employee": {
+    "position": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "position": {
+        "positionType": {
           "type": "string",
-          "title": "Position",
+          "title": "Art der Position",
           "examples": [
             "Büroleiter:in",
             "Pressesprecher:in",
@@ -290,6 +293,23 @@
             "Staatssekretär:in"
           ]
         },
+        "positionStatus": {
+          "type": "string",
+          "title": "Zusatzbezeichnung",
+          "examples": ["stellvertretend", "kommissarisch", "N.N."]
+        },
+        "uri": {
+          "$ref": "#/definitions/uri"
+        },
+        "person": {
+          "$ref": "#/definitions/person"
+        }
+      }
+    },
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "salutation": {
           "type": "string",
           "title": "Anrede"
@@ -322,15 +342,11 @@
       },
       "title": "Person"
     },
-    "uri": {
-      "title": "Verknüpfungen (URIs)",
+    "sameAsInfo": {
       "type": "object",
+      "title": "Information about same as URI",
       "additionalProperties": false,
       "properties": {
-        "uri": {
-          "title": "URI",
-          "type": "string"
-        },
         "uriSameAs": {
           "title": "Externe Verknüpfung",
           "type": "string"
@@ -342,6 +358,24 @@
         "uriSameAsDescription": {
           "title": "URI Description",
           "type": "string"
+        }
+      }
+    },
+    "uri": {
+      "title": "Verknüpfungen (URIs)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "URI",
+          "type": "string"
+        },
+        "sameAsUris": {
+          "type": "array",
+          "title": "Externe Verknüpfung",
+          "items": {
+            "$ref": "#/definitions/sameAsInfo"
+          }
         }
       }
     },
@@ -399,29 +433,6 @@
         }
       },
       "title": "Anschrift"
-    },
-    "exportNEW": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "filename": {
-          "type": "string",
-          "title": "Dateiname"
-        },
-        "saveExport": {
-          "type": "string",
-          "title": "Möchten Sie das Dokument speichern oder als Bild oder Dokument expotieren?",
-          "default": "save",
-          "enum": ["save", "export"],
-          "enumNames": ["Speichern", "Exportieren"]
-        },
-        "exportType": {
-          "type": "string",
-          "title": "Dateiformat",
-          "default": "pdf",
-          "enum": ["svg", "png", "pdf"]
-        }
-      }
     },
     "export": {
       "title": "Export Options",
@@ -518,9 +529,30 @@
                   "default": "json-ld",
                   "enum": ["json-ld", "nquads", "turtle"],
                   "enumNames": ["JSON-LD", "N-Quads", "Turtle"]
+                },
+                "baseUri": {
+                  "type": "string",
+                  "title": "Basis URI ändern",
+                  "default": ""
                 }
               }
             }
+          ]
+        }
+      }
+    },
+    "settings": {
+      "title": "Settings Options",
+      "type": "object",
+      "properties": {
+        "validator": {
+          "type": "string",
+          "title": "Validierung (experimetelles Feature)",
+          "default": "",
+          "enum": ["", "berlinerVerwaltung"],
+          "enumNames": [
+            "keine Validierung",
+            "für die Berliner Verwaltung (in Bearbeitung)"
           ]
         }
       }

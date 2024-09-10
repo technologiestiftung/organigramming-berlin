@@ -1,15 +1,29 @@
-import { toSnakeCase } from "./service";
+import {
+  toSnakeCase,
+  replaceUrlParts,
+  getRoleTypeDescription,
+  nameExists,
+  getSameAsURIs,
+} from "./service";
 import { convertJsonLdToRdfXml } from "./convertJsonLdToRdfXml";
 import { convertJsonLdToTurtle } from "./convertJsonLdToTurtle";
 import typeVocabLookup from "./typeVocabLookup.json";
 import rdfVocab from "./rdfVocab.json";
+import getURI from "./getURI";
+const subClasses = {};
 
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
   const rdfType = data.export.rdfType;
+  const baseUri = data.export?.baseUri;
+
   let fileData;
   let fileType = "";
   let fileExtension = "";
+
+  if (baseUri && baseUri !== "https://berlin.github.io/lod-organigram/") {
+    rdf = replaceUrlParts(rdf, baseUri);
+  }
 
   if (rdfType === "json-ld") {
     fileData = JSON.stringify(rdf);
@@ -41,33 +55,65 @@ function hasKeys(obj) {
   return Object.keys(obj).length === 0 ? false : true;
 }
 
-function getMemberData(d) {
-  const dC = d.contact;
-  const newMemberJSONLD = {
-    "@type": typeVocabLookup[d.position]
-      ? [
-          "vcard:Individual",
-          `${typeVocabLookup[d.position].vocab}:${
-            typeVocabLookup[d.position].name
+function getPositionData(position) {
+  const newPositionJSONLD = {
+    "@type": "org:Post",
+    ...(position.positionType &&
+      typeVocabLookup[position.positionType] && {
+        "org:role": {
+          "@id": `${typeVocabLookup[position.positionType].vocab}:${
+            typeVocabLookup[position.positionType].name
           }`,
-        ]
-      : "vcard:Individual",
-    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
-    ...(d.uri &&
-      d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
-    ...(d.title && { "vcard:title": d.title }),
-    ...(d.salutation && { "vcard:honorific-prefix": d.salutation }),
-    ...(d.firstName && { "vcard:given-name": d.firstName }),
-    ...(d.lastName && { "vcard:family-name": d.lastName }),
-    ...(d.position &&
-      !typeVocabLookup[d.position] && {
-        "vcard:role": {
-          "@value": d.position,
-          "@language": "de",
         },
       }),
-    ...(d.gender && { "vcard:hasGender": d.gender }),
+    // if the position is NOT in the vocab
+    ...(position.positionType &&
+      !typeVocabLookup[position.positionType] && {
+        "@type": "org:Post",
+        "org:role": {
+          "@type": "org:Role",
+          "@id": getURI("role", getRoleTypeDescription(position)),
+          "skos:prefLabel": {
+            "@value":
+              position.positionType +
+              (position?.positionStatus ? ` (${position.positionStatus})` : ""),
+            "@language": "de",
+          },
+        },
+      }),
+    ...(position.positionStatus && { "rdfs:comment": position.positionStatus }),
+    ...(position?.uri?.uri && { "@id": position.uri.uri }),
+    ...(position?.uri?.sameAsUris && {
+      "owl:sameAs": getSameAsURIs(position.uri.sameAsUris),
+    }),
+  };
 
+  return newPositionJSONLD;
+}
+
+const genderHelper = {
+  m: "schema:Male",
+  w: "schema:Female",
+  d: "berorgs:Divers",
+};
+function getMemberData(d) {
+  if (!nameExists(d)) return;
+  const person = d.person;
+  const dC = person.contact;
+  const newMemberJSONLD = {
+    "@type": "vcard:Individual",
+    ...(person?.uri?.uri && { "@id": person.uri.uri }),
+    ...(person?.uri?.sameAsUris && {
+      "owl:sameAs": getSameAsURIs(person.uri.sameAsUris),
+    }),
+    ...(person.title && { "vcard:title": person.title }),
+    ...(person.salutation && { "vcard:honorific-prefix": person.salutation }),
+    ...(person.firstName && { "vcard:given-name": person.firstName }),
+    ...(person.lastName && { "vcard:family-name": person.lastName }),
+    ...(person.gender &&
+      person.gender !== "1" && {
+        "schema:gender": { "@id": genderHelper[person.gender] },
+      }),
     ...(dC.telephone && {
       "vcard:tel": dC.telephone,
     }),
@@ -80,22 +126,39 @@ function getMemberData(d) {
     ...(dC.website && {
       "vcard:url": dC.website,
     }),
+    "org:holds": { "@id": d.uri.uri },
   };
   return newMemberJSONLD;
 }
 
 function getOrgData(d) {
+  const orgTypeUri = "organigram:" + getURI("orgtype", d.type, true);
+
+  if (!typeVocabLookup[d.type]) {
+    subClasses[orgTypeUri] = {
+      "@id": orgTypeUri,
+      "@type": "rdfs:Class",
+      "rdfs:subClassOf": {
+        "@id": "org:Organization",
+      },
+      "rdfs:label": {
+        "@value": d.type || "",
+        "@language": "de",
+      },
+    };
+  }
+
   const newOrgJSONLD = {
     "@type": typeVocabLookup[d.type]
       ? [
           "org:Organization",
           `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
         ]
-      : ["org:Organization", "rdfs:Class"],
-    ...(d.uri &&
-      d.uri.uriSameAs &&
-      d.uri.uriSameAs && { "owl:sameAs": { "@id": d.uri.uriSameAs } }),
-    ...(d.uri && d.uri.uri && { "@id": d.uri.uri }),
+      : orgTypeUri,
+    ...(d?.uri?.uri && { "@id": d.uri.uri }),
+    ...(d?.uri?.sameAsUris && {
+      "owl:sameAs": getSameAsURIs(d.uri.sameAsUris),
+    }),
     ...(d.name && {
       "skos:prefLabel": {
         "@value": d.name,
@@ -114,22 +177,6 @@ function getOrgData(d) {
         "@language": "de",
       },
     }),
-    // ...(d.type &&
-    //   !typeVocabLookup[d.type] && {
-    //     "org:classification": {
-    //       "@value": d.type,
-    //       "@language": "de",
-    //     },
-    //   }),
-    // in case the type can not be foun in berlinorgs
-    ...(d.type &&
-      !typeVocabLookup[d.type] && {
-        "rdfs:subClassOf": "org:Organization",
-        "rdfs:label": {
-          "@value": d.type,
-          "@language": "de",
-        },
-      }),
   };
 
   const cD = d.contact;
@@ -164,9 +211,14 @@ function getOrgData(d) {
       };
     }
   }
-  if (d.employees && d.employees.length) {
-    newOrgJSONLD["org:hasMember"] = d.employees.map((d) => {
+  if (d.positions && d.positions.length) {
+    newOrgJSONLD["org:hasMember"] = d.positions.map((d) => {
       return getMemberData(d);
+    });
+  }
+  if (d.positions && d.positions.length) {
+    newOrgJSONLD["org:hasPost"] = d.positions.map((d) => {
+      return getPositionData(d);
     });
   }
   if (d.departments && d.departments.length) {
@@ -184,7 +236,8 @@ export const exportRDF = (data) => {
       return organizations.map((org) => {
         if (org.layout.style === "hide") {
           const { organisations } = org;
-          return traverseOrganizations(organisations);
+          const result = traverseOrganizations(organisations);
+          return result[0];
         } else {
           const { organisations } = org;
           const result = getOrgData(org);
@@ -201,13 +254,10 @@ export const exportRDF = (data) => {
         }
       });
     }
-
-    // return traverseOrganizations(inputJSON);
     return traverseOrganizations(inputJSON);
   }
 
   // get the document data which will the the main org
-  // const docOrg = getOrgData(data.document);
   let mainOrg;
   let subOrgs;
   if (data.organisations.length === 1) {
@@ -232,11 +282,38 @@ export const exportRDF = (data) => {
 
   let rdf = {
     "@context": rdfVocab,
-    ...(data.document?.version && {
-      "dcterms:created": data.document?.version,
-    }),
-    ...mainOrg,
-    ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
+    "@graph": [
+      ...(subClasses && Object.values(subClasses)),
+      {
+        "@id": data.document?.uri?.uri,
+        ...(data.document?.uri?.sameAsUris && {
+          "owl:sameAs": getSameAsURIs(data.document.uri.sameAsUris),
+        }),
+        "@type": "berorgs:Organogram",
+        "rdfs:label": {
+          "@value": data.document?.title || "",
+          "@language": "de",
+        },
+        ...(data.document?.creator && {
+          "dcterms:creator": {
+            "schema:name": {
+              "@value": data.document?.creator,
+              "@language": "de",
+            },
+          },
+        }),
+        ...(data.document?.version && {
+          "dcterms:created": {
+            "@value": data.document?.version,
+            "@type": "xsd:date",
+          },
+        }),
+        "berorgs:contains": {
+          ...mainOrg,
+          ...(subOrgs && { "org:hasSubOrganization": subOrgs }),
+        },
+      },
+    ],
   };
 
   downloadData(data, rdf);

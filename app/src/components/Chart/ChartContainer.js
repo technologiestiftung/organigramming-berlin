@@ -10,7 +10,7 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import PropTypes from "prop-types";
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { selectNodeService } from "../../services/service";
+import { selectNodeService, formatDate } from "../../services/service";
 import JSONDigger from "../../services/jsonDigger";
 import html2canvas from "html2canvas";
 import { toPng, toSvg } from "html-to-image";
@@ -46,7 +46,7 @@ const propTypes = {
 const defaultProps = {
   pan: false,
   zoom: false,
-  zoomoutLimit: 0.5,
+  zoomoutLimit: 0.2,
   zoominLimit: 7,
   containerClass: "",
   chartClass: "",
@@ -92,6 +92,7 @@ const ChartContainer = forwardRef(
     const [dragging, setDragging] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [sizeWarning, setSizeWarning] = useState(false);
+    const [paperSize, setPaperSize] = useState("");
 
     const [node, setNode] = useState({
       id: "n-root",
@@ -120,7 +121,12 @@ const ChartContainer = forwardRef(
       setTimeout(() => {
         updateChartHandler();
       }, 50);
-    }, [update, data]);
+
+      if (paperSize && paperSize !== data.document.paperSize) {
+        setPaperSize(data.document.paperSize);
+        resetViewHandler();
+      }
+    }, [update, data, paperSize]);
 
     const changeHierarchy = async (draggedItemData, dropTargetId) => {
       await dsDigger.removeNode(draggedItemData.id);
@@ -245,11 +251,14 @@ const ChartContainer = forwardRef(
       const containerWidth = chart.current.clientWidth,
         containerHeight = chart.current.clientHeight,
         chartWidth = chart.current.querySelector("#paper").clientWidth,
-        chartHeight = chart.current.querySelector("#paper").clientHeight,
-        newScale = Math.min(
-          (containerWidth - 32) / chartWidth,
-          (containerHeight - 32) / chartHeight
-        );
+        chartHeight = chart.current.querySelector("#paper").clientHeight;
+
+      let newScale = Math.min(
+        (containerWidth - 32) / chartWidth,
+        (containerHeight - 32) / chartHeight
+      );
+
+      newScale = newScale - 0.03;
 
       setTransform(
         "matrix(" +
@@ -259,7 +268,7 @@ const ChartContainer = forwardRef(
           ", " +
           (containerWidth - chartWidth) / 2 +
           ", " +
-          (containerHeight - chartHeight) / 2 +
+          (containerHeight - chartHeight * (1.98 - newScale)) / 2 +
           ")"
       );
     };
@@ -646,7 +655,7 @@ const ChartContainer = forwardRef(
                           <span>{data.document.creator}</span>
                         )}
                         {data.document.version && (
-                          <span> {data.document.version}</span>
+                          <span> {formatDate(data.document.version)}</span>
                         )}
                       </div>
                     )}

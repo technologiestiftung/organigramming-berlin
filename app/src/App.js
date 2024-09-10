@@ -16,14 +16,18 @@ import {
   handleDropEnd,
   isDefiend,
   validateData,
+  getFileNameFromURL,
 } from "./services/service";
 import { upgradeDataStructure } from "./services/upgradeDataStructure";
+import { getDataURL } from "./services/getDataURL";
+import { getExternalData } from "./services/getExternalData";
 
 import JSONDigger from "./services/jsonDigger";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
 
 const initdata = () => {
   let doc = initDocument;
+
   if (localStorage.getItem("data") !== null) {
     try {
       return JSON.parse(localStorage.getItem("data"));
@@ -45,7 +49,11 @@ const App = () => {
   const [data, setData] = useState(initdata());
   const [tempData, setTempData] = useState();
   const [droppedData, setDroppedData] = useState();
+  const [dataURL, setDataURL] = useState(null);
+
   const [importError, setImportError] = useState(null);
+  const [dataUrlError, setDataUrlError] = useState(null);
+
   const [closeNewDocumentModal, setCloseNewDocumentModal] = useState(0);
 
   const dsDigger = new JSONDigger(data, "id", "organisations");
@@ -133,6 +141,11 @@ const App = () => {
   const handleJoyrideCallback = (jRData) => {
     const { action, index, status, type } = jRData;
 
+    if (action === "close") {
+      setState({ run: false, stepIndex: 0 });
+      return;
+    }
+
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
       // Update state to advance the tour
       const stepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
@@ -146,12 +159,19 @@ const App = () => {
       } else if (stepIndex > 3 && stepIndex < 9) {
         setSelected(data.organisations[0]);
         if (stepIndex === 8) {
-          // const tab = controlLayer.current;
-          // document.getElementById("organisation-tab").scrollTo(0, 0);
-          const element = document.getElementById("organisation-tab");
-          element.scrollIntoView({
-            block: "center",
-          });
+          function selectElementUntilExists(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+              element.scrollIntoView();
+              setState({ stepIndex: stepIndex });
+            } else {
+              setTimeout(function () {
+                selectElementUntilExists(elementId);
+              }, 30);
+            }
+          }
+
+          selectElementUntilExists("organisation-tab");
         }
       } else if (stepIndex === 9) {
         chart.current.orgchart.demoDragMode(true, "n6");
@@ -226,6 +246,15 @@ const App = () => {
     e.stopPropagation();
   };
 
+  useEffect(() => {
+    const { error, url } = getDataURL();
+    if (error) {
+      setDataUrlError(error);
+      return;
+    }
+    setDataURL(url);
+  }, []);
+
   return (
     <div
       className="App"
@@ -276,6 +305,31 @@ const App = () => {
       />
 
       <AlertModal
+        show={dataURL}
+        onHide={() => {
+          setDataURL(null);
+        }}
+        saveButton={"importieren"}
+        onSave={async () => {
+          const { error, data } = await getExternalData(dataURL);
+          console.log(error, data);
+          if (error) {
+            setImportError(error);
+          } else {
+            setDataURL(null);
+            setData(data);
+          }
+        }}
+        title="Externe Daten importieren"
+      >
+        Möchten Sie die Datei <b>{getFileNameFromURL(dataURL)}</b> von der
+        folgenden Quelle importieren?
+        <br></br> <br></br>
+        <i>{dataURL}</i>
+        <br></br> <br></br>
+      </AlertModal>
+
+      <AlertModal
         show={droppedData}
         onHide={() => {
           setDroppedData(null);
@@ -292,6 +346,26 @@ const App = () => {
       </AlertModal>
 
       <AlertModal
+        show={dataUrlError}
+        onHide={() => {
+          setDataUrlError(null);
+        }}
+        title="Import Fehlgeschlagen"
+      >
+        <Alert variant="danger">
+          Möchten Sie eine externe URL laden? Sie haben über den Parameter
+          "dataurl" in der URL eine externe Quelle angegeben. Diese Quelle ist
+          fehlerhaft:
+          {dataUrlError?.map((error, i) => (
+            <div key={"error-" + i} className="my-2">
+              {error}
+            </div>
+          ))}
+          Bitte überprüfen Sie die URL.
+        </Alert>
+      </AlertModal>
+
+      <AlertModal
         show={importError}
         onHide={() => {
           setImportError(null);
@@ -301,9 +375,9 @@ const App = () => {
         <Alert variant="danger">
           Beim öffnen der Datei ist ein Fehler aufgetreten:
           {importError?.map((error, i) => (
-            <pre key={"error-" + i} className="mt-2">
+            <div key={"error-" + i} className="my-2">
               {JSON.stringify(error, null, " ")}
-            </pre>
+            </div>
           ))}
         </Alert>
       </AlertModal>
@@ -325,6 +399,7 @@ const App = () => {
             onJoyrideStart={handleJoyrideStart}
             ref={controlLayer}
             closeNewDocumentModal={closeNewDocumentModal}
+            dataURL={dataURL}
           />
         </Container>
         <Chart
