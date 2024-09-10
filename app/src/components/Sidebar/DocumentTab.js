@@ -77,6 +77,11 @@ const DocumentTab = ({ data, sendDataUp }) => {
         "ui:widget": FileSelect,
         preuploads: preuploads,
       },
+      version: {
+        "ui:options": {
+          format: "DMY",
+        },
+      },
       schemaVersion: {
         "ui:widget": "hidden",
       },

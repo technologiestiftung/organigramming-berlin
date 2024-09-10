@@ -10,7 +10,7 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import PropTypes from "prop-types";
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { selectNodeService } from "../../services/service";
+import { selectNodeService, formatDate } from "../../services/service";
 import JSONDigger from "../../services/jsonDigger";
 import html2canvas from "html2canvas";
 import { elementToSVG, inlineResources } from "dom-to-svg";
@@ -636,7 +636,7 @@ const ChartContainer = forwardRef(
                           <span>{data.document.creator}</span>
                         )}
                         {data.document.version && (
-                          <span> {data.document.version}</span>
+                          <span> {formatDate(data.document.version)}</span>
                         )}
                       </div>
                     )}

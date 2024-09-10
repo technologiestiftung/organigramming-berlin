@@ -31,6 +31,11 @@ export const selectNodeService = {
   getSelectedNodeInfo: () => subject2.asObservable(),
 };
 
+export const formatDate = (dateString) => {
+  const [year, month, day] = dateString.split("-");
+  return `${day}-${month}-${year}`;
+};
+
 export const toSnakeCase = (str) => {
   return str
     .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
