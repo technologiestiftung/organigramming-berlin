@@ -474,8 +474,8 @@
                   "type": "string",
                   "title": "Dateiformat",
                   "default": "pdf",
-                  "enum": ["json", "svg", "png", "pdf", "rdf"],
-                  "enumNames": ["JSON", "SVG", "PNG", "PDF", "RDF"]
+                  "enum": ["json", "png", "pdf", "rdf"],
+                  "enumNames": ["JSON", "PNG", "PDF", "RDF"]
                 }
               }
             }
@@ -508,13 +508,6 @@
               "properties": {
                 "exportType": {
                   "enum": ["pdf"]
-                },
-                "pdfType": {
-                  "type": "string",
-                  "title": "PDF Prozess",
-                  "default": "print",
-                  "enum": ["print", "png"],
-                  "enumNames": ["Als PDF \"drucken\"", "Bidmap"]
                 }
               }
             },

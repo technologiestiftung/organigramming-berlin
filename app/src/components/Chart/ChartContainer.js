@@ -12,7 +12,7 @@ import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
 import { selectNodeService, formatDate } from "../../services/service";
 import JSONDigger from "../../services/jsonDigger";
-import { toPng } from "html-to-image";
+import { toPng, toBlob } from "html-to-image";
 // import * as htmlToImage from "html-to-image";
 import { elementToSVG, inlineResources } from "dom-to-svg";
 import jsPDF from "jspdf";
@@ -384,7 +384,33 @@ const ChartContainer = forwardRef(
       document.body.removeChild(link);
     };
 
-    const exportPNG = (canvas, exportFilename) => {
+    const resetChart = ({
+      node,
+      nodeBackground,
+      nodeTransform,
+      originalScrollLeft,
+      originalScrollTop,
+    }) => {
+      node.style.background = nodeBackground;
+      node.style.transform = nodeTransform;
+      container.current.scrollLeft = originalScrollLeft;
+      container.current.scrollTop = originalScrollTop;
+
+      const logo = node.querySelector("#logo");
+      if (logo) {
+        logo.style.display = "block";
+      }
+
+      setExporting(false);
+    };
+
+    const exportPNG = (
+      node,
+      exportFilename,
+      originalScrollLeft,
+      originalScrollTop,
+      exportFileextension
+    ) => {
       const isWebkit = "WebkitAppearance" in document.documentElement.style;
       const isFf = !!window.sidebar;
       const isEdge =
@@ -392,10 +418,62 @@ const ChartContainer = forwardRef(
         (navigator.appName === "Netscape" &&
           navigator.appVersion.indexOf("Edge") > -1);
 
-      if ((!isWebkit && !isFf) || isEdge) {
-        window.navigator.msSaveBlob(canvas.msToBlob(), exportFilename + ".png");
+      // save the old background and transform style
+      const nodeBackground = node.style.background;
+      const nodeTransform = node.style.transform;
+      node.style.background = "#fff";
+      node.style.transform = "";
+
+      // for old browser and not pdf export
+      if (((!isWebkit && !isFf) || isEdge) && exportFileextension !== "pdf") {
+        toBlob(node).then(
+          function (blob) {
+            window.navigator.msSaveBlob(blob, exportFilename + ".png");
+            resetChart({
+              node,
+              nodeBackground,
+              nodeTransform,
+              originalScrollLeft,
+              originalScrollTop,
+            });
+          }, // on error
+          () => {
+            resetChart({
+              node,
+              nodeBackground,
+              nodeTransform,
+              originalScrollLeft,
+              originalScrollTop,
+            });
+          }
+        );
       } else {
-        download(canvas.toDataURL("image/png"), exportFilename, "png");
+        toPng(node).then(
+          function (dataUrl) {
+            if (exportFileextension === "pdf") {
+              exportPDF(node, dataUrl, exportFilename);
+            } else {
+              download(dataUrl, exportFilename, "png");
+            }
+            resetChart({
+              node,
+              nodeBackground,
+              nodeTransform,
+              originalScrollLeft,
+              originalScrollTop,
+            });
+          },
+          // on error
+          () => {
+            resetChart({
+              node,
+              nodeBackground,
+              nodeTransform,
+              originalScrollLeft,
+              originalScrollTop,
+            });
+          }
+        );
       }
     };
 
@@ -425,43 +503,18 @@ const ChartContainer = forwardRef(
           exportRDF(data);
           setExporting(false);
         } else if (exportFileextension === "pdf" && pdfType === "svg") {
-          console.log("exportSVG2PDF");
           exportSVG2PDF(canvas, exportFilename).then(() => {
             setExporting(false);
           });
         } else {
           const node = chart.current.querySelector("#paper");
-          const nodeBackground = node.style.background;
-          const nodeTransform = node.style.transform;
-          node.style.background = "#fff";
-          node.style.transform = "";
-          toPng(node).then(
-            function (dataUrl) {
-              if (exportFileextension === "pdf") {
-                exportPDF(node, dataUrl, exportFilename);
-              } else {
-                download(dataUrl, exportFilename);
-              }
-              node.style.background = nodeBackground;
-              node.style.transform = nodeTransform;
-              container.current.scrollLeft = originalScrollLeft;
-              container.current.scrollTop = originalScrollTop;
-              setExporting(false);
-            },
-            // on error
-            () => {
-              setExporting(false);
-              node.style.background = nodeBackground;
-              node.style.transform = nodeTransform;
-              container.current.scrollLeft = originalScrollLeft;
-              container.current.scrollTop = originalScrollTop;
-              if (!includeLogo && data.document.logo) {
-                const logo = canvas.querySelector("#logo");
-                if (logo) {
-                  logo.style.display = "none";
-                }
-              }
-            }
+
+          exportPNG(
+            node,
+            exportFilename,
+            originalScrollLeft,
+            originalScrollTop,
+            exportFileextension
           );
         }
       },
