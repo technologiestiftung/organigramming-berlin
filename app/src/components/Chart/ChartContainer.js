@@ -384,17 +384,11 @@ const ChartContainer = forwardRef(
       document.body.removeChild(link);
     };
 
-    const resetChart = ({
-      node,
-      nodeBackground,
-      nodeTransform,
-      originalScrollLeft,
-      originalScrollTop,
-    }) => {
-      node.style.background = nodeBackground;
-      node.style.transform = nodeTransform;
-      container.current.scrollLeft = originalScrollLeft;
-      container.current.scrollTop = originalScrollTop;
+    const resetChart = ({ node, userView }) => {
+      node.style.background = userView.nodeBackground;
+      node.style.transform = userView.nodeTransform;
+      container.current.scrollLeft = userView.originalScrollLeft;
+      container.current.scrollTop = userView.originalScrollTop;
 
       const logo = node.querySelector("#logo");
       if (logo) {
@@ -418,9 +412,14 @@ const ChartContainer = forwardRef(
         (navigator.appName === "Netscape" &&
           navigator.appVersion.indexOf("Edge") > -1);
 
+      const userView = {
+        originalScrollLeft: originalScrollLeft,
+        originalScrollTop: originalScrollTop,
+      };
+
       // save the old background and transform style
-      const nodeBackground = node.style.background;
-      const nodeTransform = node.style.transform;
+      userView.nodeBackground = node.style.background;
+      userView.nodeTransform = node.style.transform;
       node.style.background = "#fff";
       node.style.transform = "";
 
@@ -431,19 +430,13 @@ const ChartContainer = forwardRef(
             window.navigator.msSaveBlob(blob, exportFilename + ".png");
             resetChart({
               node,
-              nodeBackground,
-              nodeTransform,
-              originalScrollLeft,
-              originalScrollTop,
+              userView,
             });
           }, // on error
           () => {
             resetChart({
               node,
-              nodeBackground,
-              nodeTransform,
-              originalScrollLeft,
-              originalScrollTop,
+              userView,
             });
           }
         );
@@ -457,20 +450,14 @@ const ChartContainer = forwardRef(
             }
             resetChart({
               node,
-              nodeBackground,
-              nodeTransform,
-              originalScrollLeft,
-              originalScrollTop,
+              userView,
             });
           },
           // on error
           () => {
             resetChart({
               node,
-              nodeBackground,
-              nodeTransform,
-              originalScrollLeft,
-              originalScrollTop,
+              userView,
             });
           }
         );
