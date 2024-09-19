@@ -12,7 +12,7 @@ import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
 import { selectNodeService, formatDate } from "../../services/service";
 import JSONDigger from "../../services/jsonDigger";
-import { toPng, toBlob } from "html-to-image";
+import { toPng, toBlob, toJpeg } from "html-to-image";
 // import * as htmlToImage from "html-to-image";
 import { elementToSVG, inlineResources } from "dom-to-svg";
 import jsPDF from "jspdf";
@@ -371,7 +371,7 @@ const ChartContainer = forwardRef(
         unit: "px",
         format: [canvasWidth, canvasHeight],
       });
-      doc.addImage(dataUrl, "PNG", 0, 0, canvasWidth, canvasHeight);
+      doc.addImage(dataUrl, "JPEG", 0, 0, canvasWidth, canvasHeight);
       doc.save(exportFilename + ".pdf");
     };
 
@@ -441,26 +441,41 @@ const ChartContainer = forwardRef(
           }
         );
       } else {
-        toPng(node).then(
-          function (dataUrl) {
-            if (exportFileextension === "pdf") {
+        if (exportFileextension === "pdf") {
+          toJpeg(node, { quality: 1 }).then(
+            function (dataUrl) {
               exportPDF(node, dataUrl, exportFilename);
-            } else {
-              download(dataUrl, exportFilename, "png");
+              resetChart({
+                node,
+                userView,
+              });
+            },
+            // on error
+            () => {
+              resetChart({
+                node,
+                userView,
+              });
             }
-            resetChart({
-              node,
-              userView,
-            });
-          },
-          // on error
-          () => {
-            resetChart({
-              node,
-              userView,
-            });
-          }
-        );
+          );
+        } else {
+          toPng(node, { quality: 1 }).then(
+            function (dataUrl) {
+              download(dataUrl, exportFilename, "png");
+              resetChart({
+                node,
+                userView,
+              });
+            },
+            // on error
+            () => {
+              resetChart({
+                node,
+                userView,
+              });
+            }
+          );
+        }
       }
     };
 
