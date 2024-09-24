@@ -11,7 +11,7 @@ const definitions = getDefinitions();
 
 const ExportModal = (props) => {
   const [formData, setFormData] = useState({ ...props.data });
-  const [showPDFInfo, setShowPDFInfo] = useState(false);
+  // const [showPDFInfo, setShowPDFInfo] = useState(false);
   const [showRDFInfo, setShowRDFInfo] = useState(false);
   const [warningMultiMainOrgs, setWarningMultiMainOrgs] = useState(false);
   const [duplicatePersons, setDuplicatePersons] = useState([]);
@@ -41,15 +41,15 @@ const ExportModal = (props) => {
     const personsDuplicates = checkForDuplicatePersons(formData);
     setDuplicatePersons(personsDuplicates);
 
-    if (
-      formData.export.exportType === "pdf" &&
-      formData.export.pdfType === "print" &&
-      formData.export.saveExport === "export"
-    ) {
-      setShowPDFInfo(true);
-    } else {
-      setShowPDFInfo(false);
-    }
+    // if (
+    //   formData.export.exportType === "pdf" &&
+    //   formData.export.pdfType === "print" &&
+    //   formData.export.saveExport === "export"
+    // ) {
+    //   setShowPDFInfo(true);
+    // } else {
+    //   setShowPDFInfo(false);
+    // }
     if (
       formData.export.exportType === "rdf" &&
       formData.export.saveExport === "export"
@@ -114,18 +114,18 @@ const ExportModal = (props) => {
           props.onSave(formData.export.includeLogo);
           break;
         default:
-          if (formData.export.pdfType === "print") {
-            document.title = formData.export.filename;
-            setTimeout(() => {
-              window.print();
-            }, 500);
-          } else {
-            props.onExport(
-              "pdf",
-              formData.export.includeLogo,
-              formData.export.pdfType
-            );
-          }
+          // if (formData.export.pdfType === "print") {
+          //   document.title = formData.export.filename;
+          //   setTimeout(() => {
+          //     window.print();
+          //   }, 500);
+          // } else {
+          props.onExport(
+            "pdf",
+            formData.export.includeLogo,
+            formData.export.pdfType
+          );
+          // }
           break;
       }
     }
@@ -164,7 +164,7 @@ const ExportModal = (props) => {
             </Form>
           </Col>
         </Row>
-        {showPDFInfo && (
+        {/* {showPDFInfo && (
           <Row>
             <Col className="mb-3">
               <Alert variant="success">
@@ -203,7 +203,7 @@ const ExportModal = (props) => {
               </Alert>
             </Col>
           </Row>
-        )}
+        )} */}
         {showRDFInfo && (
           <Row>
             <Col className="mb-3">
