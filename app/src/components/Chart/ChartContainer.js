@@ -353,14 +353,7 @@ const ChartContainer = forwardRef(
             unit: "px",
             format: [canvasWidth, canvasHeight],
           });
-          doc.addImage(
-            dataUrl,
-            "JPEG",
-            0,
-            0,
-            canvasWidth / 1.3333,
-            canvasHeight / 1.3333
-          );
+          doc.addImage(dataUrl, "JPEG", 0, 0, canvasWidth, canvasHeight);
           doc.save(exportFilename + ".pdf");
 
           resetChart({
