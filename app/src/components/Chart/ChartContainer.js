@@ -346,7 +346,7 @@ const ChartContainer = forwardRef(
       const canvasWidth = Math.floor(boundingClientRect.width);
       const canvasHeight = Math.floor(boundingClientRect.height);
 
-      toJpeg(node, { quality: 1, pixelRatio: 2 }).then(
+      toJpeg(node, { quality: 1, pixelRatio: 3 }).then(
         function (dataUrl) {
           const doc = new jsPDF({
             orientation: data.document.paperOrientation,
@@ -428,7 +428,7 @@ const ChartContainer = forwardRef(
         );
       } else {
         //
-        toPng(node, { quality: 1, pixelRatio: 2 }).then(
+        toPng(node, { quality: 1, pixelRatio: 3 }).then(
           function (dataUrl) {
             download(dataUrl, exportFilename, "png");
             resetChart({
