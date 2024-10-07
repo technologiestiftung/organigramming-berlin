@@ -268,5 +268,70 @@
     "vocab": "berorgs",
     "name": "Geschaeftsleitung",
     "type": "position"
+  },
+  "Vorsteher:in": {
+    "vocab": "berorgs",
+    "name": "VorsteherIn",
+    "type": "position"
+  },
+  "BVV-Büro": {
+    "vocab": "berorgs",
+    "name": "BVVBuero",
+    "type": "org"
+  },
+  "Amtsleiter:in": {
+    "vocab": "berorgs",
+    "name": "AmtsleiterIn",
+    "type": "position"
+  },
+  "Nachhaltigkeitsbeauftragte:r": {
+    "vocab": "berorgs",
+    "name": "NachhaltigkeitsbeauftragteR",
+    "type": "position"
+  },
+  "Integrationsbeauftragte:r": {
+    "vocab": "berorgs",
+    "name": "IntegrationsbeauftragteR",
+    "type": "position"
+  },
+  "Europabeauftragte:r": {
+    "vocab": "berorgs",
+    "name": "EuropabeauftragteR",
+    "type": "position"
+  },
+  "Beauftragte:r für Partnerschaften": {
+    "vocab": "berorgs",
+    "name": "BeauftragteRFuerPartnerschaften",
+    "type": "position"
+  },
+  "Beauftragte:r für EU- und Städtepartnerschaften": {
+    "vocab": "berorgs",
+    "name": "BeauftragteRFuerEUUndStaedtepartnerschaften",
+    "type": "position"
+  },
+  "Gleichstellungsbeauftragte:r": {
+    "vocab": "berorgs",
+    "name": "GleichstellungsbeauftragteR",
+    "type": "position"
+  },
+  "Bezirksstadträt:in": {
+    "vocab": "berorgs",
+    "name": "BezirksstadtraetIn",
+    "type": "position"
+  },
+  "Pressestelle": {
+    "vocab": "berorgs",
+    "name": "Pressestelle",
+    "type": "org"
+  },
+  "Rechtsamt": {
+    "vocab": "berorgs",
+    "name": "Rechtsamt",
+    "type": "org"
+  },
+  "Sozialraumorientierte Planungskoordination": {
+    "vocab": "berorgs",
+    "name": "SozialraumorientiertePlanungskoordination",
+    "type": "org"
   }
 }

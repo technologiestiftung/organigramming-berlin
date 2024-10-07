@@ -217,16 +217,20 @@ export function nameExists(pos) {
 export function getGenderedPosition(position, gender) {
   const splittedPosition = position.split(":");
   if ((gender === "m" || gender === "w") && splittedPosition.length > 1) {
-    const ending = splittedPosition[splittedPosition.length - 1];
-
-    if (ending === "in") {
-      const genderedPosition =
-        gender === "w" ? splittedPosition[0] + "in" : splittedPosition[0];
-      return genderedPosition;
+    if (position.includes(":r")) {
+      if (gender === "w") {
+        return position.replaceAll(":r", "");
+      } else if (gender === "m") {
+        return position.replaceAll(":r", "r");
+      }
     }
 
-    if (ending === "r") {
-      return gender === "w" ? splittedPosition[0] : splittedPosition[0] + "r";
+    if (position.includes(":in")) {
+      if (gender === "w") {
+        return position.replaceAll(":in", "in");
+      } else if (gender === "m") {
+        return position.replaceAll(":in", "");
+      }
     }
   } else {
     return position;
