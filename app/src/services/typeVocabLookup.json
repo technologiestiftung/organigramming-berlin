@@ -219,14 +219,9 @@
     "name": "Bueroleitung",
     "type": "position"
   },
-  "ehördliche:r Beauftragte:r": {
-    "vocab": "berorgs",
-    "name": "BehoerdlicheRBeauftragteR",
-    "type": "position"
-  },
   "Behördliche:r Beauftragte:r": {
     "vocab": "berorgs",
-    "name": "Behördliche:r Beauftragte:r",
+    "name": "BehoerdlicheRBeauftragteR",
     "type": "position"
   },
   "Landesbeauftragte:r": {
@@ -261,7 +256,7 @@
   },
   "Präsident:in": {
     "vocab": "berorgs",
-    "name": "PräsidentIn",
+    "name": "PraesidentIn",
     "type": "position"
   },
   "Amtsleitung": {
