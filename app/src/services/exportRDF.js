@@ -110,6 +110,11 @@ function getMemberData(d) {
     ...(person.salutation && { "vcard:honorific-prefix": person.salutation }),
     ...(person.firstName && { "vcard:given-name": person.firstName }),
     ...(person.lastName && { "vcard:family-name": person.lastName }),
+    ...((person.firstName || person.lastName) && {
+      "rdfs:label": [person.firstName, person.lastName]
+        .filter(Boolean)
+        .join(" "),
+    }),
     ...(person.gender &&
       person.gender !== "1" && {
         "schema:gender": { "@id": genderHelper[person.gender] },
