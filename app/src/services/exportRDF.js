@@ -66,10 +66,19 @@ function getPositionData(position) {
           }`,
         },
       }),
+    ...(position?.positionType &&
+      typeVocabLookup[position?.positionType]?.name && {
+        "rdfs:label": typeVocabLookup[position.positionType].name,
+      }),
     // if the position is NOT in the vocab
     ...(position.positionType &&
       !typeVocabLookup[position.positionType] && {
         "@type": "org:Post",
+        ...(position.positionType && {
+          "rdfs:label":
+            position.positionType +
+            (position?.positionStatus ? ` (${position.positionStatus})` : ""),
+        }),
         "org:role": {
           "@type": "org:Role",
           "@id": getURI("role", getRoleTypeDescription(position)),
