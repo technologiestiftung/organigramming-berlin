@@ -238,14 +238,15 @@ export const exportRDF = (data) => {
   function createNestedOrganizations(inputJSON) {
     function traverseOrganizations(organizations) {
       if (!organizations) return;
-      return organizations.map((org) => {
+      return organizations.flatMap((org) => {
         if (org.layout.style === "hide") {
           const { organisations } = org;
           const result = traverseOrganizations(organisations);
-          return result[0];
+          return result || [];
         } else {
           const { organisations } = org;
           const result = getOrgData(org);
+
           delete result.organisations;
           const subOrganizations = traverseOrganizations(organisations);
           if (subOrganizations && subOrganizations.length > 0) {
@@ -255,7 +256,7 @@ export const exportRDF = (data) => {
               result["org:hasSubOrganization"] = subOrganizations[0];
             }
           }
-          return result;
+          return [result];
         }
       });
     }
