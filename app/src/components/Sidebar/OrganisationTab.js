@@ -182,15 +182,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
     },
   };
 
-  // function whenDataChanges(e) {
-  //   console.log("ta1", e.formData.current.uri?.uri);
-
-  //   if (e.formData.current.uri?.uri === "") {
-  //     e.formData.current.uri = { uri: getURI("organisation") };
-  //     console.log("da2", e.formData.current.uri);
-  //   }
-  // }
-
   useEffect(() => {
     if (selected != null) {
       setFormData({ current: { ...selected } });
@@ -211,8 +202,6 @@ const OrganisationTab = ({ sendDataUp, selected, setSelected, dsDigger }) => {
   const onChange = async (e) => {
     // fix: if there is no URI for an organisation
     if (e.formData.current.uri?.uri === "") {
-      console.log("CALLLEDD");
-
       setTimeout(() => {
         e.formData.current.uri = { uri: getURI("organisation") };
         setFormData({ ...e.formData });
