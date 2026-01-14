@@ -327,11 +327,7 @@ export const exportRDF = (data) => {
         }),
         "@type": "berorgs:Organogram",
         "rdfs:label": {
-          "@value": data.document?.title
-            ? data.document.title.startsWith("Organigramm")
-              ? data.document.title
-              : `Organigramm der ${data.document.title}`
-            : "",
+          "@value": data.document?.title || "",
           "@language": "de",
         },
         ...(data.document?.creator && {
