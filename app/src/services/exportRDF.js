@@ -12,6 +12,17 @@ import rdfVocab from "./rdfVocab.json";
 import getURI from "./getURI";
 const subClasses = {};
 
+function buildTelephoneResource(telephone) {
+  if (!telephone) return null;
+  const trimmed = telephone.trim();
+  if (!trimmed) return null;
+  const value = trimmed.startsWith("tel:") ? trimmed : `tel:${trimmed}`;
+  return {
+    "@type": "vcard:Telephone",
+    "vcard:hasValue": value,
+  };
+}
+
 const downloadData = async (data, rdf) => {
   const fileName = data.export.filename || toSnakeCase(data.document.title);
   const rdfType = data.export.rdfType;
@@ -129,7 +140,7 @@ function getMemberData(d) {
         "schema:gender": { "@id": genderHelper[person.gender] },
       }),
     ...(dC.telephone && {
-      "vcard:tel": dC.telephone,
+      "vcard:hasTelephone": buildTelephoneResource(dC.telephone),
     }),
     ...(dC.fax && {
       "vcard:fax": dC.fax,
@@ -138,7 +149,7 @@ function getMemberData(d) {
       "vcard:email": dC.email,
     }),
     ...(dC.website && {
-      "vcard:url": dC.website,
+      "vcard:hasUrl": dC.website,
     }),
     "org:holds": { "@id": d.uri.uri },
   };
@@ -146,9 +157,12 @@ function getMemberData(d) {
 }
 
 function getOrgData(d) {
-  const orgTypeUri = "organigram:" + getURI("orgtype", d.type, true);
+  const hasType = Boolean(d?.type?.trim());
+  const orgTypeUri = hasType
+    ? "organigram:" + getURI("orgtype", d.type, true)
+    : null;
 
-  if (!typeVocabLookup[d.type]) {
+  if (hasType && !typeVocabLookup[d.type]) {
     subClasses[orgTypeUri] = {
       "@id": orgTypeUri,
       "@type": "rdfs:Class",
@@ -163,18 +177,24 @@ function getOrgData(d) {
   }
 
   const newOrgJSONLD = {
-    "@type": typeVocabLookup[d.type]
-      ? [
-          "org:Organization",
-          `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
-        ]
-      : orgTypeUri,
+    "@type": hasType
+      ? typeVocabLookup[d.type]
+        ? [
+            "org:Organization",
+            `${typeVocabLookup[d.type].vocab}:${typeVocabLookup[d.type].name}`,
+          ]
+        : orgTypeUri
+      : "org:Organization",
     ...(d?.uri?.uri && { "@id": d.uri.uri }),
     ...(d?.uri?.sameAsUris && {
       "owl:sameAs": getSameAsURIs(d.uri.sameAsUris),
     }),
     ...(d.name && {
       "skos:prefLabel": {
+        "@value": d.name,
+        "@language": "de",
+      },
+      "rdfs:label": {
         "@value": d.name,
         "@language": "de",
       },
@@ -195,20 +215,21 @@ function getOrgData(d) {
 
   const cD = d.contact;
   const aD = d.address;
-  if (hasKeys(aD) || hasKeys(cD)) {
+  if (cD?.website) {
+    newOrgJSONLD["vcard:hasUrl"] = cD.website;
+  }
+  const hasSiteContact = cD?.telephone || cD?.fax || cD?.email;
+  if (hasKeys(aD) || hasSiteContact) {
     newOrgJSONLD["org:hasSite"] = {
       "@type": "org:Site",
-      ...(cD.telephone && {
-        "vcard:tel": cD.telephone,
+      ...(cD?.telephone && {
+        "vcard:hasTelephone": buildTelephoneResource(cD.telephone),
       }),
-      ...(cD.fax && {
+      ...(cD?.fax && {
         "vcard:fax": cD.fax,
       }),
-      ...(cD.email && {
+      ...(cD?.email && {
         "vcard:email": cD.email,
-      }),
-      ...(cD.website && {
-        "vcard:url": cD.website,
       }),
     };
     if (hasKeys(aD)) {
@@ -306,7 +327,11 @@ export const exportRDF = (data) => {
         }),
         "@type": "berorgs:Organogram",
         "rdfs:label": {
-          "@value": data.document?.title || "",
+          "@value": data.document?.title
+            ? data.document.title.startsWith("Organigramm")
+              ? data.document.title
+              : `Organigramm der ${data.document.title}`
+            : "",
           "@language": "de",
         },
         ...(data.document?.creator && {
