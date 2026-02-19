@@ -231,19 +231,20 @@ const ChartNode = forwardRef(
               }}
             >
               <h1>{ds.name}</h1>
-              {ds.altName && (
-                <h3 className="text-start">
-                  <span>({ds.altName})</span>
-                </h3>
-              )}
-              {ds.purpose && (
+              <h3 style={{fontStyle: "normal", fontWeight: 300 }}>
+                {ds.purpose}
+              </h3>
+              {ds.type && (
                 <h3
                   className="text-end"
                   style={{
                     fontStyle: "normal",
                   }}
                 >
-                  <span>{ds.purpose}</span>
+                  <span>
+                    {ds.type}
+                    {(ds.altName) ? ` · ${ds.altName}` : ""}
+                  </span>
                 </h3>
               )}
             </div>
@@ -272,9 +273,9 @@ const ChartNode = forwardRef(
                       positions={data.positions}
                     />
                   )}
-                {ds.departments && ds.departments.length > 0 && (
+                {/* {ds.departments && ds.departments.length > 0 && (
                   <hr className="mb-2"></hr>
-                )}
+                )} */}
 
                 {ds.departments && ds.layout?.grid === "grid2" && (
                   <div className="grid-container">
@@ -366,7 +367,7 @@ const ChartNode = forwardRef(
                   </ul>
                 )}
 
-                {ds.address.street && (
+                {(ds?.address?.street || ds.address.city) ? (
                   <div className="address">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -389,7 +390,7 @@ const ChartNode = forwardRef(
                     {ds.address.city && " "}
                     {ds.address.city}
                   </div>
-                )}
+                ):""}
               </div>
             )}
           </div>

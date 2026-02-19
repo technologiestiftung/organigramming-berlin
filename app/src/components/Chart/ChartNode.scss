@@ -131,7 +131,14 @@
               padding-top: 0.3rem;
               padding-bottom: 0.2rem;
               padding-left: 0.7rem;
-              padding-right: 0.7rem;
+            
+              hr {
+                width: calc(100% + 0.7rem);
+                margin-left: -0.7rem;
+                margin-right: 0;
+                height: 0.5px;
+              }
+
               li {
                 width: 100%;
                 display: block;
@@ -140,7 +147,6 @@
                 }
                 h3 {
                   font-size: 1.15em;
-                  font-weight: bold;
                 }
                 .name {
                   display: inline-block;
@@ -150,6 +156,11 @@
                 }
                 .position {
                   display: block;
+                  font-size: 0.7em;
+                }
+                .department-type{
+                  font-size: 0.8em;
+                  margin-bottom: 0px;
                 }
               }
             }
@@ -170,6 +181,7 @@
                   font-size: 1em;
                   font-weight: normal;
                   margin-bottom: 0;
+                  font-weight: bold;
                 }
                 .position {
                   font-size: 0.75em;
@@ -437,7 +449,7 @@
         width: calc(50% + 1px);
         top: 10px;
         height: 2px;
-        background-color: $primary;
+        background-color: $secondary;
       }
       &::after {
         content: "";
@@ -446,13 +458,13 @@
         width: 2px;
         top: 0px;
         height: 10px;
-        background-color: $primary;
+        background-color: $secondary;
       }
       > li {
         position: relative;
         margin-left: 0px;
         padding-left: 10px;
-        padding-right: 10px;
+        padding-right: 80px;
         margin-bottom: 0;
         // &:last-child {
         //   &::before {
@@ -482,7 +494,7 @@
             width: calc(50% - 2px);
             top: 0;
             height: calc(50% - 2px);
-            border-bottom: 2px $primary solid;
+            border-bottom: 2px $secondary solid;
           }
         }
         &:first-child {
@@ -501,8 +513,8 @@
               top: 0;
               height: calc(50% - 2px);
               // background-color: $primary;
-              border-bottom: 2px $primary solid;
-              border-left: 2px $primary solid;
+              border-bottom: 2px $secondary solid;
+              border-left: 2px $secondary solid;
             }
           }
         }
@@ -514,7 +526,7 @@
             width: 2px;
             height: 100%;
             top: 0;
-            background-color: $primary;
+            background-color: $secondary;
           }
         }
       }
@@ -677,6 +689,11 @@ h4.person {
   font-size: 1.15em;
   font-weight: bold;
   margin-bottom: 0.15em;
+}
+
+h4.person.highlighted,
+h4.name.highlighted {
+  font-size: 1.5em;
 }
 
 body.drag-demo {

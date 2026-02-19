@@ -32,9 +32,6 @@
           "departments": [
             {
               "name": "Sekretariat",
-              "uri": {
-                "uri": "https://berlin.github.io/lod-organigram/organisation-1c10d92515"
-              },
               "positions": [
                 {
                   "person": {
@@ -63,9 +60,6 @@
           "positions": [
             {
               "positionType": "Abteilungsleiter",
-              "uri": {
-                "uri": "https://berlin.github.io/lod-organigram/position-24fde97446"
-              },
               "person": {
                 "contact": { "telephone": "030 343566" },
                 "firstName": "Max",

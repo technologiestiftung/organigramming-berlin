@@ -32,11 +32,9 @@ const ChartNodePositions = forwardRef(({ ds, data, positions }, ref) => {
                         position.positionType,
                         position?.person?.gender
                       )}
-                      {position.positionStatus &&
-                        " (" + position.positionStatus + ")"}
                     </span>
                   )}
-                  <h4 className="person">
+                  <h4 className={`person${position?.person?.highlight ? " highlighted" : ""}`}>
                     {position?.person?.salutation}
                     {position?.person?.title && " "}
                     {position?.person?.title}
@@ -45,6 +43,11 @@ const ChartNodePositions = forwardRef(({ ds, data, positions }, ref) => {
                     {position?.person?.lastName && " "}
                     {position?.person?.lastName}
                   </h4>
+                  {position.positionStatus && (
+                    <span className="position">
+                      {"(" + position.positionStatus + ")"}
+                    </span>
+                  )}
                   {position?.person?.contact && (
                     <ul className="contact">
                       {position?.person?.contact.telephone && (

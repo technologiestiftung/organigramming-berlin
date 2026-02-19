@@ -87,7 +87,7 @@
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],
-          "title": "Art"
+          "title": "Art der Organisation/Einheit"
         },
         "name": {
           "type": "string",
@@ -264,7 +264,7 @@
             "Öffentliches Unternehmen",
             "Unternehmen"
           ],
-          "title": "Art"
+          "title": "Art der Organisationseinheiten"
         },
         "uri": {
           "$ref": "#/definitions/uri"
@@ -284,7 +284,7 @@
       "properties": {
         "positionType": {
           "type": "string",
-          "title": "Art der Position",
+          "title": "Art der Rolle",
           "examples": [
             "Büroleiter:in",
             "Pressesprecher:in",
@@ -310,6 +310,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+       "highlight": {
+          "type": "boolean",
+          "title": "Person hervorheben",
+          "default": false
+        },
         "salutation": {
           "type": "string",
           "title": "Anrede"
@@ -487,6 +492,11 @@
               "properties": {
                 "exportType": {
                   "enum": ["json"]
+                },
+                "excludePersonalData": {
+                  "type": "boolean",
+                  "title": "Personenbezogene Daten NICHT exportieren",
+                  "default": false
                 }
               }
             },
@@ -522,6 +532,11 @@
                   "default": "json-ld",
                   "enum": ["json-ld", "nquads", "turtle"],
                   "enumNames": ["JSON-LD", "N-Quads", "Turtle"]
+                },
+                "excludePersonalData": {
+                  "type": "boolean",
+                  "title": "Personenbezogene Daten NICHT exportieren",
+                  "default": false
                 },
                 "baseUri": {
                   "type": "string",

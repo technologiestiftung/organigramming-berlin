@@ -219,20 +219,41 @@ export function getGenderedPosition(position, gender) {
   if ((gender === "m" || gender === "w") && splittedPosition.length > 1) {
     if (position.includes(":r")) {
       if (gender === "w") {
-        return position.replaceAll(":r", "");
+        position = position.replaceAll(":r", "");
       } else if (gender === "m") {
-        return position.replaceAll(":r", "r");
+        position =  position.replaceAll(":r", "r");
       }
     }
 
     if (position.includes(":in")) {
       if (gender === "w") {
-        return position.replaceAll(":in", "in");
+        position =  position.replaceAll(":in", "in");
       } else if (gender === "m") {
-        return position.replaceAll(":in", "");
+        position =  position.replaceAll(":in", "");
       }
     }
-  } else {
-    return position;
+  } 
+  
+  return position;
+  
+}
+
+export function removePersonProps(value) {
+  if (Array.isArray(value)) {
+    return value.map(removePersonProps);
   }
+
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) {
+      if (k === "person") {
+        out[k] = {};          // replace with empty object
+        continue;             // don't traverse the old person value
+      }
+      out[k] = removePersonProps(v);
+    }
+    return out;
+  }
+
+  return value;
 }

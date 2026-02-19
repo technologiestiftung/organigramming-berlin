@@ -22,6 +22,14 @@ import { exportRDF } from "../../services/exportRDF";
 
 import "../../services/registerFiles";
 
+const customSchema = {
+  attributes: {
+    "*": ["style"],
+    div: ["style"],
+  },
+};
+
+
 const propTypes = {
   data: PropTypes.object.isRequired,
   pan: PropTypes.bool,
@@ -701,7 +709,7 @@ const ChartContainer = forwardRef(
                     </Button>
                     <MDEditor.Markdown
                       source={data.document.note}
-                      rehypePlugins={[[rehypeSanitize]]}
+                      rehypePlugins={[[rehypeSanitize,customSchema]]}
                     />
                   </div>
                 </div>

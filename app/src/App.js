@@ -17,6 +17,7 @@ import {
   isDefiend,
   validateData,
   getFileNameFromURL,
+  removePersonProps
 } from "./services/service";
 import { upgradeDataStructure } from "./services/upgradeDataStructure";
 import { getDataURL } from "./services/getDataURL";
@@ -112,11 +113,12 @@ const App = () => {
     setState({ run: true, stepIndex: 0 });
   };
 
-  const onSave = async (includeLogo = true) => {
-    const fileName = data.export.filename || toSnakeCase(data.document.title);
+  const onSave = async (includeLogo = true, excludePersonalData = false) => {
+    const dataCopy = excludePersonalData ? removePersonProps(data) : data;
+    const fileName = dataCopy.export.filename || toSnakeCase(dataCopy.document.title);
     const exportData = includeLogo
-      ? { ...data }
-      : { ...data, document: { ...data.document, logo: "" } };
+      ? { ...dataCopy }
+      : { ...dataCopy, document: { ...dataCopy.document, logo: "" } };
     const json = JSON.stringify(exportData);
     const blob = new Blob([json], { type: "application/json" });
     const href = await URL.createObjectURL(blob);
