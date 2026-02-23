@@ -111,7 +111,7 @@ const ExportModal = (props) => {
           props.onExport("rdf", false, false, formData.export.rdfType);
           break;
         case "json":
-          props.onSave(formData.export.includeLogo);
+          props.onSave(formData.export.includeLogo,formData.export?.excludePersonalData);
           break;
         default:
           // if (formData.export.pdfType === "print") {

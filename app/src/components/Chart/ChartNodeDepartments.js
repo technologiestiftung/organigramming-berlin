@@ -12,10 +12,16 @@ const ChartNodeDepartments = forwardRef(({ ds, data, departments }, ref) => {
     >
       {departments &&
         departments.map((department, i) => (
-          <li key={i + ds.name + "-" + department.name} className="mb-3">
+          <span key={i + ds.name + "-" + department.name}>
+
+          <hr className="mb-2"></hr>
+          <li className="mb-3">
             <h3 className="mb-1">{department.name}</h3>
-            {ds.purpose && (
-              <h3 className="fw-normal mb-2 mt-0">{department.purpose}</h3>
+            <h3 style={{fontStyle: "normal", fontWeight: 300 }} className="department-type">
+              {department.purpose}
+            </h3>
+            {ds.type && (
+              <h3 className="department-type fw-normal mt-0 text-end">{department.type}</h3>
             )}
 
             {department.positions && (
@@ -36,22 +42,6 @@ const ChartNodeDepartments = forwardRef(({ ds, data, departments }, ref) => {
                             position.person.lastName
                           }
                         >
-                          <div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              className={
-                                position.positionType
-                                  ? "mt-2 bi bi-person"
-                                  : "bi bi-person"
-                              }
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-                            </svg>
-                          </div>{" "}
                           <div className="ms-1">
                             {position.positionType && (
                               <span className="position">
@@ -59,20 +49,22 @@ const ChartNodeDepartments = forwardRef(({ ds, data, departments }, ref) => {
                                   position.positionType,
                                   position?.person?.gender
                                 )}
-                                {position.positionStatus &&
-                                  " (" + position.positionStatus + ")"}
                               </span>
                             )}
-
-                            <h4 className="name">
-                              {position.person.salutation}
-                              {position.person.title && " "}
-                              {position.person.title}
-                              {position.person.firstName && " "}
-                              {position.person.firstName}
-                              {position.person.lastName && " "}
-                              {position.person.lastName}
+                            <h4 className={`person${position?.person?.highlight ? " highlighted" : ""}`}>
+                              {position?.person?.salutation}
+                              {position?.person?.title && " "}
+                              {position?.person?.title}
+                              {position?.person?.firstName && " "}
+                              {position?.person?.firstName}
+                              {position?.person?.lastName && " "}
+                              {position?.person?.lastName}
                             </h4>
+                            {position.positionStatus && (
+                              <span className="position">
+                                {"(" + position.positionStatus + ")"}
+                              </span>
+                            )}
                             {position.person.contact && (
                               <ul className="contact">
                                 {position.person.contact.telephone && (
@@ -146,8 +138,10 @@ const ChartNodeDepartments = forwardRef(({ ds, data, departments }, ref) => {
               </ul>
             )}
           </li>
+          </span>
         ))}
     </ul>
+    
   );
 });
 

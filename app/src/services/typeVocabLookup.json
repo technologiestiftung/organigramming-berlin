@@ -333,5 +333,35 @@
     "vocab": "berorgs",
     "name": "SozialraumorientiertePlanungskoordination",
     "type": "org"
+  },
+  "N.N.": {
+    "vocab": "berorgs",
+    "name": "Unbesetzt",
+    "type": "positionStatus"
+  },
+  "Gesperrt": {
+    "vocab": "berorgs",
+    "name": "Gesperrt",
+    "type": "positionStatus"
+  },
+  "Geplant": {
+    "vocab": "berorgs",
+    "name": "Gesperrt",
+    "type": "positionStatus"
+  },
+  "Ist Ansprechperson bis auf Weiteres": {
+    "vocab": "berorgs",
+    "name": "VertretenDurchAnsprechperson",
+    "type": "positionStatus"
+  },
+  "Kommissarisch wahrgenommen": {
+    "vocab": "berorgs",
+    "name": "KommissarischWahrgenommen",
+    "type": "positionStatus"
+  },
+  "Stellvertretend wahrgenommen": {
+    "vocab": "berorgs",
+    "name": "StellvertretendWahrgenommen",
+    "type": "positionStatus"
   }
 }
