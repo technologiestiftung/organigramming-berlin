@@ -403,7 +403,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
       const subHeadingLevel = Math.min(depth + 3, 6);
 
       return `
-        <section id="${sectionId}" data-level-depth="${depth}" style="--depth-border-color: ${getDepthBorderColor(depth)}">
+        <section id="${sectionId}" tabindex="-1" data-level-depth="${depth}" style="--depth-border-color: ${getDepthBorderColor(depth)}">
           <h${headingLevel}>${escapeHtml(titleWithPurpose)}</h${headingLevel}>
           ${directChildDescription}
           ${metaItems.length ? `<ul>${metaItems.join("")}</ul>` : ""}
@@ -416,14 +416,14 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
   const glossarySection =
     includeVocabularyComments && glossaryTerms.size > 0
       ? `
-      <section id="glossary">
+      <section id="glossary" tabindex="-1">
         <h2>Glossar</h2>
         <dl>
           ${[...glossaryTerms.entries()]
             .sort(([a], [b]) => a.localeCompare(b, "de"))
             .map(
               ([term, comment]) =>
-                `<dt id="${glossaryLinkFor(term)}">${escapeHtml(term)}</dt><dd>${escapeHtml(comment)}</dd>`,
+                `<dt id="${glossaryLinkFor(term)}" tabindex="-1">${escapeHtml(term)}</dt><dd>${escapeHtml(comment)}</dd>`,
             )
             .join("")}
         </dl>
@@ -450,6 +450,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     dl dd { margin-left: 1rem; margin-bottom: .6rem; }
     a { color: #0b57d0; text-decoration: underline; }
     a:focus-visible, section:focus-visible, dt:focus-visible { outline: 3px solid #0b57d0; outline-offset: 2px; }
+    section:focus, dt:focus { outline: none; } /* Prevent default outline on click for tabindex="-1" elements, let :focus-visible handle keyboard */
     @media print {
       a { color: inherit; }
       .skip-link { display: none; }
@@ -460,8 +461,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
 <body>
   <a class="skip-link" href="#org-structure">Zum Inhaltsbereich springen</a>
   <header>
-    <h1>${escapeHtml(title)}</h1>
-    <p>Dies ist das Organigramm der ${escapeHtml(title)} (Stand: ${escapeHtml(version || "Nicht angegeben")}).</p>
+    <h1>Organigramm der/des ${escapeHtml(title)}</h1>
+    <p>Dies ist das Organigramm der/des ${escapeHtml(title)} (Stand: ${escapeHtml(version || "Nicht angegeben")}).</p>
     <p>Es enthält ${unitsSortedByDepth.length} Organisationseinheiten in ${levelCount} Ebenen und nennt ${personIdentitySet.size} Personen.</p>
     <p>Kontaktangaben sind teilweise vorhanden (Organisationen: ${organisationsWithContactCount}, Positionen: ${positionWithContactCount}).</p>
     <p>Begriffserklärungen finden Sie im Glossar.</p>
@@ -477,7 +478,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
   </nav>
 
   <main>
-    <section id="org-structure">
+    <section id="org-structure" tabindex="-1">
       <h2>Organisationsstruktur</h2>
     </section>
     ${unitSections}
