@@ -215,10 +215,23 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
       safe(unit?.contact?.website),
   ).length;
 
-  const tocEntries = unitsSortedByDepth.map(({ unit, depth }) => {
-    const sectionId = unitLinkFor(unit);
-    return `<li><a href="#${sectionId}">${escapeHtml(safe(unit?.name) || "Unbenannte Organisationseinheit")} (Ebene ${depth + 1})</a></li>`;
-  });
+  const generateNestedToc = (orgUnits = [], depth = 0) => {
+    const visibleOrgUnits = getVisibleChildUnits(orgUnits);
+    if (visibleOrgUnits.length === 0) return "";
+
+    const items = visibleOrgUnits.map((unit) => {
+      const sectionId = unitLinkFor(unit);
+      const linkText = escapeHtml(safe(unit?.name) || "Unbenannte Organisationseinheit");
+      const link = `<a href="#${sectionId}">${linkText}</a>`;
+      const childrenHtml = generateNestedToc(unit.organisations || [], depth + 1);
+      
+      return `<li>${link}${childrenHtml ? `\n<ul>\n${childrenHtml}\n</ul>\n` : ""}</li>`;
+    });
+
+    return items.join("\n");
+  };
+
+  const nestedTocHtml = generateNestedToc(data?.organisations || []);
 
   const unitSections = unitsSortedByDepth
     .map(({ unit, parentName, parentId, depth }) => {
@@ -457,7 +470,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     <h2>Inhaltsverzeichnis</h2>
     <ul>
       <li><a href="#org-structure">Organisationsstruktur</a></li>
-      ${tocEntries.join("\n")}
+      ${nestedTocHtml}
       ${glossarySection ? '<li><a href="#glossary">Glossar</a></li>' : ""}
     </ul>
   </nav>
