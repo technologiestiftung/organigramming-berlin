@@ -399,8 +399,10 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
         })
         .join("");
 
-      const headingLevel = Math.min(depth + 2, 6);
-      const subHeadingLevel = Math.min(depth + 3, 6);
+      // If it's the main organisation, force h2.
+      // Otherwise, the main org is h2 (depth 0), so depth 0 non-main-orgs should be h3, depth 1 should be h4, etc.
+      const headingLevel = unit?.isMainOrganisation ? 2 : Math.min(depth + 3, 6);
+      const subHeadingLevel = Math.min(headingLevel + 1, 6);
 
       return `
         <section id="${sectionId}" tabindex="-1" data-level-depth="${depth}" style="--depth-border-color: ${getDepthBorderColor(depth)}">
@@ -471,16 +473,12 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
   <nav aria-label="Inhaltsverzeichnis">
     <h2>Inhaltsverzeichnis</h2>
     <ul>
-      <li><a href="#org-structure">Organisationsstruktur</a></li>
       ${nestedTocHtml}
       ${glossarySection ? '<li><a href="#glossary">Glossar</a></li>' : ""}
     </ul>
   </nav>
 
-  <main>
-    <section id="org-structure" tabindex="-1">
-      <h2>Organisationsstruktur</h2>
-    </section>
+  <main id="org-structure" tabindex="-1">
     ${unitSections}
     ${glossarySection}
   </main>
