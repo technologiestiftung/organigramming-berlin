@@ -280,17 +280,17 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
           const positionContactLinks = [];
           if (safe(position?.person?.contact?.telephone)) {
             positionContactLinks.push(
-              `<a href=\"tel:${escapeHtml(safe(position.person.contact.telephone))}\">Telefon</a>`,
+              `<a href=\"tel:${escapeHtml(safe(position.person.contact.telephone))}\">Telefon<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
             );
           }
           if (safe(position?.person?.contact?.email)) {
             positionContactLinks.push(
-              `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\">E-Mail</a>`,
+              `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\">E-Mail<span class="sr-only"> an ${escapeHtml(personName(position?.person))}</span></a>`,
             );
           }
           if (safe(position?.person?.contact?.website)) {
             positionContactLinks.push(
-              `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\">Webseite</a>`,
+              `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\">Webseite<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
             );
           }
           const contactSuffix =
@@ -335,17 +335,17 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
       const orgContactLinks = [];
       if (safe(unit?.contact?.telephone)) {
         orgContactLinks.push(
-          `<a href=\"tel:${escapeHtml(safe(unit.contact.telephone))}\">Telefon</a>`,
+          `<a href=\"tel:${escapeHtml(safe(unit.contact.telephone))}\">Telefon<span class="sr-only"> der Organisationseinheit ${escapeHtml(unitName)}</span></a>`,
         );
       }
       if (safe(unit?.contact?.email)) {
         orgContactLinks.push(
-          `<a href=\"mailto:${escapeHtml(safe(unit.contact.email))}\">E-Mail</a>`,
+          `<a href=\"mailto:${escapeHtml(safe(unit.contact.email))}\">E-Mail<span class="sr-only"> der Organisationseinheit ${escapeHtml(unitName)}</span></a>`,
         );
       }
       if (safe(unit?.contact?.website)) {
         orgContactLinks.push(
-          `<a href=\"${escapeHtml(linkableWebsite(unit.contact.website))}\">Webseite</a>`,
+          `<a href=\"${escapeHtml(linkableWebsite(unit.contact.website))}\">Webseite<span class="sr-only"> der Organisationseinheit ${escapeHtml(unitName)}</span></a>`,
         );
       }
       if (orgContactLinks.length > 0) {
@@ -375,17 +375,17 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
               const positionContactLinks = [];
               if (safe(position?.person?.contact?.telephone)) {
                 positionContactLinks.push(
-                  `<a href=\"tel:${escapeHtml(safe(position.person.contact.telephone))}\">Telefon</a>`,
+                  `<a href=\"tel:${escapeHtml(safe(position.person.contact.telephone))}\">Telefon<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
                 );
               }
               if (safe(position?.person?.contact?.email)) {
                 positionContactLinks.push(
-                  `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\">E-Mail</a>`,
+                  `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\">E-Mail<span class="sr-only"> an ${escapeHtml(personName(position?.person))}</span></a>`,
                 );
               }
               if (safe(position?.person?.contact?.website)) {
                 positionContactLinks.push(
-                  `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\">Webseite</a>`,
+                  `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\">Webseite<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
                 );
               }
               const contactSuffix =
@@ -440,6 +440,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     body { font-family: Arial, sans-serif; line-height: 1.4; margin: 2rem; }
     .skip-link { position: absolute; left: -9999px; top: 0; background: #fff; color: #000; padding: .5rem .8rem; border: 2px solid #0b57d0; z-index: 1000; }
     .skip-link:focus { left: 1rem; top: 1rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
     h1 { font-size: 1.8rem; margin-bottom: .25rem; }
     h2 { font-size: 1.35rem; margin-top: 0; }
     h3 { font-size: 1.1rem; margin-top: 1rem; }
