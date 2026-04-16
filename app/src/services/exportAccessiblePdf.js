@@ -125,6 +125,18 @@ const getDepthBorderColor = (depth = 0) =>
 export const exportAccessiblePdf = async (data, exportFilename) => {
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
+  const formatDate = (dateStr = "") => {
+    const clean = safe(dateStr);
+    if (!clean) return "";
+    const parts = clean.split("-");
+    if (parts.length !== 3) return escapeHtml(clean);
+    const [year, month, day] = parts;
+    const monthNames = ["", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    const monthIndex = parseInt(month, 10);
+    if (monthIndex < 1 || monthIndex > 12) return escapeHtml(clean);
+    const dayNum = parseInt(day, 10);
+    return `<time datetime="${escapeHtml(clean)}">${dayNum}. ${monthNames[monthIndex]} ${year}</time>`;
+  };
   const includeVocabularyComments = Boolean(
     data?.export?.includeVocabularyComments,
   );
@@ -247,9 +259,6 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
       const sectionId = unitLinkFor(unit);
       const unitName = safe(unit?.name) || "Unbenannte Organisationseinheit";
       const unitPurpose = safe(unit?.purpose);
-      const titleWithPurpose = unitPurpose
-        ? `${unitName} - ${unitPurpose}`
-        : unitName;
 
       let parentLabel = parentName || "";
       let resolvedParentLink =
@@ -446,7 +455,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
 
       return `
         <section id="${sectionId}" tabindex="-1" data-level-depth="${depth}" style="--depth-border-color: ${getDepthBorderColor(depth)}">
-          <h${headingLevel}>${escapeHtml(titleWithPurpose)}</h${headingLevel}>
+          <h${headingLevel}>${escapeHtml(unitName)}</h${headingLevel}>
+          ${unitPurpose ? `<p>${escapeHtml(unitPurpose)}</p>` : ""}
           ${directChildDescription}
           ${metaItems.length ? `<ul>${metaItems.join("")}</ul>` : ""}
           ${departments ? `<h${subHeadingLevel}>Zugehörige Einheiten</h${subHeadingLevel}><ul>${departments}</ul>` : ""}
@@ -504,7 +514,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
   <a class="skip-link" href="#org-structure">Zum Inhaltsbereich springen</a>
   <header>
     <h1>Organigramm der/des ${escapeHtml(title)}</h1>
-    <p>Dies ist das Organigramm der/des ${escapeHtml(title)} (Stand: ${escapeHtml(version || "Nicht angegeben")}).</p>
+    <p>Dieses Organigramm ist hierarchisch aufgebaut. Nutzen Sie die Überschriftennavigation Ihres Screenreaders, um zwischen Organisationsebenen zu wechseln.</p>
+    ${version ? `<p>Stand des Organigramms: ${formatDate(version)}</p>` : ""}
     <p>Es enthält ${unitsSortedByDepth.length} Organisationseinheiten in ${levelCount} Ebenen und nennt ${personIdentitySet.size} Personen.</p>
     <p>Kontaktangaben sind teilweise vorhanden (Organisationen: ${organisationsWithContactCount}, Personen: ${positionWithContactCount}).</p>
     <p>Begriffserklärungen finden Sie teilweise im Glossar.</p>
