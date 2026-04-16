@@ -63,16 +63,16 @@ const flattenUnits = (
 
 const BERORGS_NAMESPACE = "https://berlin.github.io/lod-vocabulary/berorgs/";
 const RDFS_COMMENT_PREDICATE = "http://www.w3.org/2000/01/rdf-schema#comment";
+const RDFS_LABEL_PREDICATE = "http://www.w3.org/2000/01/rdf-schema#label";
 
-const parseVocabularyComments = (turtleText = "") => {
-  const commentsByTerm = {};
+const parseVocabularyData = (turtleText = "") => {
+  const dataByTerm = {};
 
   try {
     const parser = new Parser({ format: "text/turtle" });
     const quads = parser.parse(turtleText || "");
 
     quads.forEach((quad) => {
-      if (quad?.predicate?.value !== RDFS_COMMENT_PREDICATE) return;
       if (quad?.object?.termType !== "Literal") return;
       if ((quad?.object?.language || "").toLowerCase() !== "de") return;
 
@@ -80,19 +80,26 @@ const parseVocabularyComments = (turtleText = "") => {
       if (!subjectValue.startsWith(BERORGS_NAMESPACE)) return;
 
       const term = subjectValue.slice(BERORGS_NAMESPACE.length);
-      const normalizedComment = safe(quad?.object?.value).replace(/\s+/g, " ");
-      if (term && normalizedComment) {
-        commentsByTerm[term] = normalizedComment;
+      if (!term) return;
+
+      if (!dataByTerm[term]) dataByTerm[term] = {};
+
+      if (quad?.predicate?.value === RDFS_COMMENT_PREDICATE) {
+        const normalizedComment = safe(quad?.object?.value).replace(/\s+/g, " ");
+        if (normalizedComment) dataByTerm[term].comment = normalizedComment;
+      } else if (quad?.predicate?.value === RDFS_LABEL_PREDICATE) {
+        const normalizedLabel = safe(quad?.object?.value);
+        if (normalizedLabel) dataByTerm[term].label = normalizedLabel;
       }
     });
   } catch (_error) {
     return {};
   }
 
-  return commentsByTerm;
+  return dataByTerm;
 };
 
-const getVocabularyComments = async () => {
+const getVocabularyData = async () => {
   if (!vocabularyCommentCachePromise) {
     vocabularyCommentCachePromise = fetch(BERORGS_VOCAB_URL)
       .then((response) => {
@@ -101,7 +108,7 @@ const getVocabularyComments = async () => {
         }
         return response.text();
       })
-      .then((ttl) => parseVocabularyComments(ttl))
+      .then((ttl) => parseVocabularyData(ttl))
       .catch(() => ({}));
   }
   return vocabularyCommentCachePromise;
@@ -155,8 +162,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
   const includeVocabularyComments = Boolean(
     data?.export?.includeVocabularyComments,
   );
-  const vocabularyComments = includeVocabularyComments
-    ? await getVocabularyComments()
+  const vocabularyData = includeVocabularyComments
+    ? await getVocabularyData()
     : {};
 
   const units = flattenUnits(data?.organisations || []);
@@ -164,10 +171,15 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
 
   const describeTermInline = (rawLabel, vocabTerm) => {
     if (!includeVocabularyComments || !vocabTerm) return escapeHtml(rawLabel);
-    const comment = vocabularyComments[vocabTerm];
-    if (!comment) return escapeHtml(rawLabel);
+    const termData = vocabularyData[vocabTerm];
+    if (!termData?.comment) return escapeHtml(rawLabel);
 
-    if (!glossaryTerms.has(vocabTerm)) glossaryTerms.set(vocabTerm, comment);
+    if (!glossaryTerms.has(vocabTerm)) {
+      glossaryTerms.set(vocabTerm, {
+        label: termData.label || vocabTerm,
+        comment: termData.comment,
+      });
+    }
     const href = `#${glossaryLinkFor(vocabTerm)}`;
     return `<a href="${href}">${escapeHtml(rawLabel)}</a>`;
   };
@@ -487,10 +499,10 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
         <h2>Glossar</h2>
         <dl>
           ${[...glossaryTerms.entries()]
-            .sort(([a], [b]) => a.localeCompare(b, "de"))
+            .sort(([, a], [, b]) => a.label.localeCompare(b.label, "de"))
             .map(
-              ([term, comment]) =>
-                `<dt id="${glossaryLinkFor(term)}" tabindex="-1">${escapeHtml(term)}</dt><dd>${escapeHtml(comment)}</dd>`,
+              ([term, { label, comment }]) =>
+                `<dt id="${glossaryLinkFor(term)}" tabindex="-1">${escapeHtml(label)}</dt><dd>${escapeHtml(comment)}</dd>`,
             )
             .join("")}
         </dl>
