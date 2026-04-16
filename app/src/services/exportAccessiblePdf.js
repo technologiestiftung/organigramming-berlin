@@ -107,15 +107,30 @@ const getVocabularyComments = async () => {
   return vocabularyCommentCachePromise;
 };
 
-const anchorPart = (value = "") =>
-  encodeURIComponent(safe(value).replace(/\s+/g, " "));
+const slugify = (value = "") => {
+  const replacements = { ä: "ae", ö: "oe", ü: "ue", ß: "ss" };
+  return safe(value)
+    .toLowerCase()
+    .replace(/[äöüß]/g, (ch) => replacements[ch])
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
 
-const glossaryLinkFor = (term) => `glossary-${anchorPart(term)}`;
+const glossaryLinkFor = (term) => `glossar-${slugify(term)}`;
+
+const unitSlugCache = new Map();
+const slugCounter = new Map();
 const unitLinkFor = (unit) => {
-  const unitName = safe(unit?.name) || "Unbenannte Organisationseinheit";
-  const unitId = safe(unit?.id);
-  const base = `organisation-${anchorPart(unitName)}`;
-  return unitId ? `${base}-${anchorPart(unitId)}` : base;
+  const key = safe(unit?.id) || safe(unit?.name) || "";
+  if (unitSlugCache.has(key)) return unitSlugCache.get(key);
+
+  const unitName = safe(unit?.name) || "unbenannt";
+  const base = `org-${slugify(unitName)}`;
+  const count = slugCounter.get(base) || 0;
+  slugCounter.set(base, count + 1);
+  const id = count === 0 ? base : `${base}-${count + 1}`;
+  unitSlugCache.set(key, id);
+  return id;
 };
 
 const SECTION_DEPTH_COLORS = ["#002856", "#004F9F", "#4F90CD", "#AAC9E7"];
@@ -496,6 +511,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     h1 { font-size: 1.8rem; margin-bottom: .25rem; }
     h2 { font-size: 1.35rem; margin-top: 0; }
     h3 { font-size: 1.1rem; margin-top: 1rem; }
+    h6 { font-size: 12px; }
     section { border: 1px solid #d9d9d9; border-top: 4px solid var(--depth-border-color, #002856); padding: .8rem 1rem; margin-bottom: .9rem; }
     nav ul, section ul { margin-left: 1.2rem; }
     dl dt { font-weight: 700; margin-top: .7rem; }
