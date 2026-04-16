@@ -271,7 +271,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
 
       const positionMetaItems = (unit?.positions || [])
         .map((position) => {
-          const positionTypeRaw = safe(position?.positionType) || "Position";
+          const positionTypeRaw = safe(position?.positionType) || "";
           const positionType = getGenderedPosition(
             positionTypeRaw,
             position?.person?.gender,
@@ -297,7 +297,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
             positionContactLinks.length > 0
               ? ` <span>(Kontakt: ${positionContactLinks.join(" | ")})</span>`
               : "";
-          return `<li>${describeTermInline(positionType, positionTerm)}: ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
+          return `<li>${describeTermInline(positionType, positionTerm)}${positionTypeRaw?':':''} ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
         })
         .filter(Boolean);
 
@@ -309,7 +309,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
           ? `<li><strong>Art:</strong> ${unitTypeDisplay}</li>`
           : "",
         positionMetaItems.length
-          ? `<li><strong>Positionen:</strong><ul>${positionMetaItems.join("")}</ul></li>`
+          ? `<li><strong>Personen und Aufgaben:</strong><ul>${positionMetaItems.join("")}</ul></li>`
           : "",
       ].filter(Boolean);
 
@@ -362,7 +362,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
           const deptPositions = (department?.positions || [])
             .map((position) => {
               const positionTypeRaw =
-                safe(position?.positionType) || "Position";
+                safe(position?.positionType) || "";
               const positionType = getGenderedPosition(
                 positionTypeRaw,
                 position?.person?.gender,
@@ -392,7 +392,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
                 positionContactLinks.length > 0
                   ? ` <span>(Kontakt: ${positionContactLinks.join(" | ")})</span>`
                   : "";
-              return `<li>${positionLabel}: ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
+              return `<li>${positionLabel}${positionLabel?":":""} ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
             })
             .join("");
           return `<li>${deptName}${deptPositions ? `<ul>${deptPositions}</ul>` : ""}</li>`;
@@ -466,8 +466,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     <h1>Organigramm der/des ${escapeHtml(title)}</h1>
     <p>Dies ist das Organigramm der/des ${escapeHtml(title)} (Stand: ${escapeHtml(version || "Nicht angegeben")}).</p>
     <p>Es enthält ${unitsSortedByDepth.length} Organisationseinheiten in ${levelCount} Ebenen und nennt ${personIdentitySet.size} Personen.</p>
-    <p>Kontaktangaben sind teilweise vorhanden (Organisationen: ${organisationsWithContactCount}, Positionen: ${positionWithContactCount}).</p>
-    <p>Begriffserklärungen finden Sie im Glossar.</p>
+    <p>Kontaktangaben sind teilweise vorhanden (Organisationen: ${organisationsWithContactCount}, Personen: ${positionWithContactCount}).</p>
+    <p>Begriffserklärungen finden Sie teilweise im Glossar.</p>
   </header>
 
   <nav aria-label="Inhaltsverzeichnis">
