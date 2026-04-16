@@ -153,6 +153,15 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     return `https://${clean}`;
   };
 
+  const normalizePhone = (phone = "") => {
+    const clean = safe(phone);
+    if (!clean) return "";
+    // Remove shorthand alternatives like "/02"
+    const primary = clean.split("/")[0];
+    // Remove all spaces and non-essential characters (keep + and digits)
+    return primary.replace(/[^\d+]/g, "");
+  };
+
   const unitsSortedByDepth = [...units].sort((a, b) => a.depth - b.depth);
   const sectionIdByUnitId = new Map();
   const sectionIdByUnitName = new Map();
@@ -296,17 +305,17 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
           const positionContactLinks = [];
           if (safe(position?.person?.contact?.telephone)) {
             positionContactLinks.push(
-              `<a href=\"tel:${escapeHtml(safe(position.person.contact.telephone))}\">Telefon<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
+              `<a href=\"tel:${escapeHtml(normalizePhone(position.person.contact.telephone))}\" aria-label=\"Telefon von ${escapeHtml(personName(position?.person))}\">Telefon</a>`,
             );
           }
           if (safe(position?.person?.contact?.email)) {
             positionContactLinks.push(
-              `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\">E-Mail<span class="sr-only"> an ${escapeHtml(personName(position?.person))}</span></a>`,
+              `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\" aria-label=\"E-Mail an ${escapeHtml(personName(position?.person))}\">E-Mail</a>`,
             );
           }
           if (safe(position?.person?.contact?.website)) {
             positionContactLinks.push(
-              `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\">Webseite<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
+              `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\" aria-label=\"Webseite von ${escapeHtml(personName(position?.person))}\">Webseite</a>`,
             );
           }
           const contactSuffix =
@@ -351,17 +360,17 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
       const orgContactLinks = [];
       if (safe(unit?.contact?.telephone)) {
         orgContactLinks.push(
-          `<a href=\"tel:${escapeHtml(safe(unit.contact.telephone))}\">Telefon<span class="sr-only"> der Organisationseinheit ${escapeHtml(unitName)}</span></a>`,
+          `<a href=\"tel:${escapeHtml(normalizePhone(unit.contact.telephone))}\" aria-label=\"Telefon der Organisationseinheit ${escapeHtml(unitName)}\">Telefon</a>`,
         );
       }
       if (safe(unit?.contact?.email)) {
         orgContactLinks.push(
-          `<a href=\"mailto:${escapeHtml(safe(unit.contact.email))}\">E-Mail<span class="sr-only"> der Organisationseinheit ${escapeHtml(unitName)}</span></a>`,
+          `<a href=\"mailto:${escapeHtml(safe(unit.contact.email))}\" aria-label=\"E-Mail der Organisationseinheit ${escapeHtml(unitName)}\">E-Mail</a>`,
         );
       }
       if (safe(unit?.contact?.website)) {
         orgContactLinks.push(
-          `<a href=\"${escapeHtml(linkableWebsite(unit.contact.website))}\">Webseite<span class="sr-only"> der Organisationseinheit ${escapeHtml(unitName)}</span></a>`,
+          `<a href=\"${escapeHtml(linkableWebsite(unit.contact.website))}\" aria-label=\"Webseite der Organisationseinheit ${escapeHtml(unitName)}\">Webseite</a>`,
         );
       }
       if (orgContactLinks.length > 0) {
@@ -402,17 +411,17 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
               const positionContactLinks = [];
               if (safe(position?.person?.contact?.telephone)) {
                 positionContactLinks.push(
-                  `<a href=\"tel:${escapeHtml(safe(position.person.contact.telephone))}\">Telefon<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
+                  `<a href=\"tel:${escapeHtml(normalizePhone(position.person.contact.telephone))}\" aria-label=\"Telefon von ${escapeHtml(personName(position?.person))}\">Telefon</a>`,
                 );
               }
               if (safe(position?.person?.contact?.email)) {
                 positionContactLinks.push(
-                  `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\">E-Mail<span class="sr-only"> an ${escapeHtml(personName(position?.person))}</span></a>`,
+                  `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\" aria-label=\"E-Mail an ${escapeHtml(personName(position?.person))}\">E-Mail</a>`,
                 );
               }
               if (safe(position?.person?.contact?.website)) {
                 positionContactLinks.push(
-                  `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\">Webseite<span class="sr-only"> von ${escapeHtml(personName(position?.person))}</span></a>`,
+                  `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\" aria-label=\"Webseite von ${escapeHtml(personName(position?.person))}\">Webseite</a>`,
                 );
               }
               const contactSuffix =
