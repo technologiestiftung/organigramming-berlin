@@ -25,7 +25,7 @@ const personName = (person = {}) => {
   ]
     .filter(Boolean)
     .join(" ");
-  return parts || "Nicht angegeben";
+  return parts || "";
 };
 
 const getVisibleChildUnits = (units = []) => {
@@ -271,12 +271,28 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
 
       const positionMetaItems = (unit?.positions || [])
         .map((position) => {
-          const positionTypeRaw = safe(position?.positionType) || "";
-          const positionType = getGenderedPosition(
-            positionTypeRaw,
-            position?.person?.gender,
-          );
-          const positionTerm = typeVocabLookup[positionTypeRaw]?.name;
+          const positionTypeRaw = safe(position?.positionType);
+          const positionStatusRaw = safe(position?.positionStatus);
+          
+          let positionType = "";
+          let positionTerm = "";
+          if (positionTypeRaw) {
+            positionType = getGenderedPosition(
+              positionTypeRaw,
+              position?.person?.gender,
+            );
+            positionTerm = typeVocabLookup[positionTypeRaw]?.name;
+          }
+
+          let displayRole = "";
+          if (positionType && positionStatusRaw) {
+            displayRole = `${describeTermInline(positionType, positionTerm)} (${escapeHtml(positionStatusRaw)})`;
+          } else if (positionType) {
+            displayRole = describeTermInline(positionType, positionTerm);
+          } else if (positionStatusRaw) {
+            displayRole = escapeHtml(positionStatusRaw);
+          }
+
           const positionContactLinks = [];
           if (safe(position?.person?.contact?.telephone)) {
             positionContactLinks.push(
@@ -297,7 +313,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
             positionContactLinks.length > 0
               ? ` <span>(Kontakt: ${positionContactLinks.join(" | ")})</span>`
               : "";
-          return `<li>${describeTermInline(positionType, positionTerm)}${positionTypeRaw?':':''} ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
+          return `<li>${displayRole}${displayRole ? ':' : ''} ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
         })
         .filter(Boolean);
 
@@ -361,17 +377,28 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
           );
           const deptPositions = (department?.positions || [])
             .map((position) => {
-              const positionTypeRaw =
-                safe(position?.positionType) || "";
-              const positionType = getGenderedPosition(
-                positionTypeRaw,
-                position?.person?.gender,
-              );
-              const positionTerm = typeVocabLookup[positionTypeRaw]?.name;
-              const positionLabel = describeTermInline(
-                positionType,
-                positionTerm,
-              );
+              const positionTypeRaw = safe(position?.positionType);
+              const positionStatusRaw = safe(position?.positionStatus);
+              
+              let positionType = "";
+              let positionTerm = "";
+              if (positionTypeRaw) {
+                positionType = getGenderedPosition(
+                  positionTypeRaw,
+                  position?.person?.gender,
+                );
+                positionTerm = typeVocabLookup[positionTypeRaw]?.name;
+              }
+
+              let displayRole = "";
+              if (positionType && positionStatusRaw) {
+                displayRole = `${describeTermInline(positionType, positionTerm)} (${escapeHtml(positionStatusRaw)})`;
+              } else if (positionType) {
+                displayRole = describeTermInline(positionType, positionTerm);
+              } else if (positionStatusRaw) {
+                displayRole = escapeHtml(positionStatusRaw);
+              }
+
               const positionContactLinks = [];
               if (safe(position?.person?.contact?.telephone)) {
                 positionContactLinks.push(
@@ -392,7 +419,11 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
                 positionContactLinks.length > 0
                   ? ` <span>(Kontakt: ${positionContactLinks.join(" | ")})</span>`
                   : "";
-              return `<li>${positionLabel}${positionLabel?":":""} ${escapeHtml(personName(position?.person))}${contactSuffix}</li>`;
+              
+              const finalName = escapeHtml(personName(position?.person));
+              const colon = displayRole && finalName ? ': ' : '';
+              
+              return `<li>${displayRole}${colon}${finalName}${contactSuffix}</li>`;
             })
             .join("");
           return `<li>${deptName}${deptPositions ? `<ul>${deptPositions}</ul>` : ""}</li>`;
