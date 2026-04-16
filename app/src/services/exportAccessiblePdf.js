@@ -529,8 +529,20 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     dl dt { font-weight: 700; margin-top: .7rem; }
     dl dd { margin-left: 1rem; margin-bottom: .6rem; }
     a { color: #0b57d0; text-decoration: underline; }
-    a:focus-visible, section:focus-visible, dt:focus-visible { outline: 3px solid #0b57d0; outline-offset: 2px; }
-    section:focus, dt:focus { outline: none; } /* Prevent default outline on click for tabindex="-1" elements, let :focus-visible handle keyboard */
+    a:focus-visible,
+    main:focus,
+    section:focus,
+    dt:focus {
+      outline: 3px solid #0b57d0;
+      outline-offset: 2px;
+    }
+    main:target,
+    section:target,
+    dt:target {
+      outline: 3px solid #0b57d0;
+      outline-offset: 2px;
+      scroll-margin-top: 1rem;
+    }
     @media print {
       a { color: inherit; }
       .skip-link { display: none; }
