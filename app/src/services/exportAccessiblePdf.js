@@ -338,20 +338,24 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
             displayRole = escapeHtml(positionStatusRaw);
           }
 
+          const pName = personName(position?.person);
           const positionContactLinks = [];
           if (safe(position?.person?.contact?.telephone)) {
+            const telLabel = pName ? `Telefon von ${escapeHtml(pName)}` : "Telefon";
             positionContactLinks.push(
-              `<a href=\"tel:${escapeHtml(normalizePhone(position.person.contact.telephone))}\" aria-label=\"Telefon von ${escapeHtml(personName(position?.person))}\">Telefon</a>`,
+              `<a href=\"tel:${escapeHtml(normalizePhone(position.person.contact.telephone))}\" aria-label=\"${telLabel}\">Telefon</a>`,
             );
           }
           if (safe(position?.person?.contact?.email)) {
+            const emailLabel = pName ? `E-Mail an ${escapeHtml(pName)}` : "E-Mail";
             positionContactLinks.push(
-              `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\" aria-label=\"E-Mail an ${escapeHtml(personName(position?.person))}\">E-Mail</a>`,
+              `<a href=\"mailto:${escapeHtml(safe(position.person.contact.email))}\" aria-label=\"${emailLabel}\">E-Mail</a>`,
             );
           }
           if (safe(position?.person?.contact?.website)) {
+            const webLabel = pName ? `Webseite von ${escapeHtml(pName)}` : "Webseite";
             positionContactLinks.push(
-              `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\" aria-label=\"Webseite von ${escapeHtml(personName(position?.person))}\">Webseite</a>`,
+              `<a href=\"${escapeHtml(linkableWebsite(position.person.contact.website))}\" aria-label=\"${webLabel}\">Webseite</a>`,
             );
           }
           const contactSuffix =
