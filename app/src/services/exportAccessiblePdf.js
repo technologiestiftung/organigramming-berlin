@@ -201,7 +201,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     return primary.replace(/[^\d+]/g, "");
   };
 
-  const unitsSortedByDepth = [...units].sort((a, b) => a.depth - b.depth);
+  // const unitsSortedByDepth = [...units].sort((a, b) => a.depth - b.depth);
+  const unitsSortedByDepth = [...units];
   const sectionIdByUnitId = new Map();
   const sectionIdByUnitName = new Map();
 
