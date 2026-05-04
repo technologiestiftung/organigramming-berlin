@@ -24,5 +24,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-AGENTS.md
 /app/src/services/workingPDFVersion.js
+/app/public/js/blob-stream.js
+/app/public/js/pdfkit.standalone.js
