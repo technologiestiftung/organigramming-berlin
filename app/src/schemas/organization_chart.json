@@ -479,8 +479,14 @@
                   "type": "string",
                   "title": "Dateiformat",
                   "default": "pdf",
-                  "enum": ["json", "png", "pdf", "rdf"],
-                  "enumNames": ["JSON", "PNG", "PDF", "RDF"]
+                  "enum": ["json", "png", "pdf", "pdf-accessible", "rdf"],
+                  "enumNames": [
+                    "JSON",
+                    "PNG",
+                    "PDF",
+                    "Barrierefreies PDF",
+                    "RDF"
+                  ]
                 }
               }
             }
@@ -518,6 +524,18 @@
               "properties": {
                 "exportType": {
                   "enum": ["pdf"]
+                }
+              }
+            },
+            {
+              "properties": {
+                "exportType": {
+                  "enum": ["pdf-accessible"]
+                },
+                "includeVocabularyComments": {
+                  "type": "boolean",
+                  "title": "RDF-Kommentare aus Vokabular ergänzen",
+                  "default": false
                 }
               }
             },
