@@ -25,5 +25,3 @@ yarn-debug.log*
 yarn-error.log*
 
 /app/src/services/exportAccessiblePDF_old.js
-/app/public/js/blob-stream.js
-/app/public/js/pdfkit.standalone.js
