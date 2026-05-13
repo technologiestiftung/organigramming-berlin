@@ -531,11 +531,6 @@
               "properties": {
                 "exportType": {
                   "enum": ["pdf-accessible"]
-                },
-                "includeVocabularyComments": {
-                  "type": "boolean",
-                  "title": "RDF-Kommentare aus Vokabular ergänzen",
-                  "default": false
                 }
               }
             },
