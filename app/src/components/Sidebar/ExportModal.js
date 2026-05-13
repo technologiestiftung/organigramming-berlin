@@ -107,8 +107,8 @@ const ExportModal = (props) => {
         case "png":
           props.onExport("png", formData.export.includeLogo);
           break;
-        case "pdf-accessible":
-          props.onExport("pdf-accessible", false);
+        case "accessible-html":
+          props.onExport("accessible-html", false);
           break;
         case "rdf":
           props.onExport("rdf", false, false, formData.export.rdfType);

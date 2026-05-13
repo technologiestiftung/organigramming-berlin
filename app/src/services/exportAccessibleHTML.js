@@ -245,7 +245,7 @@ const getDepthBorderColor = (depth = 0) =>
     Math.max(0, depth) % SECTION_DEPTH_COLORS.length
   ];
 
-export const exportAccessiblePdf = async (data, exportFilename) => {
+export const exportAccessibleHTML = async (data, exportFilename) => {
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
 
@@ -868,7 +868,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
 </head>
 <body>
   <header>
-    <h1>Organigramm von ${escapeHtml(title)}</h1>
+    <h1>Organigramm von: ${escapeHtml(title)}</h1>
 
     <p>
       Dieses Organigramm ist hierarchisch aufgebaut. Nutzen Sie die

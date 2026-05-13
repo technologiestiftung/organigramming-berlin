@@ -479,12 +479,12 @@
                   "type": "string",
                   "title": "Dateiformat",
                   "default": "pdf",
-                  "enum": ["json", "png", "pdf", "pdf-accessible", "rdf"],
+                  "enum": ["json", "png", "pdf", "accessible-html", "rdf"],
                   "enumNames": [
                     "JSON",
                     "PNG",
                     "PDF",
-                    "Barrierefreies PDF",
+                    "Barrierefreies HTML",
                     "RDF"
                   ]
                 }
@@ -530,7 +530,7 @@
             {
               "properties": {
                 "exportType": {
-                  "enum": ["pdf-accessible"]
+                  "enum": ["accessible-html"]
                 }
               }
             },
