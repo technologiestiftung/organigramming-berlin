@@ -5,7 +5,7 @@ import { Parser } from "n3";
 const BERORGS_VOCAB_URL =
   "https://raw.githubusercontent.com/berlin/lod-vocabulary/main/data/berorgs/berorgs.ttl";
 
-let vocabularyCommentCachePromise = null;
+let vocabularyDataCachePromise = null;
 
 const safe = (value) => (typeof value === "string" ? value.trim() : "");
 
@@ -176,8 +176,8 @@ const parseVocabularyData = (turtleText = "") => {
 };
 
 const getVocabularyData = async () => {
-  if (!vocabularyCommentCachePromise) {
-    vocabularyCommentCachePromise = fetch(BERORGS_VOCAB_URL)
+  if (!vocabularyDataCachePromise) {
+    vocabularyDataCachePromise = fetch(BERORGS_VOCAB_URL)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Could not fetch vocabulary (${response.status})`);
@@ -185,11 +185,17 @@ const getVocabularyData = async () => {
 
         return response.text();
       })
-      .then((ttl) => parseVocabularyData(ttl))
-      .catch(() => ({}));
+      .then((ttl) => ({
+        isAvailable: true,
+        data: parseVocabularyData(ttl),
+      }))
+      .catch(() => ({
+        isAvailable: false,
+        data: {},
+      }));
   }
 
-  return vocabularyCommentCachePromise;
+  return vocabularyDataCachePromise;
 };
 
 const slugify = (value = "") => {
@@ -283,13 +289,8 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     return `<time datetime="${escapeHtml(clean)}">${dayNum}. ${monthNames[monthIndex]} ${year}</time>`;
   };
 
-  const includeVocabularyComments = Boolean(
-    data?.export?.includeVocabularyComments,
-  );
-
-  const vocabularyData = includeVocabularyComments
-    ? await getVocabularyData()
-    : {};
+  const { isAvailable: isVocabularyAvailable, data: vocabularyData } =
+    await getVocabularyData();
 
   const normalizedRootOrganisations = normalizeOrganisationRoots(
     data?.organisations || [],
@@ -299,7 +300,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
   const glossaryTerms = new Map();
 
   const describeTermInline = (rawLabel, vocabTerm) => {
-    if (!includeVocabularyComments || !vocabTerm) {
+    if (!isVocabularyAvailable || !vocabTerm) {
       return escapeHtml(rawLabel);
     }
 
@@ -746,7 +747,7 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
     .join("\n");
 
   const glossarySection =
-    includeVocabularyComments && glossaryTerms.size > 0
+    isVocabularyAvailable && glossaryTerms.size > 0
       ? `
       <section id="glossary" tabindex="-1">
         <h2>Glossar</h2>
@@ -889,7 +890,11 @@ export const exportAccessiblePdf = async (data, exportFilename) => {
       Personen: ${positionWithContactCount}).
     </p>
 
-    <p>Begriffserklärungen finden Sie teilweise im Glossar.</p>
+    ${
+      isVocabularyAvailable
+        ? `<p>Begriffserklärungen finden Sie teilweise im Glossar.</p>`
+        : ""
+    }
   </header>
 
   <nav aria-label="Inhaltsverzeichnis">
