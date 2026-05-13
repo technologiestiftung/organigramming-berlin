@@ -1,13 +1,20 @@
-import typeVocabLookup from "./typeVocabLookup.json";
-import { getGenderedPosition } from "./service";
-import { Parser } from "n3";
-
-const BERORGS_VOCAB_URL =
-  "https://raw.githubusercontent.com/berlin/lod-vocabulary/main/data/berorgs/berorgs.ttl";
-
-let vocabularyDataCachePromise = null;
-
-const safe = (value) => (typeof value === "string" ? value.trim() : "");
+import {
+  safe,
+  getVisibleChildUnits,
+  normalizeOrganisationRoots,
+  flattenUnits,
+  getVocabularyData,
+  glossaryLinkFor,
+  createUnitLinkFor,
+  formatGermanDate,
+  summarizeUnits,
+  buildSectionIdLookups,
+  buildContactEntries,
+  labelForContactKind,
+  resolvePositionDisplay,
+  resolveUnitTypeDisplay,
+  describeChildUnits,
+} from "./exportAccessibleShared";
 
 const escapeHtml = (value = "") =>
   value
@@ -17,227 +24,6 @@ const escapeHtml = (value = "") =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 
-const personName = (person = {}) => {
-  const parts = [
-    safe(person.title),
-    safe(person.firstName),
-    safe(person.lastName),
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  return parts || "";
-};
-
-const getVisibleChildUnits = (units = []) => {
-  return (units || []).flatMap((unit) => {
-    if (unit?.layout?.style === "hide") {
-      return getVisibleChildUnits(unit?.organisations || []);
-    }
-
-    return [unit];
-  });
-};
-
-/**
- * Ensures that the exported accessible HTML has exactly one
- * organisation with depth 0.
- *
- * Cases:
- * - No organisations: []
- * - Exactly one organisation:
- *   that organisation becomes the root
- * - Multiple organisations:
- *   the organisation marked with isMainOrganisation becomes the root
- *   and all other top-level organisations are attached below it
- *
- * Fallback:
- * - If multiple organisations exist but none is marked as main,
- *   the first one is used as root so the output still has only one depth-0 org.
- */
-const normalizeOrganisationRoots = (organisations = []) => {
-  const orgs = organisations || [];
-
-  if (orgs.length === 0) {
-    return [];
-  }
-
-  if (orgs.length === 1) {
-    return [
-      {
-        ...orgs[0],
-        isMainOrganisation: true,
-      },
-    ];
-  }
-
-  const mainOrganisation =
-    orgs.find((org) => org?.isMainOrganisation === true) || orgs[0];
-
-  const additionalTopLevelOrganisations = orgs.filter(
-    (org) => org !== mainOrganisation,
-  );
-
-  return [
-    {
-      ...mainOrganisation,
-      isMainOrganisation: true,
-      organisations: [
-        ...(mainOrganisation?.organisations || []),
-        ...additionalTopLevelOrganisations,
-      ],
-    },
-  ];
-};
-
-const flattenUnits = (
-  units = [],
-  depth = 0,
-  parentName = "",
-  parentId = "",
-  numbering = [],
-) => {
-  const visibleUnits = getVisibleChildUnits(units);
-
-  return visibleUnits.flatMap((unit, index) => {
-    const currentNumbering = [...numbering, index + 1];
-
-    const current = [
-      {
-        unit,
-        depth,
-        parentName,
-        parentId,
-        numbering: currentNumbering,
-      },
-    ];
-
-    const nested = flattenUnits(
-      unit.organisations || [],
-      depth + 1,
-      safe(unit.name),
-      safe(unit.id),
-      currentNumbering,
-    );
-
-    return [...current, ...nested];
-  });
-};
-
-const BERORGS_NAMESPACE = "https://berlin.github.io/lod-vocabulary/berorgs/";
-const RDFS_COMMENT_PREDICATE =
-  "http://www.w3.org/2000/01/rdf-schema#comment";
-const RDFS_LABEL_PREDICATE =
-  "http://www.w3.org/2000/01/rdf-schema#label";
-
-const parseVocabularyData = (turtleText = "") => {
-  const dataByTerm = {};
-
-  try {
-    const parser = new Parser({ format: "text/turtle" });
-    const quads = parser.parse(turtleText || "");
-
-    quads.forEach((quad) => {
-      if (quad?.object?.termType !== "Literal") return;
-      if ((quad?.object?.language || "").toLowerCase() !== "de") return;
-
-      const subjectValue = quad?.subject?.value || "";
-      if (!subjectValue.startsWith(BERORGS_NAMESPACE)) return;
-
-      const term = subjectValue.slice(BERORGS_NAMESPACE.length);
-      if (!term) return;
-
-      if (!dataByTerm[term]) {
-        dataByTerm[term] = {};
-      }
-
-      if (quad?.predicate?.value === RDFS_COMMENT_PREDICATE) {
-        const normalizedComment = safe(quad?.object?.value).replace(
-          /\s+/g,
-          " ",
-        );
-
-        if (normalizedComment) {
-          dataByTerm[term].comment = normalizedComment;
-        }
-      } else if (quad?.predicate?.value === RDFS_LABEL_PREDICATE) {
-        const normalizedLabel = safe(quad?.object?.value);
-
-        if (normalizedLabel) {
-          dataByTerm[term].label = normalizedLabel;
-        }
-      }
-    });
-  } catch (_error) {
-    return {};
-  }
-
-  return dataByTerm;
-};
-
-const getVocabularyData = async () => {
-  if (!vocabularyDataCachePromise) {
-    vocabularyDataCachePromise = fetch(BERORGS_VOCAB_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Could not fetch vocabulary (${response.status})`);
-        }
-
-        return response.text();
-      })
-      .then((ttl) => ({
-        isAvailable: true,
-        data: parseVocabularyData(ttl),
-      }))
-      .catch(() => ({
-        isAvailable: false,
-        data: {},
-      }));
-  }
-
-  return vocabularyDataCachePromise;
-};
-
-const slugify = (value = "") => {
-  const replacements = {
-    ä: "ae",
-    ö: "oe",
-    ü: "ue",
-    ß: "ss",
-  };
-
-  return safe(value)
-    .toLowerCase()
-    .replace(/[äöüß]/g, (ch) => replacements[ch])
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-};
-
-const glossaryLinkFor = (term) => `glossar-${slugify(term)}`;
-
-const unitSlugCache = new Map();
-const slugCounter = new Map();
-
-const unitLinkFor = (unit) => {
-  const key = safe(unit?.id) || safe(unit?.name) || "";
-
-  if (unitSlugCache.has(key)) {
-    return unitSlugCache.get(key);
-  }
-
-  const unitName = safe(unit?.name) || "unbenannt";
-  const base = `org-${slugify(unitName)}`;
-  const count = slugCounter.get(base) || 0;
-
-  slugCounter.set(base, count + 1);
-
-  const id = count === 0 ? base : `${base}-${count + 1}`;
-
-  unitSlugCache.set(key, id);
-
-  return id;
-};
-
 const SECTION_DEPTH_COLORS = ["#002856", "#004F9F", "#4F90CD", "#AAC9E7"];
 
 const getDepthBorderColor = (depth = 0) =>
@@ -245,49 +31,25 @@ const getDepthBorderColor = (depth = 0) =>
     Math.max(0, depth) % SECTION_DEPTH_COLORS.length
   ];
 
+const formatDateHtml = (dateStr = "") => {
+  const clean = safe(dateStr);
+
+  if (!clean) return "";
+
+  const formatted = formatGermanDate(clean);
+
+  // If formatGermanDate returned the input unchanged, the value was not a
+  // recognisable ISO date and we should just escape it as plain text.
+  if (formatted === clean) {
+    return escapeHtml(clean);
+  }
+
+  return `<time datetime="${escapeHtml(clean)}">${formatted}</time>`;
+};
+
 export const exportAccessibleHTML = async (data, exportFilename) => {
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
-
-  const formatDate = (dateStr = "") => {
-    const clean = safe(dateStr);
-
-    if (!clean) return "";
-
-    const parts = clean.split("-");
-
-    if (parts.length !== 3) {
-      return escapeHtml(clean);
-    }
-
-    const [year, month, day] = parts;
-
-    const monthNames = [
-      "",
-      "Januar",
-      "Februar",
-      "März",
-      "April",
-      "Mai",
-      "Juni",
-      "Juli",
-      "August",
-      "September",
-      "Oktober",
-      "November",
-      "Dezember",
-    ];
-
-    const monthIndex = parseInt(month, 10);
-
-    if (monthIndex < 1 || monthIndex > 12) {
-      return escapeHtml(clean);
-    }
-
-    const dayNum = parseInt(day, 10);
-
-    return `<time datetime="${escapeHtml(clean)}">${dayNum}. ${monthNames[monthIndex]} ${year}</time>`;
-  };
 
   const { isAvailable: isVocabularyAvailable, data: vocabularyData } =
     await getVocabularyData();
@@ -322,102 +84,21 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
     return `<a href="${href}">${escapeHtml(rawLabel)}</a>`;
   };
 
-  const linkableWebsite = (website = "") => {
-    const clean = safe(website);
-
-    if (!clean) return "";
-
-    if (clean.startsWith("http://") || clean.startsWith("https://")) {
-      return clean;
-    }
-
-    return `https://${clean}`;
-  };
-
-  const normalizePhone = (phone = "") => {
-    const clean = safe(phone);
-
-    if (!clean) return "";
-
-    // Remove shorthand alternatives like "/02"
-    const primary = clean.split("/")[0];
-
-    // Remove all spaces and non-essential characters, but keep + and digits
-    return primary.replace(/[^\d+]/g, "");
-  };
-
   const unitsSortedByDepth = [...units];
 
-  const sectionIdByUnitId = new Map();
-  const sectionIdByUnitName = new Map();
+  const unitLinkFor = createUnitLinkFor();
 
-  unitsSortedByDepth.forEach(({ unit }) => {
-    const sectionId = unitLinkFor(unit);
-
-    if (safe(unit?.id)) {
-      sectionIdByUnitId.set(safe(unit.id), sectionId);
-    }
-
-    if (safe(unit?.name) && !sectionIdByUnitName.has(safe(unit.name))) {
-      sectionIdByUnitName.set(safe(unit.name), sectionId);
-    }
-  });
-
-  const mainOrganisationEntry = unitsSortedByDepth.find(
-    ({ depth }) => depth === 0,
+  const { sectionIdByUnitId, sectionIdByUnitName } = buildSectionIdLookups(
+    unitsSortedByDepth,
+    unitLinkFor,
   );
 
-  const mainOrganisationName = safe(mainOrganisationEntry?.unit?.name);
-
-  const mainOrganisationSectionId = mainOrganisationEntry
-    ? unitLinkFor(mainOrganisationEntry.unit)
-    : "";
-
-  const levelCount =
-    unitsSortedByDepth.length > 0
-      ? Math.max(...unitsSortedByDepth.map(({ depth }) => depth)) + 1
-      : 0;
-
-  const personIdentitySet = new Set();
-  let positionWithContactCount = 0;
-
-  unitsSortedByDepth.forEach(({ unit }) => {
-    const allPositions = [
-      ...(unit?.positions || []),
-      ...(unit?.departments || []).flatMap(
-        (department) => department?.positions || [],
-      ),
-    ];
-
-    allPositions.forEach((position) => {
-      const identity = [
-        safe(position?.person?.title),
-        safe(position?.person?.firstName),
-        safe(position?.person?.lastName),
-      ]
-        .filter(Boolean)
-        .join("|");
-
-      if (identity) {
-        personIdentitySet.add(identity);
-      }
-
-      if (
-        safe(position?.person?.contact?.telephone) ||
-        safe(position?.person?.contact?.email) ||
-        safe(position?.person?.contact?.website)
-      ) {
-        positionWithContactCount += 1;
-      }
-    });
-  });
-
-  const organisationsWithContactCount = unitsSortedByDepth.filter(
-    ({ unit }) =>
-      safe(unit?.contact?.telephone) ||
-      safe(unit?.contact?.email) ||
-      safe(unit?.contact?.website),
-  ).length;
+  const {
+    levelCount,
+    personIdentitySet,
+    positionWithContactCount,
+    organisationsWithContactCount,
+  } = summarizeUnits(unitsSortedByDepth);
 
   const generateNestedToc = (orgUnits = []) => {
     const visibleOrgUnits = getVisibleChildUnits(orgUnits);
@@ -468,94 +149,65 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
         ? `<a href="#${resolvedParentLink}">${escapeHtml(parentLabel)}</a>`
         : escapeHtml(parentLabel || "keine");
 
-      const unitType = safe(unit?.type);
-      const unitTerm = typeVocabLookup[unitType]?.name;
+      const { raw: unitType, vocabTerm: unitTerm } =
+        resolveUnitTypeDisplay(unit);
 
       const unitTypeDisplay = unitType
         ? describeTermInline(unitType, unitTerm)
         : "";
 
+      const renderPositionContactSuffix = (contacts, pName) => {
+        if (contacts.length === 0) return "";
+
+        const links = contacts
+          .map((entry) => {
+            const baseLabel = labelForContactKind(entry.kind);
+            const ariaLabel = pName
+              ? `${baseLabel} ${
+                  entry.kind === "email" ? "an" : "von"
+                } ${escapeHtml(pName)}`
+              : baseLabel;
+
+            return `<a href="${escapeHtml(
+              entry.href,
+            )}" aria-label="${ariaLabel}">${baseLabel}</a>`;
+          })
+          .join(" | ");
+
+        return ` <span>(Kontakt: ${links})</span>`;
+      };
+
+      const renderPositionListItem = (position) => {
+        const {
+          positionType,
+          positionStatus,
+          vocabTerm: positionTerm,
+          personName: pName,
+          contacts,
+        } = resolvePositionDisplay(position);
+
+        let displayRole = "";
+
+        if (positionType && positionStatus) {
+          displayRole = `${describeTermInline(
+            positionType,
+            positionTerm,
+          )} (${escapeHtml(positionStatus)})`;
+        } else if (positionType) {
+          displayRole = describeTermInline(positionType, positionTerm);
+        } else if (positionStatus) {
+          displayRole = escapeHtml(positionStatus);
+        }
+
+        const finalName = escapeHtml(pName);
+        const colon = displayRole && finalName ? ": " : "";
+        const contactSuffix = renderPositionContactSuffix(contacts, pName);
+
+        return `<li>${displayRole}${colon}${finalName}${contactSuffix}</li>`;
+      };
+
       const positionMetaItems = (unit?.positions || [])
-        .map((position) => {
-          const positionTypeRaw = safe(position?.positionType);
-          const positionStatusRaw = safe(position?.positionStatus);
-
-          let positionType = "";
-          let positionTerm = "";
-
-          if (positionTypeRaw) {
-            positionType = getGenderedPosition(
-              positionTypeRaw,
-              position?.person?.gender,
-            );
-
-            positionTerm = typeVocabLookup[positionTypeRaw]?.name;
-          }
-
-          let displayRole = "";
-
-          if (positionType && positionStatusRaw) {
-            displayRole = `${describeTermInline(
-              positionType,
-              positionTerm,
-            )} (${escapeHtml(positionStatusRaw)})`;
-          } else if (positionType) {
-            displayRole = describeTermInline(positionType, positionTerm);
-          } else if (positionStatusRaw) {
-            displayRole = escapeHtml(positionStatusRaw);
-          }
-
-          const pName = personName(position?.person);
-          const positionContactLinks = [];
-
-          if (safe(position?.person?.contact?.telephone)) {
-            const telLabel = pName
-              ? `Telefon von ${escapeHtml(pName)}`
-              : "Telefon";
-
-            positionContactLinks.push(
-              `<a href="tel:${escapeHtml(
-                normalizePhone(position.person.contact.telephone),
-              )}" aria-label="${telLabel}">Telefon</a>`,
-            );
-          }
-
-          if (safe(position?.person?.contact?.email)) {
-            const emailLabel = pName
-              ? `E-Mail an ${escapeHtml(pName)}`
-              : "E-Mail";
-
-            positionContactLinks.push(
-              `<a href="mailto:${escapeHtml(
-                safe(position.person.contact.email),
-              )}" aria-label="${emailLabel}">E-Mail</a>`,
-            );
-          }
-
-          if (safe(position?.person?.contact?.website)) {
-            const webLabel = pName
-              ? `Webseite von ${escapeHtml(pName)}`
-              : "Webseite";
-
-            positionContactLinks.push(
-              `<a href="${escapeHtml(
-                linkableWebsite(position.person.contact.website),
-              )}" aria-label="${webLabel}">Webseite</a>`,
-            );
-          }
-
-          const contactSuffix =
-            positionContactLinks.length > 0
-              ? ` <span>(Kontakt: ${positionContactLinks.join(
-                  " | ",
-                )})</span>`
-              : "";
-
-          const finalName = escapeHtml(personName(position?.person));
-          const colon = displayRole && finalName ? ": " : "";
-
-          return `<li>${displayRole}${colon}${finalName}${contactSuffix}</li>`;
-        })
+        .map(renderPositionListItem)
         .filter(Boolean);
 
       const metaItems = [
@@ -572,62 +224,40 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
           : "",
       ].filter(Boolean);
 
-      const directChildren = getVisibleChildUnits(unit?.organisations || []);
+      const childDescription = describeChildUnits(unit, {
+        sectionIdByUnitId,
+        sectionIdByUnitName,
+      });
 
       const directChildDescription =
-        directChildren.length > 0
+        childDescription.count > 0
           ? (() => {
-              const childLinks = directChildren.map((child) => {
-                const childSectionId =
-                  sectionIdByUnitId.get(safe(child?.id)) ||
-                  sectionIdByUnitName.get(safe(child?.name));
+              const childLinks = childDescription.children.map((child) => {
+                const childLabel = escapeHtml(child.name);
 
-                const childLabel = escapeHtml(
-                  safe(child?.name) || "Unbenannte Organisationseinheit",
-                );
-
-                return childSectionId
-                  ? `<a href="#${childSectionId}">${childLabel}</a>`
+                return child.sectionId
+                  ? `<a href="#${child.sectionId}">${childLabel}</a>`
                   : childLabel;
               });
 
-              return `<p>Diese Organisationseinheit hat ${directChildren.length} direkt untergeordnete Organisationseinheiten. Die direkt untergeordneten Einheiten sind: ${childLinks.join(
+              return `<p>Diese Organisationseinheit hat ${childDescription.count} direkt untergeordnete Organisationseinheiten. Die direkt untergeordneten Einheiten sind: ${childLinks.join(
                 ", ",
               )}</p>`;
             })()
           : "";
 
-      const orgContactLinks = [];
+      const orgContactEntries = buildContactEntries(unit?.contact);
 
-      if (safe(unit?.contact?.telephone)) {
-        orgContactLinks.push(
-          `<a href="tel:${escapeHtml(
-            normalizePhone(unit.contact.telephone),
-          )}" aria-label="Telefon der Organisationseinheit ${escapeHtml(
-            unitName,
-          )}">Telefon</a>`,
-        );
-      }
+      const orgContactLinks = orgContactEntries.map((entry) => {
+        const baseLabel = labelForContactKind(entry.kind);
+        const ariaLabel = `${baseLabel} der Organisationseinheit ${escapeHtml(
+          unitName,
+        )}`;
 
-      if (safe(unit?.contact?.email)) {
-        orgContactLinks.push(
-          `<a href="mailto:${escapeHtml(
-            safe(unit.contact.email),
-          )}" aria-label="E-Mail der Organisationseinheit ${escapeHtml(
-            unitName,
-          )}">E-Mail</a>`,
-        );
-      }
-
-      if (safe(unit?.contact?.website)) {
-        orgContactLinks.push(
-          `<a href="${escapeHtml(
-            linkableWebsite(unit.contact.website),
-          )}" aria-label="Webseite der Organisationseinheit ${escapeHtml(
-            unitName,
-          )}">Webseite</a>`,
-        );
-      }
+        return `<a href="${escapeHtml(
+          entry.href,
+        )}" aria-label="${ariaLabel}">${baseLabel}</a>`;
+      });
 
       if (orgContactLinks.length > 0) {
         metaItems.push(
@@ -644,79 +274,7 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
           );
 
           const deptPositions = (department?.positions || [])
-            .map((position) => {
-              const positionTypeRaw = safe(position?.positionType);
-              const positionStatusRaw = safe(position?.positionStatus);
-
-              let positionType = "";
-              let positionTerm = "";
-
-              if (positionTypeRaw) {
-                positionType = getGenderedPosition(
-                  positionTypeRaw,
-                  position?.person?.gender,
-                );
-
-                positionTerm = typeVocabLookup[positionTypeRaw]?.name;
-              }
-
-              let displayRole = "";
-
-              if (positionType && positionStatusRaw) {
-                displayRole = `${describeTermInline(
-                  positionType,
-                  positionTerm,
-                )} (${escapeHtml(positionStatusRaw)})`;
-              } else if (positionType) {
-                displayRole = describeTermInline(positionType, positionTerm);
-              } else if (positionStatusRaw) {
-                displayRole = escapeHtml(positionStatusRaw);
-              }
-
-              const positionContactLinks = [];
-
-              if (safe(position?.person?.contact?.telephone)) {
-                positionContactLinks.push(
-                  `<a href="tel:${escapeHtml(
-                    normalizePhone(position.person.contact.telephone),
-                  )}" aria-label="Telefon von ${escapeHtml(
-                    personName(position?.person),
-                  )}">Telefon</a>`,
-                );
-              }
-
-              if (safe(position?.person?.contact?.email)) {
-                positionContactLinks.push(
-                  `<a href="mailto:${escapeHtml(
-                    safe(position.person.contact.email),
-                  )}" aria-label="E-Mail an ${escapeHtml(
-                    personName(position?.person),
-                  )}">E-Mail</a>`,
-                );
-              }
-
-              if (safe(position?.person?.contact?.website)) {
-                positionContactLinks.push(
-                  `<a href="${escapeHtml(
-                    linkableWebsite(position.person.contact.website),
-                  )}" aria-label="Webseite von ${escapeHtml(
-                    personName(position?.person),
-                  )}">Webseite</a>`,
-                );
-              }
-
-              const contactSuffix =
-                positionContactLinks.length > 0
-                  ? ` <span>(Kontakt: ${positionContactLinks.join(
-                      " | ",
-                    )})</span>`
-                  : "";
-
-              const finalName = escapeHtml(personName(position?.person));
-              const colon = displayRole && finalName ? ": " : "";
-
-              return `<li>${displayRole}${colon}${finalName}${contactSuffix}</li>`;
-            })
+            .map(renderPositionListItem)
             .join("");
 
           return `<li>${deptName}${
@@ -877,7 +435,7 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
       finden Sie im Inhaltsverzeichnis.
     </p>
 
-    ${version ? `<p>Stand des Organigramms: ${formatDate(version)}</p>` : ""}
+    ${version ? `<p>Stand des Organigramms: ${formatDateHtml(version)}</p>` : ""}
 
     <p>
       Es enthält ${unitsSortedByDepth.length} Organisationseinheiten in

@@ -110,6 +110,9 @@ const ExportModal = (props) => {
         case "accessible-html":
           props.onExport("accessible-html", false);
           break;
+        case "accessible-pdf":
+          props.onExport("accessible-pdf", false);
+          break;
         case "rdf":
           props.onExport("rdf", false, false, formData.export.rdfType);
           break;
