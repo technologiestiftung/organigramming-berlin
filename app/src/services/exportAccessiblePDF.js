@@ -1410,7 +1410,15 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   orgSection.end();
 
   // -- Glossary -----------------------------------------------------------
-
+  //
+  // Each glossary term is rendered as its own H3 heading followed by a P
+  // paragraph with the description. This pattern keeps the structure
+  // tree clean for Acrobat's accessibility checker (which previously
+  // flagged the Lbl/LBody structure of the list-based variant) and lets
+  // screen-reader users navigate the glossary like any other set of
+  // headed sections. Inline links from elsewhere in the document
+  // (`goTo: glossaryLinkFor(term)`) still resolve correctly because
+  // each H3 carries the named destination as its anchor.
   if (isVocabularyAvailable && glossaryTerms.size > 0) {
     const glossarySection = doc.struct("Sect", { title: "Glossar" });
     documentRoot.add(glossarySection);
@@ -1429,43 +1437,25 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       after: 4,
     });
 
-    const glossaryList = doc.struct("L");
-    glossarySection.add(glossaryList);
-
     [...glossaryTerms.entries()]
       .sort(([, a], [, b]) => a.label.localeCompare(b.label, "de"))
       .forEach(([vocabTerm, { label, comment }]) => {
         const glossaryDestination = glossaryLinkFor(vocabTerm);
         doc.addNamedDestination(glossaryDestination);
 
-        const item = doc.struct("LI");
-        const labelStruct = doc.struct("Lbl");
-        const body = doc.struct("LBody");
-
-        item.add(labelStruct);
-        item.add(body);
-        glossaryList.add(item);
-
-        writeStructuredParagraph(doc, labelStruct, label, {
-          indent: 8,
-          fontSize: BODY_FONT_SIZE,
-          bold: true,
-          structType: "Lbl",
+        writeHeading(doc, glossarySection, label, {
+          level: 3,
           destination: glossaryDestination,
-          after: 1,
+          before: 4,
+          after: 2,
         });
 
-        writeStructuredParagraph(doc, body, comment, {
-          indent: 24,
+        writeStructuredParagraph(doc, glossarySection, comment, {
           fontSize: BODY_FONT_SIZE,
-          structType: "P",
           after: 3,
         });
-
-        item.end();
       });
 
-    glossaryList.end();
     glossarySection.end();
   }
 
