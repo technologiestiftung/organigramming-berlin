@@ -98,10 +98,18 @@ const SECTION_DEPTH_COLORS = ["#002856", "#004F9F", "#4F90CD", "#AAC9E7"];
 
 const headingFontSize = (level) => HEADING_FONT_SIZES[level] || BODY_FONT_SIZE;
 
-// Map unit depth to heading level. Depth 0 is the root organisation - it
-// becomes H3 (H1 is the document title, H2 is the section heading
-// "Organisationseinheiten"). Beyond H6 we cap so PDF/UA never sees a gap.
-const headingLevelFromDepth = (depth) => Math.min(3 + depth, 6);
+// All organisation units share the same heading level (H3) regardless of
+// their position in the tree. PDF/UA requires headings to follow a strict
+// "no skipping levels" rule. Mapping every org depth to H3 keeps the
+// heading hierarchy clean and meets the Berliner Standard for PDF, which
+// explicitly forbids skipping heading levels. The hierarchy itself is
+// still conveyed via the "Übergeordnete Einheit:" bullet and the
+// "Direkt untergeordnete Einheiten"-Paragraph in each section.
+const headingLevelFromDepth = () => 3;
+
+// Sub-section headings inside an organisation (e.g. "Zugehörige Einheiten")
+// are one level deeper than the org heading and therefore H4.
+const SUB_SECTION_HEADING_LEVEL = 4;
 
 const getDepthBorderColor = (depth = 0) =>
   SECTION_DEPTH_COLORS[
@@ -165,6 +173,13 @@ const createPdfBlob = (doc) =>
 /**
  * Writes a single text paragraph as a tagged structure element (P, H1-H6,
  * Span, Link, ...) and returns the parent so callers can chain.
+ *
+ * If the paragraph is a hyperlink (link/goTo set), the text rendering is
+ * wrapped in a `Link` structure element and emitted inside
+ * `linkStruct.add(closure)`. That is required for PDF/UA: PDFKit only
+ * connects the link annotation to its surrounding `Link` struct (via an
+ * `OBJR` entry) when the closure form is used, because only then is the
+ * internal `_currentStructureElement` flag set to the Link element.
  */
 const writeStructuredParagraph = (
   doc,
@@ -198,23 +213,45 @@ const writeStructuredParagraph = (
     color: hasLink ? LINK_COLOR : TEXT_COLOR,
   });
 
-  const options = {
+  const baseOptions = {
     width: pageContentWidth(doc, indent),
     align: "left",
     lineGap: LINE_GAP,
-    structParent: parent,
-    structType,
   };
 
-  if (destination) options.destination = destination;
-  if (goTo) options.goTo = goTo;
-  if (link) options.link = link;
-  if (hasLink) options.underline = true;
-
-  const height = doc.heightOfString(normalized, options);
+  const height = doc.heightOfString(normalized, baseOptions);
   ensureSpace(doc, height);
 
-  doc.text(normalized, PAGE_MARGIN_X + indent, doc.y, options);
+  if (hasLink) {
+    // Hyperlinks need the closure-form so PDFKit can attach the link
+    // annotation's OBJR entry to the Link struct in the structure tree.
+    const linkStruct = doc.struct(structType === "Link" ? "Link" : "Link");
+    parent.add(linkStruct);
+
+    linkStruct.add(() => {
+      setTextStyle(doc, { fontSize, bold, color: LINK_COLOR });
+
+      doc.text(normalized, PAGE_MARGIN_X + indent, doc.y, {
+        ...baseOptions,
+        underline: true,
+        destination: destination || undefined,
+        goTo: goTo || undefined,
+        link: link || undefined,
+      });
+    });
+
+    linkStruct.end();
+  } else {
+    const options = {
+      ...baseOptions,
+      structParent: parent,
+      structType,
+    };
+
+    if (destination) options.destination = destination;
+
+    doc.text(normalized, PAGE_MARGIN_X + indent, doc.y, options);
+  }
 
   if (after > 0) {
     doc.y += after;
@@ -366,6 +403,15 @@ const layoutInlineRuns = (
     let buffer = "";
     let bufferStartX = cursorX;
 
+    // Pending text calls that need to run inside the structure-element
+    // closure. We collect them here, then hand the whole list to
+    // `runStruct.add(closure)` at the end. Running them inside the
+    // closure is essential for PDF/UA: PDFKit only wires the link
+    // annotation into the structure tree (OBJR entry) when
+    // `_currentStructureElement` matches the surrounding Link struct -
+    // and that flag is only set inside `add(closure)`.
+    const pendingTextCalls = [];
+
     const flushBuffer = () => {
       if (!buffer) return;
 
@@ -379,15 +425,12 @@ const layoutInlineRuns = (
       const measuredWidth = doc.widthOfString(buffer);
       const wordCount = (buffer.match(/\S+/g) || []).length || 1;
 
-      doc.text(buffer, bufferStartX, cursorY, {
-        lineBreak: false,
+      pendingTextCalls.push({
+        text: buffer,
+        x: bufferStartX,
+        y: cursorY,
         textWidth: measuredWidth,
         wordCount,
-        structParent: runStruct,
-        structType: hasLink ? "Link" : "Span",
-        underline: hasLink,
-        goTo: run.goTo || null,
-        link: run.link || null,
       });
 
       buffer = "";
@@ -433,6 +476,31 @@ const layoutInlineRuns = (
     });
 
     flushBuffer();
+
+    // Render the queued text inside `runStruct.add(closure)`. This sets
+    // PDFKit's `_currentStructureElement` to `runStruct` for the
+    // duration of the closure, which in turn lets PDFKit attach any
+    // link/goTo annotation to that Link struct via an OBJR entry -
+    // satisfying PDF/UA 7.18.5.
+    runStruct.add(() => {
+      setTextStyle(doc, {
+        fontSize,
+        bold: Boolean(run.bold),
+        color: hasLink ? LINK_COLOR : TEXT_COLOR,
+      });
+
+      pendingTextCalls.forEach((call) => {
+        doc.text(call.text, call.x, call.y, {
+          lineBreak: false,
+          textWidth: call.textWidth,
+          wordCount: call.wordCount,
+          underline: hasLink,
+          goTo: run.goTo || null,
+          link: run.link || null,
+        });
+      });
+    });
+
     runStruct.end();
   });
 
@@ -515,17 +583,17 @@ const writeBulletItem = (
 
   const alignedY = doc.y;
 
-  // The bullet glyph is a small filled circle (the native PDFKit list
-  // style) drawn as a vector. We wrap it in an Artifact marked-content
-  // block so it is treated as decoration and not exposed to screen
-  // readers. The Lbl structure element is still present in the tag tree
-  // and conveys "this is a list item label" semantically.
+  // The bullet glyph is a small filled circle drawn as a vector. We
+  // render it inside the `Lbl` structure element (via the closure form
+  // of `label.add`) so the Lbl carries real content - an empty Lbl is
+  // flagged by some PDF/UA validators as a warning. The circle inside
+  // the Lbl marked content is, semantically, a graphical list label.
   const ascender = doc._font ? doc._font.ascender / 1000 * fontSize : fontSize * 0.7;
   const bulletRadius = Math.max(ascender / 6, 1.2);
   const bulletCenterX = bulletX + bulletRadius * 2;
   const bulletCenterY = alignedY + ascender / 2;
 
-  withArtifact(doc, "Layout", () => {
+  label.add(() => {
     doc
       .save()
       .fillColor(TEXT_COLOR)
@@ -1008,40 +1076,6 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       ]);
     }
 
-    const positions = unit?.positions || [];
-
-    if (positions.length > 0) {
-      const headerItem = writeBulletItem(
-        doc,
-        metaList,
-        [{ text: "Personen und Aufgaben:", bold: true }],
-        { indent: 8, fontSize: BODY_FONT_SIZE },
-      );
-
-      if (headerItem) {
-        const nestedList = doc.struct("L");
-        headerItem.body.add(nestedList);
-
-        positions.forEach((position) => {
-          const runs = buildPositionRuns(position, {
-            isVocabularyAvailable,
-            vocabularyData,
-            registerGlossaryTerm,
-          });
-
-          const positionItem = writeBulletItem(doc, nestedList, runs, {
-            indent: 24,
-            fontSize: BODY_FONT_SIZE,
-          });
-
-          positionItem?.close();
-        });
-
-        nestedList.end();
-        headerItem.close();
-      }
-    }
-
     const orgContactEntries = buildContactEntries(unit?.contact);
 
     if (orgContactEntries.length > 0) {
@@ -1066,12 +1100,49 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     metaList.end();
 
+    // Positions are emitted as their own top-level list, separate from
+    // the metadata list above. This keeps the structure tree clean: the
+    // "Personen und Aufgaben:" heading is a regular paragraph and the
+    // positions form a peer `L` element rather than being nested inside
+    // an `LBody`, which avoids PDF/UA validator warnings about mixed
+    // block content in list bodies.
+    const positions = unit?.positions || [];
+
+    if (positions.length > 0) {
+      writeInlineRuns(
+        doc,
+        section,
+        [{ text: "Personen und Aufgaben:", bold: true }],
+        { indent: 8, fontSize: BODY_FONT_SIZE, before: 2, after: 2 },
+      );
+
+      const positionList = doc.struct("L");
+      section.add(positionList);
+
+      positions.forEach((position) => {
+        const runs = buildPositionRuns(position, {
+          isVocabularyAvailable,
+          vocabularyData,
+          registerGlossaryTerm,
+        });
+
+        const positionItem = writeBulletItem(doc, positionList, runs, {
+          indent: 16,
+          fontSize: BODY_FONT_SIZE,
+        });
+
+        positionItem?.close();
+      });
+
+      positionList.end();
+    }
+
     // Departments (Zugehörige Einheiten).
     const departments = unit?.departments || [];
 
     if (departments.length > 0) {
       writeHeading(doc, section, "Zugehörige Einheiten", {
-        level: Math.min(headingLevelFromDepth(depth) + 1, 6),
+        level: SUB_SECTION_HEADING_LEVEL,
         before: 4,
         after: 3,
       });
