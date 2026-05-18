@@ -354,11 +354,17 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
     `
       : "";
 
+  // The footer note (`document.note`) is editor-managed Markdown. We do
+  // not render Markdown here - that would require a dependency on a
+  // sanitised renderer. Instead the content is emitted as plain text
+  // with line breaks preserved via `white-space: pre-wrap` (see the
+  // global stylesheet), so the structure remains readable even though
+  // headings, bold, links etc. are NOT interpreted.
   const noteSection = documentNote
     ? `
-      <section id="note" tabindex="-1">
+      <section id="note" tabindex="-1" class="note">
         <h2>Fußzeile</h2>
-        <p>${escapeHtml(documentNote)}</p>
+        <p class="note-body">${escapeHtml(documentNote)}</p>
       </section>
     `
     : "";
@@ -448,6 +454,10 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
       outline: 3px solid #0b57d0;
       outline-offset: 2px;
       scroll-margin-top: 1rem;
+    }
+
+    .note-body {
+      white-space: pre-wrap;
     }
 
     @media print {

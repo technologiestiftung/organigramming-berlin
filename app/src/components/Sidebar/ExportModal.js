@@ -16,6 +16,22 @@ const ExportModal = (props) => {
   const [warningMultiMainOrgs, setWarningMultiMainOrgs] = useState(false);
   const [duplicatePersons, setDuplicatePersons] = useState([]);
 
+  // The accessible HTML/PDF exports include the document footer
+  // (`document.note`) verbatim as plain text - Markdown formatting is
+  // not rendered. We show a small notice on the export modal so the
+  // user is not surprised by the raw `#`, `*`, `[...](...)` characters
+  // appearing in the output.
+  const documentNote =
+    typeof formData?.document?.note === "string"
+      ? formData.document.note.trim()
+      : "";
+  const isAccessibleExport =
+    formData?.export?.exportType === "accessible-html" ||
+    formData?.export?.exportType === "accessible-pdf";
+  const isExporting = formData?.export?.saveExport === "export";
+  const showAccessibleNoteWarning =
+    isExporting && isAccessibleExport && documentNote.length > 0;
+
   const properties = {
     properties: {
       export: {
@@ -213,6 +229,25 @@ const ExportModal = (props) => {
             </Col>
           </Row>
         )} */}
+        {showAccessibleNoteWarning && (
+          <Row>
+            <Col className="mb-3">
+              <Alert variant="warning">
+                <Alert.Heading as="h6">
+                  Hinweis zur Fußzeile
+                </Alert.Heading>
+                <p className="mb-0">
+                  Der Text in der <b>Fußzeile</b> (Dokumenteigenschaften) wird
+                  im barrierefreien Export <b>als reiner Text</b> übernommen.
+                  Markdown-Formatierung (Überschriften mit <code>#</code>,
+                  Fettdruck mit <code>**…**</code>, Links wie{" "}
+                  <code>[Text](URL)</code> usw.) wird <b>nicht</b> in
+                  formatierte Inhalte umgewandelt.
+                </p>
+              </Alert>
+            </Col>
+          </Row>
+        )}
         {showRDFInfo && (
           <Row>
             <Col className="mb-3">
