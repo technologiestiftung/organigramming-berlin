@@ -925,6 +925,60 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   doc.font(FONT_NAMES.regular);
   doc.fillColor(TEXT_COLOR);
 
+  // ---------------------------------------------------------------------
+  // PDF/UA CIDSet patch
+  // ---------------------------------------------------------------------
+  //
+  // PDFKit 0.13.0 writes a hard-coded `CIDSet` stream (the byte sequence
+  // 0xFFFFFFFFC0) into every embedded subset font descriptor whenever
+  // `doc.subset === 1` (the value set by `subset: "PDF/UA"`). That CIDSet
+  // is just a placeholder and does NOT match the glyphs that are
+  // actually present in the Liberation Sans subset, which causes
+  // veraPDF rule 7.21.4.2-2 ("cidSetListsAllGlyphs == true") to fail.
+  //
+  // PDF/UA-1 explicitly allows the CIDSet stream to be absent. So we
+  // patch the EmbeddedFont prototype's `finalize()` to set
+  // `doc.subset = 0` for the duration of the font's `embed()` call -
+  // which makes PDFKit skip the CIDSet block entirely. We immediately
+  // restore the original value so `endSubset()` still writes the proper
+  // `<pdfuaid:part>1</pdfuaid:part>` XMP entry that marks the file as
+  // PDF/UA-1.
+  //
+  // The EmbeddedFont class is not exported by PDFKit, so we reach its
+  // prototype via the freshly instantiated `doc._font` and patch the
+  // prototype once per page load (marker `__a11yCidsetPatched` prevents
+  // re-application across multiple PDF generations).
+  if (doc._font) {
+    const fontProto = Object.getPrototypeOf(doc._font);
+
+    if (
+      fontProto &&
+      typeof fontProto.finalize === "function" &&
+      !fontProto.__a11yCidsetPatched
+    ) {
+      const originalFinalize = fontProto.finalize;
+
+      fontProto.finalize = function patchedFinalize() {
+        const docRef = this.document;
+        const savedSubset = docRef ? docRef.subset : undefined;
+
+        if (docRef) {
+          docRef.subset = 0;
+        }
+
+        try {
+          return originalFinalize.call(this);
+        } finally {
+          if (docRef) {
+            docRef.subset = savedSubset;
+          }
+        }
+      };
+
+      fontProto.__a11yCidsetPatched = true;
+    }
+  }
+
   const { outline } = doc;
   const rootBookmark = outline.addItem(title, { expanded: true });
 
