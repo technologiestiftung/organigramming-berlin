@@ -24,6 +24,17 @@ const PAGE_MARGIN_TOP = 56;
 const PAGE_MARGIN_BOTTOM = 48;
 const LINE_GAP = 6;
 
+// Body font size in points. The Berliner Standards for PDF require a
+// minimum of 12 pt for the body text (Verdana would be 11 pt, but we use
+// a sans-serif similar to Arial).
+const BODY_FONT_SIZE = 12;
+
+// Hyperlink colour. Berliner Standards require links to be visually
+// distinct from body text by colour AND a second cue (we additionally
+// underline). Dark blue is the worldwide-established convention.
+const LINK_COLOR = "#0B57D0";
+const TEXT_COLOR = "#000000";
+
 // Registered PDF font aliases. We use Liberation Sans (SIL OFL) embedded as
 // TTF so the resulting PDF satisfies the PDF/UA requirement that every used
 // font must be embedded. Helvetica (the PDFKit default) is NOT embedded
@@ -72,20 +83,23 @@ const loadEmbeddedFonts = async () => {
 };
 
 const HEADING_FONT_SIZES = {
-  1: 20,
-  2: 15,
-  3: 12.5,
-  4: 11.5,
-  5: 11,
-  6: 10.5,
+  1: 22,
+  2: 18,
+  3: 15,
+  4: 13.5,
+  5: 12.5,
+  6: 12,
 };
 
 // Same palette as HTML's SECTION_DEPTH_COLORS (used for the depth-coloured
 // border accent above each unit section).
 const SECTION_DEPTH_COLORS = ["#002856", "#004F9F", "#4F90CD", "#AAC9E7"];
 
-const headingFontSize = (level) => HEADING_FONT_SIZES[level] || 11;
+const headingFontSize = (level) => HEADING_FONT_SIZES[level] || BODY_FONT_SIZE;
 
+// Map unit depth to heading level. Depth 0 is the root organisation - it
+// becomes H3 (H1 is the document title, H2 is the section heading
+// "Organisationseinheiten"). Beyond H6 we cap so PDF/UA never sees a gap.
 const headingLevelFromDepth = (depth) => Math.min(3 + depth, 6);
 
 const getDepthBorderColor = (depth = 0) =>
@@ -111,9 +125,27 @@ const ensureSpace = (doc, neededHeight = 20) => {
   }
 };
 
-const setTextStyle = (doc, { fontSize = 11, bold = false } = {}) => {
+const setTextStyle = (
+  doc,
+  { fontSize = BODY_FONT_SIZE, bold = false, color = TEXT_COLOR } = {},
+) => {
   doc.font(bold ? FONT_NAMES.bold : FONT_NAMES.regular);
   doc.fontSize(fontSize);
+  doc.fillColor(color);
+};
+
+/**
+ * Marks the wrapped graphics / text operations as an Artifact so screen
+ * readers ignore them. Used for decorative content (bullet glyphs,
+ * separator rules) that must not pollute the structure tree.
+ */
+const withArtifact = (doc, type, draw) => {
+  doc.markContent("Artifact", { type });
+  try {
+    draw();
+  } finally {
+    doc.endMarkedContent();
+  }
 };
 
 const createPdfBlob = (doc) =>
@@ -139,7 +171,7 @@ const writeStructuredParagraph = (
   text,
   {
     indent = 0,
-    fontSize = 11,
+    fontSize = BODY_FONT_SIZE,
     bold = false,
     before = 0,
     after = 0,
@@ -157,7 +189,13 @@ const writeStructuredParagraph = (
     doc.y += before;
   }
 
-  setTextStyle(doc, { fontSize, bold });
+  const hasLink = Boolean(goTo || link);
+
+  setTextStyle(doc, {
+    fontSize,
+    bold,
+    color: hasLink ? LINK_COLOR : TEXT_COLOR,
+  });
 
   const options = {
     width: pageContentWidth(doc, indent),
@@ -170,7 +208,7 @@ const writeStructuredParagraph = (
   if (destination) options.destination = destination;
   if (goTo) options.goTo = goTo;
   if (link) options.link = link;
-  if (link || goTo) options.underline = true;
+  if (hasLink) options.underline = true;
 
   const height = doc.heightOfString(normalized, options);
   ensureSpace(doc, height);
@@ -181,6 +219,10 @@ const writeStructuredParagraph = (
     doc.y += after;
   }
 
+  // Reset to body colour so subsequent unrelated text never inherits the
+  // link colour.
+  doc.fillColor(TEXT_COLOR);
+
   return parent;
 };
 
@@ -190,6 +232,14 @@ const writeHeading = (
   text,
   { level = 2, indent = 0, before = 0, after = 4, destination = null } = {},
 ) => {
+  // Avoid orphaned headings at the bottom of a page: reserve roughly two
+  // body lines below the heading so it is forced to the next page if no
+  // content would fit underneath it.
+  const headingHeight =
+    headingFontSize(level) * 1.4 + (BODY_FONT_SIZE + LINE_GAP) * 2;
+
+  ensureSpace(doc, headingHeight);
+
   return writeStructuredParagraph(doc, parent, text, {
     indent,
     fontSize: headingFontSize(level),
@@ -203,7 +253,9 @@ const writeHeading = (
 
 /**
  * Renders a coloured rule above a unit section to signal its depth in the
- * hierarchy (mirrors the HTML's coloured border-top).
+ * hierarchy (mirrors the HTML's coloured border-top). The rule is purely
+ * decorative, so it is emitted inside an Artifact marked-content block
+ * and therefore ignored by screen readers.
  */
 const drawDepthRule = (doc, depth) => {
   ensureSpace(doc, 6);
@@ -212,14 +264,16 @@ const drawDepthRule = (doc, depth) => {
   const y = doc.y;
   const width = pageContentWidth(doc, 0);
 
-  doc
-    .save()
-    .lineWidth(2)
-    .strokeColor(getDepthBorderColor(depth))
-    .moveTo(x, y)
-    .lineTo(x + width, y)
-    .stroke()
-    .restore();
+  withArtifact(doc, "Layout", () => {
+    doc
+      .save()
+      .lineWidth(2)
+      .strokeColor(getDepthBorderColor(depth))
+      .moveTo(x, y)
+      .lineTo(x + width, y)
+      .stroke()
+      .restore();
+  });
 
   doc.y = y + 4;
 };
@@ -295,7 +349,11 @@ const layoutInlineRuns = (
 
     paragraph.add(runStruct);
 
-    setTextStyle(doc, { fontSize, bold: Boolean(run.bold) });
+    setTextStyle(doc, {
+      fontSize,
+      bold: Boolean(run.bold),
+      color: hasLink ? LINK_COLOR : TEXT_COLOR,
+    });
 
     const segments = splitRun(run.text);
 
@@ -375,7 +433,9 @@ const layoutInlineRuns = (
     runStruct.end();
   });
 
-  // Advance the document cursor to the line after the last laid-out one.
+  // Reset to body colour and advance the document cursor to the line
+  // after the last laid-out one.
+  doc.fillColor(TEXT_COLOR);
   doc.y = cursorY + lineHeight;
 };
 
@@ -388,7 +448,7 @@ const writeInlineRuns = (
   doc,
   parent,
   runs,
-  { indent = 0, fontSize = 11, before = 0, after = 0 } = {},
+  { indent = 0, fontSize = BODY_FONT_SIZE, before = 0, after = 0 } = {},
 ) => {
   const filtered = runs.filter((run) => run && safe(run.text));
 
@@ -424,7 +484,7 @@ const writeBulletItem = (
   doc,
   listStruct,
   runs,
-  { indent = 0, fontSize = 11, after = 0 } = {},
+  { indent = 0, fontSize = BODY_FONT_SIZE, after = 0 } = {},
 ) => {
   const filtered = runs.filter((run) => run && safe(run.text));
 
@@ -444,17 +504,35 @@ const writeBulletItem = (
   const textStartX = PAGE_MARGIN_X + indent + 14;
   const textMaxX = textStartX + pageContentWidth(doc, indent + 14);
 
-  ensureSpace(doc, doc.currentLineHeight(true) + LINE_GAP);
+  // Try to keep the bullet and at least one body line on the same page.
+  // We approximate the LI height as 2 lines so a long item that would
+  // start at the bottom of the page is moved to the next page entirely.
+  const lineHeight = doc.currentLineHeight(true) + LINE_GAP;
+  ensureSpace(doc, lineHeight * 2);
 
   const alignedY = doc.y;
 
-  doc.text("•", bulletX, alignedY, {
-    lineBreak: false,
-    structParent: label,
-    structType: "Lbl",
+  // The bullet glyph is a small filled circle (the native PDFKit list
+  // style) drawn as a vector. We wrap it in an Artifact marked-content
+  // block so it is treated as decoration and not exposed to screen
+  // readers. The Lbl structure element is still present in the tag tree
+  // and conveys "this is a list item label" semantically.
+  const ascender = doc._font ? doc._font.ascender / 1000 * fontSize : fontSize * 0.7;
+  const bulletRadius = Math.max(ascender / 6, 1.2);
+  const bulletCenterX = bulletX + bulletRadius * 2;
+  const bulletCenterY = alignedY + ascender / 2;
+
+  withArtifact(doc, "Layout", () => {
+    doc
+      .save()
+      .fillColor(TEXT_COLOR)
+      .circle(bulletCenterX, bulletCenterY, bulletRadius)
+      .fill()
+      .restore();
   });
 
   doc.y = alignedY;
+  doc.fillColor(TEXT_COLOR);
 
   const paragraph = doc.struct("P");
   body.add(paragraph);
@@ -466,6 +544,7 @@ const writeBulletItem = (
   });
 
   paragraph.end();
+  label.end();
 
   if (after > 0) {
     doc.y += after;
@@ -616,6 +695,10 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     margin: 0,
     pdfVersion: "1.7",
     tagged: true,
+    // Subset PDF/UA tells PDFKit to emit the pdfuaid:part 1 XMP metadata
+    // entry that PDF/UA-validators look for. Without this, no validator
+    // will recognise the file as PDF/UA even if everything else is right.
+    subset: "PDF/UA",
     lang: "de-DE",
     displayTitle: true,
     autoFirstPage: true,
@@ -625,15 +708,37 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       Subject: "Barrierefreies Organigramm",
       Author: safe(data?.document?.creator) || "Organigramm Tool Berlin",
       Creator: "organigramming-berlin",
-      Producer: "PDFKit",
-      CreationDate: new Date(),
-      ModDate: new Date(),
+      // "Stand des Organigramms" - the editorial date of the source data,
+      // not the moment the PDF was generated. We map it onto CreationDate
+      // so PDF readers display it under "Erstellt am" in the document
+      // properties. If the source has no version date we fall back to
+      // now() so the field is never empty.
+      CreationDate: version ? new Date(version) : new Date(),
       Keywords: "Organigramm, Barrierefreiheit, PDF",
     },
   });
 
   doc.x = PAGE_MARGIN_X;
   doc.y = PAGE_MARGIN_TOP;
+
+  // Tabs = "S" tells assistive technology to follow the structure tree
+  // when tabbing through interactive content. PDF/UA requires this on
+  // every page. PDFKit creates the first page automatically, so we set
+  // it here and also from a "pageAdded" listener for subsequent pages.
+  const enforcePageDefaults = () => {
+    if (doc.page) {
+      doc.page.dictionary.data.Tabs = "S";
+    }
+  };
+
+  enforcePageDefaults();
+  doc.on("pageAdded", enforcePageDefaults);
+
+  // PageMode = UseOutlines opens the document with the bookmarks panel
+  // visible. PDFKit sets this automatically when an outline item exists,
+  // but we set it explicitly so the behaviour is independent of any
+  // future refactoring.
+  doc._root.data.PageMode = "UseOutlines";
 
   // Register the embedded Liberation Sans faces. From this point on every
   // setTextStyle() call selects one of these embedded fonts, which means
@@ -646,6 +751,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   // setTextStyle call (e.g. from the outline labels) uses the embedded
   // font, not the PDFKit default (Helvetica, non-embedded).
   doc.font(FONT_NAMES.regular);
+  doc.fillColor(TEXT_COLOR);
 
   const { outline } = doc;
   const rootBookmark = outline.addItem(title, { expanded: true });
@@ -678,7 +784,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     doc,
     headerSection,
     "Dieses Organigramm ist hierarchisch aufgebaut. Die hierarchische Struktur finden Sie im Inhaltsverzeichnis.",
-    { fontSize: 11, after: 6 },
+    { fontSize: BODY_FONT_SIZE, after: 6 },
   );
 
   if (version) {
@@ -688,7 +794,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       doc,
       headerSection,
       `Stand des Organigramms: ${formattedVersion || version}`,
-      { fontSize: 11, after: 4 },
+      { fontSize: BODY_FONT_SIZE, after: 4 },
     );
   }
 
@@ -696,14 +802,14 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     doc,
     headerSection,
     `Es enthält ${unitsSortedByDepth.length} Organisationseinheiten in ${levelCount} Ebenen und nennt ${personIdentitySet.size} Personen.`,
-    { fontSize: 11, after: 4 },
+    { fontSize: BODY_FONT_SIZE, after: 4 },
   );
 
   writeStructuredParagraph(
     doc,
     headerSection,
     `Kontaktangaben sind teilweise vorhanden (Organisationen: ${organisationsWithContactCount}, Personen: ${positionWithContactCount}).`,
-    { fontSize: 11, after: 4 },
+    { fontSize: BODY_FONT_SIZE, after: 4 },
   );
 
   if (isVocabularyAvailable) {
@@ -711,7 +817,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       doc,
       headerSection,
       "Begriffserklärungen finden Sie teilweise im Glossar.",
-      { fontSize: 11, after: 4 },
+      { fontSize: BODY_FONT_SIZE, after: 4 },
     );
   }
 
@@ -744,7 +850,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
       writeStructuredParagraph(doc, tocItem, unitName, {
         indent: 8 + depth * 12,
-        fontSize: 11,
+        fontSize: BODY_FONT_SIZE,
         structType: "Link",
         goTo: sectionId,
       });
@@ -782,7 +888,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       doc,
       orgSection,
       "Es wurden keine Organisationseinheiten gefunden.",
-      { fontSize: 11 },
+      { fontSize: BODY_FONT_SIZE },
     );
   }
 
@@ -811,7 +917,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     if (unitPurpose) {
       writeStructuredParagraph(doc, section, unitPurpose, {
-        fontSize: 11,
+        fontSize: BODY_FONT_SIZE,
         after: 3,
       });
     }
@@ -841,7 +947,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       });
 
       writeInlineRuns(doc, section, runs, {
-        fontSize: 11,
+        fontSize: BODY_FONT_SIZE,
         after: 3,
       });
     }
@@ -852,7 +958,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     section.add(metaList);
 
     const ensureMetaListItem = (runs) => {
-      writeBulletItem(doc, metaList, runs, { indent: 8, fontSize: 11 });
+      writeBulletItem(doc, metaList, runs, { indent: 8, fontSize: BODY_FONT_SIZE });
     };
 
     if (depth > 0) {
@@ -890,7 +996,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
         doc,
         metaList,
         [{ text: "Personen und Aufgaben:", bold: true }],
-        { indent: 8, fontSize: 11 },
+        { indent: 8, fontSize: BODY_FONT_SIZE },
       );
 
       if (headerItem) {
@@ -906,7 +1012,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
           const positionItem = writeBulletItem(doc, nestedList, runs, {
             indent: 24,
-            fontSize: 11,
+            fontSize: BODY_FONT_SIZE,
           });
 
           positionItem?.close();
@@ -962,7 +1068,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
           doc,
           deptList,
           [{ text: deptName, bold: true }],
-          { indent: 8, fontSize: 11 },
+          { indent: 8, fontSize: BODY_FONT_SIZE },
         );
 
         if (!deptItem) return;
@@ -982,7 +1088,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
             const positionItem = writeBulletItem(doc, nestedList, runs, {
               indent: 24,
-              fontSize: 11,
+              fontSize: BODY_FONT_SIZE,
             });
 
             positionItem?.close();
@@ -1041,7 +1147,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
         writeStructuredParagraph(doc, labelStruct, label, {
           indent: 8,
-          fontSize: 11,
+          fontSize: BODY_FONT_SIZE,
           bold: true,
           structType: "Lbl",
           destination: glossaryDestination,
@@ -1050,7 +1156,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
         writeStructuredParagraph(doc, body, comment, {
           indent: 24,
-          fontSize: 10.5,
+          fontSize: BODY_FONT_SIZE,
           structType: "P",
           after: 3,
         });
