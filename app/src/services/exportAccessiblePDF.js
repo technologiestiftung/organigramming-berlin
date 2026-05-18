@@ -54,11 +54,17 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
     options.Subtype = "Link";
     options.A = this.ref({
       S: "GoTo",
+      // PDFKit's serializer distinguishes PDF text strings from PDF names
+      // by the JS type: `String` wrapper objects become text strings, plain
+      // primitives become names. We must keep the wrapper here.
+      // eslint-disable-next-line no-new-wrappers
       D: new String(name),
     });
     options.A.end();
 
     if (options.structParent && !options.Contents) {
+      // Same reason as above: PDFKit requires a String wrapper.
+      // eslint-disable-next-line no-new-wrappers
       options.Contents = new String(`Verweis zu ${name}`);
     }
 
@@ -77,7 +83,10 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
       // PDFKit would otherwise default Contents to an empty string here.
       // Providing a description that includes the URL gives screen
       // readers something to announce and makes the annotation valid for
-      // PDF/UA.
+      // PDF/UA. We must use a `String` wrapper rather than a primitive,
+      // because PDFKit's PDF-object serializer uses the JS type to
+      // distinguish text strings (wrappers) from PDF names (primitives).
+      // eslint-disable-next-line no-new-wrappers
       options.Contents = new String(`Verweis: ${url}`);
     }
 
