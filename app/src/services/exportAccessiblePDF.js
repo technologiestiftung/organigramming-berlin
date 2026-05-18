@@ -14,6 +14,7 @@ import {
   resolvePositionDisplay,
   resolveUnitTypeDisplay,
   describeChildUnits,
+  formatAddress,
 } from "./exportAccessibleShared";
 
 const PDFDocument = window.PDFDocument;
@@ -275,7 +276,9 @@ const drawDepthRule = (doc, depth) => {
       .restore();
   });
 
-  doc.y = y + 4;
+  // Vertical gap between the rule and the heading underneath. The extra
+  // breathing room makes section starts easier to scan visually.
+  doc.y = y + 9;
 };
 
 /**
@@ -639,6 +642,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
+  const documentNote = safe(data?.document?.note);
 
   const { isAvailable: isVocabularyAvailable, data: vocabularyData } =
     await getVocabularyData();
@@ -895,13 +899,21 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   unitsSortedByDepth.forEach(({ unit, parentName, parentId, depth }, index) => {
     const sectionId = unitLinkFor(unit);
     const unitName = safe(unit?.name) || "Unbenannte Organisationseinheit";
+    const unitAltName = safe(unit?.altName);
     const unitPurpose = safe(unit?.purpose);
+    const unitAddress = formatAddress(unit?.address);
 
-    const section = doc.struct("Sect", { title: unitName });
+    // Heading combines the name and (when present) the short form so
+    // both forms are visible at a glance.
+    const unitHeadingText = unitAltName
+      ? `${unitName} (${unitAltName})`
+      : unitName;
+
+    const section = doc.struct("Sect", { title: unitHeadingText });
     orgSection.add(section);
 
     doc.addNamedDestination(sectionId);
-    structureBookmark.addItem(unitName);
+    structureBookmark.addItem(unitHeadingText);
 
     if (index > 0) {
       doc.y += 6;
@@ -909,7 +921,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     drawDepthRule(doc, depth);
 
-    writeHeading(doc, section, unitName, {
+    writeHeading(doc, section, unitHeadingText, {
       level: headingLevelFromDepth(depth),
       destination: sectionId,
       after: 3,
@@ -989,6 +1001,13 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       ]);
     }
 
+    if (unitAddress) {
+      ensureMetaListItem([
+        { text: "Adresse: ", bold: true },
+        { text: unitAddress },
+      ]);
+    }
+
     const positions = unit?.positions || [];
 
     if (positions.length > 0) {
@@ -1063,13 +1082,32 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       departments.forEach((department) => {
         const deptName =
           safe(department?.name) || "Unbenannte Einheit";
+        const { raw: deptType, vocabTerm: deptVocabTerm } =
+          resolveUnitTypeDisplay(department);
+        const deptPurpose = safe(department?.purpose);
 
-        const deptItem = writeBulletItem(
-          doc,
-          deptList,
-          [{ text: deptName, bold: true }],
-          { indent: 8, fontSize: BODY_FONT_SIZE },
-        );
+        // The bullet body is a single inline paragraph that contains
+        // - the (bold) name
+        // - the optional type, linked to the glossary when available
+        // - the optional purpose ("Beschreibung") set in regular weight
+        const headRuns = [{ text: deptName, bold: true }];
+
+        if (deptType) {
+          const goTo = registerGlossaryTerm(deptVocabTerm);
+
+          headRuns.push({ text: " — " });
+          headRuns.push({ text: deptType, goTo: goTo || null });
+        }
+
+        if (deptPurpose) {
+          headRuns.push({ text: deptType ? ", " : " — " });
+          headRuns.push({ text: deptPurpose });
+        }
+
+        const deptItem = writeBulletItem(doc, deptList, headRuns, {
+          indent: 8,
+          fontSize: BODY_FONT_SIZE,
+        });
 
         if (!deptItem) return;
 
@@ -1166,6 +1204,41 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     glossaryList.end();
     glossarySection.end();
+  }
+
+  // -- Fußzeile (document.note) ------------------------------------------
+  //
+  // The schema labels `document.note` as "Fußzeile". The Berliner Standards
+  // for PDF explicitly disallow important content in page headers or
+  // footers, because assistive technology may not reach them. We therefore
+  // render the note as a regular tagged section on its OWN page at the
+  // end of the document. It is reachable via the structure tree and the
+  // bookmark outline, satisfies the standard, and still conveys the
+  // editorial intent of a closing note.
+  if (documentNote) {
+    const noteSection = doc.struct("Sect", { title: "Fußzeile" });
+    documentRoot.add(noteSection);
+
+    rootBookmark.addItem("Fußzeile");
+
+    doc.addPage();
+    doc.x = PAGE_MARGIN_X;
+    doc.y = PAGE_MARGIN_TOP;
+
+    doc.addNamedDestination("note");
+
+    writeHeading(doc, noteSection, "Fußzeile", {
+      level: 2,
+      destination: "note",
+      after: 4,
+    });
+
+    writeStructuredParagraph(doc, noteSection, documentNote, {
+      fontSize: BODY_FONT_SIZE,
+      after: 4,
+    });
+
+    noteSection.end();
   }
 
   documentRoot.end();

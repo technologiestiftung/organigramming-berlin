@@ -19,6 +19,7 @@ export const safe = (value) =>
 
 export const personName = (person = {}) => {
   const parts = [
+    safe(person.salutation),
     safe(person.title),
     safe(person.firstName),
     safe(person.lastName),
@@ -348,6 +349,7 @@ export const summarizeUnits = (unitsSortedByDepth = []) => {
 
       if (
         safe(position?.person?.contact?.telephone) ||
+        safe(position?.person?.contact?.fax) ||
         safe(position?.person?.contact?.email) ||
         safe(position?.person?.contact?.website)
       ) {
@@ -359,6 +361,7 @@ export const summarizeUnits = (unitsSortedByDepth = []) => {
   const organisationsWithContactCount = unitsSortedByDepth.filter(
     ({ unit }) =>
       safe(unit?.contact?.telephone) ||
+      safe(unit?.contact?.fax) ||
       safe(unit?.contact?.email) ||
       safe(unit?.contact?.website),
   ).length;
@@ -396,10 +399,15 @@ export const buildSectionIdLookups = (unitsSortedByDepth, unitLinkFor) => {
 /**
  * Builds an abstract list of contact entries for a contact object. Each entry
  * is format-agnostic and contains everything renderers need to produce a
- * "Telefon" / "E-Mail" / "Webseite" link or label.
+ * "Telefon" / "Fax" / "E-Mail" / "Webseite" link or label.
  *
  * Returned shape:
- *   [{ kind: "telephone" | "email" | "website", value, href }]
+ *   [{ kind: "telephone" | "fax" | "email" | "website", value, href }]
+ *
+ * The `fax:` URI scheme (RFC 2806) is supported by very few PDF readers /
+ * browsers, but emitting it is harmless: handlers that do not understand
+ * it simply ignore the click, while the visible link text still shows
+ * the actual fax number.
  */
 export const buildContactEntries = (contact = {}) => {
   const entries = [];
@@ -411,6 +419,16 @@ export const buildContactEntries = (contact = {}) => {
       kind: "telephone",
       value,
       href: `tel:${normalizePhone(value)}`,
+    });
+  }
+
+  if (safe(contact?.fax)) {
+    const value = safe(contact.fax);
+
+    entries.push({
+      kind: "fax",
+      value,
+      href: `fax:${normalizePhone(value)}`,
     });
   }
 
@@ -439,6 +457,7 @@ export const buildContactEntries = (contact = {}) => {
 
 const CONTACT_LABEL_BY_KIND = {
   telephone: "Telefon",
+  fax: "Fax",
   email: "E-Mail",
   website: "Webseite",
 };
@@ -507,4 +526,27 @@ export const describeChildUnits = (unit, { sectionIdByUnitId, sectionIdByUnitNam
         "",
     })),
   };
+};
+
+/**
+ * Formats an address object into a single human-readable line suitable
+ * for both HTML and PDF output. Returns an empty string when the address
+ * has no recognisable parts.
+ */
+export const formatAddress = (address = {}) => {
+  const street = [safe(address?.street), safe(address?.housenumber)]
+    .filter(Boolean)
+    .join(" ");
+
+  const location = [safe(address?.zipCode), safe(address?.city)]
+    .filter(Boolean)
+    .join(" ");
+
+  const building = safe(address?.building)
+    ? `Gebäude ${safe(address.building)}`
+    : "";
+
+  const room = safe(address?.room) ? `Raum ${safe(address.room)}` : "";
+
+  return [street, building, room, location].filter(Boolean).join(", ");
 };

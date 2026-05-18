@@ -14,6 +14,7 @@ import {
   resolvePositionDisplay,
   resolveUnitTypeDisplay,
   describeChildUnits,
+  formatAddress,
 } from "./exportAccessibleShared";
 
 const escapeHtml = (value = "") =>
@@ -50,6 +51,7 @@ const formatDateHtml = (dateStr = "") => {
 export const exportAccessibleHTML = async (data, exportFilename) => {
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
+  const documentNote = safe(data?.document?.note);
 
   const { isAvailable: isVocabularyAvailable, data: vocabularyData } =
     await getVocabularyData();
@@ -136,7 +138,13 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
       const unitName =
         safe(unit?.name) || "Unbenannte Organisationseinheit";
 
+      const unitAltName = safe(unit?.altName);
+      const unitHeading = unitAltName
+        ? `${unitName} (${unitAltName})`
+        : unitName;
+
       const unitPurpose = safe(unit?.purpose);
+      const unitAddress = formatAddress(unit?.address);
 
       const parentLabel = parentName || "";
 
@@ -217,6 +225,9 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
         unitTypeDisplay
           ? `<li><strong>Art:</strong> ${unitTypeDisplay}</li>`
           : "",
+        unitAddress
+          ? `<li><strong>Adresse:</strong> ${escapeHtml(unitAddress)}</li>`
+          : "",
         positionMetaItems.length
           ? `<li><strong>Personen und Aufgaben:</strong><ul>${positionMetaItems.join(
               "",
@@ -273,11 +284,28 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
             safe(department?.name) || "Unbenannte Einheit",
           );
 
+          const { raw: deptType, vocabTerm: deptVocabTerm } =
+            resolveUnitTypeDisplay(department);
+
+          const deptTypeDisplay = deptType
+            ? describeTermInline(deptType, deptVocabTerm)
+            : "";
+
+          const deptPurpose = safe(department?.purpose);
+
+          const deptHead = [
+            `<strong>${deptName}</strong>`,
+            deptTypeDisplay || "",
+            deptPurpose ? escapeHtml(deptPurpose) : "",
+          ]
+            .filter(Boolean)
+            .join(" — ");
+
           const deptPositions = (department?.positions || [])
             .map(renderPositionListItem)
             .join("");
 
-          return `<li>${deptName}${
+          return `<li>${deptHead}${
             deptPositions ? `<ul>${deptPositions}</ul>` : ""
           }</li>`;
         })
@@ -290,7 +318,7 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
           data-org-depth="${depth}"
           style="--depth-border-color: ${getDepthBorderColor(depth)}"
         >
-          <h3>${escapeHtml(unitName)}</h3>
+          <h3>${escapeHtml(unitHeading)}</h3>
           ${unitPurpose ? `<p>${escapeHtml(unitPurpose)}</p>` : ""}
           ${directChildDescription}
           ${metaItems.length ? `<ul>${metaItems.join("")}</ul>` : ""}
@@ -325,6 +353,15 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
       </section>
     `
       : "";
+
+  const noteSection = documentNote
+    ? `
+      <section id="note" tabindex="-1">
+        <h2>Fußzeile</h2>
+        <p>${escapeHtml(documentNote)}</p>
+      </section>
+    `
+    : "";
 
   const html = `<!doctype html>
 <html lang="de">
@@ -460,6 +497,7 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
     <ul>
       ${nestedTocHtml}
       ${glossarySection ? '<li><a href="#glossary">Glossar</a></li>' : ""}
+      ${noteSection ? '<li><a href="#note">Fußzeile</a></li>' : ""}
     </ul>
   </nav>
 
@@ -469,6 +507,8 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
     ${unitSections}
 
     ${glossarySection}
+
+    ${noteSection}
   </main>
 </body>
 </html>`;
