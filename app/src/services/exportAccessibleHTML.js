@@ -480,9 +480,9 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
     </p>
 
     <p>
-      Kontaktangaben sind teilweise vorhanden
-      (Organisationen: ${organisationsWithContactCount},
-      Personen: ${positionWithContactCount}).
+      Kontaktangaben sind teilweise vorhanden bei
+      ${organisationsWithContactCount} Organisationen und
+      ${positionWithContactCount} Positionen.
     </p>
 
     ${

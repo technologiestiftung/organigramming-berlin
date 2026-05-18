@@ -20,6 +20,106 @@ import {
 const PDFDocument = window.PDFDocument;
 const blobStream = window.blobStream;
 
+// -----------------------------------------------------------------------
+// PDFKit patches to make goTo (internal cross-references) PDF/UA-compliant
+// -----------------------------------------------------------------------
+//
+// PDFKit (as of 0.13.0) wires URI link annotations into the structure tree
+// via an OBJR entry, but ONLY when the annotation is created via `link()`
+// AND `options.structParent` is set. For internal cross-references created
+// with `goTo()` this wiring is missing entirely - `_fragment` calls
+// `this.goTo(x, y, w, h, name)` without an options object, so no
+// structParent is passed and `goTo()` itself never wires up the OBJR even
+// if one were supplied.
+//
+// PDF/UA-1 (ISO 14289-1:2014, clauses 7.18.1 and 7.18.5) requires that
+// EVERY link annotation - including internal-destination links - is
+// referenced from the structure tree via an OBJR entry. Without these
+// patches veraPDF reports hundreds of failed checks for our TOC entries,
+// glossary references and parent-unit pointers.
+//
+// We patch PDFKit's prototype exactly once per page load so the patches
+// also benefit other modules that might use the library later.
+const patchPdfkitForAccessibility = (PdfDoc) => {
+  if (!PdfDoc || PdfDoc.__a11yPatched) return;
+
+  PdfDoc.__a11yPatched = true;
+
+  // 1) Make goTo() honour an `options.structParent` argument the same way
+  //    link() does. We also set a meaningful `Contents` value so the
+  //    annotation passes PDF/UA's clause 7.18.5-2 ("Contents != ''"),
+  //    which PDFKit's built-in handling does not satisfy.
+  const originalGoTo = PdfDoc.prototype.goTo;
+  PdfDoc.prototype.goTo = function goTo(x, y, w, h, name, options = {}) {
+    options.Subtype = "Link";
+    options.A = this.ref({
+      S: "GoTo",
+      D: new String(name),
+    });
+    options.A.end();
+
+    if (options.structParent && !options.Contents) {
+      options.Contents = new String(`Verweis zu ${name}`);
+    }
+
+    return this.annotate(x, y, w, h, options);
+  };
+  // Keep a reference for diagnostics / restore.
+  PdfDoc.prototype.goTo.__original = originalGoTo;
+
+  // 2) Patch link() to provide non-empty Contents when none is given.
+  //    PDFKit's stock behaviour sets `Contents = new String('')` whenever
+  //    a structParent is supplied, which PDF/UA's rule 7.18.5-2 rejects
+  //    because the Contents string is empty.
+  const originalLink = PdfDoc.prototype.link;
+  PdfDoc.prototype.link = function link(x, y, w, h, url, options = {}) {
+    if (options.structParent && !options.Contents) {
+      // PDFKit would otherwise default Contents to an empty string here.
+      // Providing a description that includes the URL gives screen
+      // readers something to announce and makes the annotation valid for
+      // PDF/UA.
+      options.Contents = new String(`Verweis: ${url}`);
+    }
+
+    return originalLink.call(this, x, y, w, h, url, options);
+  };
+
+  // 2) Patch _fragment() to forward `_currentStructureElement` to goTo,
+  //    mirroring what PDFKit already does for `link`.
+  const originalFragment = PdfDoc.prototype._fragment;
+  PdfDoc.prototype._fragment = function _fragment(text, x, y, options) {
+    if (options && options.goTo != null) {
+      const goToOptions = {};
+      if (
+        this._currentStructureElement &&
+        this._currentStructureElement.dictionary.data.S === "Link"
+      ) {
+        goToOptions.structParent = this._currentStructureElement;
+      }
+
+      // We want our patched goTo to receive the structParent option, but
+      // PDFKit's original _fragment calls `this.goTo(...)` without it.
+      // The cleanest interception is to shadow `goTo` on the instance
+      // for the duration of the original _fragment call, then remove
+      // the shadow so subsequent calls go through the prototype again.
+      const realGoTo = this.goTo;
+      this.goTo = (gx, gy, gw, gh, gname) =>
+        realGoTo.call(this, gx, gy, gw, gh, gname, goToOptions);
+
+      try {
+        return originalFragment.call(this, text, x, y, options);
+      } finally {
+        // Removing the instance shadow lets prototype lookups resume.
+        delete this.goTo;
+      }
+    }
+
+    return originalFragment.call(this, text, x, y, options);
+  };
+};
+
+patchPdfkitForAccessibility(PDFDocument);
+
 const PAGE_MARGIN_X = 48;
 const PAGE_MARGIN_TOP = 56;
 const PAGE_MARGIN_BOTTOM = 48;
@@ -835,7 +935,12 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   doc.addStructure(documentRoot);
 
   const headerSection = doc.struct("Sect", { title: "Dokumentkopf" });
-  const tocSection = doc.struct("TOC", { title: "Inhaltsverzeichnis" });
+  // tocSection wraps the heading and the actual TOC element. PDF/UA-1
+  // clause 7.2-27 ("TOC element may contain only TOC, TOCI and Caption
+  // elements") forbids putting an H2 directly inside a TOC, so we use a
+  // generic Sect as outer container and create a dedicated TOC element
+  // for the entries only.
+  const tocSection = doc.struct("Sect", { title: "Inhaltsverzeichnis" });
   const orgSection = doc.struct("Sect", { title: "Organisationseinheiten" });
 
   documentRoot.add(headerSection);
@@ -880,7 +985,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   writeStructuredParagraph(
     doc,
     headerSection,
-    `Kontaktangaben sind teilweise vorhanden (Organisationen: ${organisationsWithContactCount}, Personen: ${positionWithContactCount}).`,
+    `Kontaktangaben sind teilweise vorhanden bei ${organisationsWithContactCount} Organisationen und ${positionWithContactCount} Positionen.`,
     { fontSize: BODY_FONT_SIZE, after: 4 },
   );
 
@@ -907,6 +1012,31 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     after: 4,
   });
 
+  // The actual TOC structure element holds only TOCI children. PDF/UA-1
+  // clause 7.2-27 forbids any other element type as a direct child of
+  // TOC (no H2, no P, only TOC/TOCI/Caption). We therefore keep the
+  // "Inhaltsverzeichnis"-heading outside in the enclosing Sect and put
+  // the entries into this dedicated TOC node.
+  const tocList = doc.struct("TOC");
+  tocSection.add(tocList);
+
+  // Recursive renderer for the table-of-contents entries.
+  //
+  // PDF/UA-1 (ISO 14289-1:2014, clause 7.2) requires that:
+  //   - "TOC element may contain only TOC, TOCI and Caption elements"
+  //   - "TOCI element should be contained in TOC element"
+  //
+  // That means a TOCI may never directly contain another TOCI. To express
+  // hierarchy we wrap nested entries in their own TOC sub-element under
+  // their parent TOCI:
+  //
+  //   TOC
+  //     TOCI (root)
+  //       TOC                    <- intermediate wrapper required by PDF/UA
+  //         TOCI (child)
+  //         TOCI (child)
+  //           TOC
+  //             TOCI (grand-child)
   const writeTocEntries = (orgUnits, structParent, depth = 0) => {
     const visibleOrgUnits = getVisibleChildUnits(orgUnits);
 
@@ -927,14 +1057,22 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
         goTo: sectionId,
       });
 
-      writeTocEntries(unit?.organisations || [], tocItem, depth + 1);
+      const childUnits = unit?.organisations || [];
+
+      if (getVisibleChildUnits(childUnits).length > 0) {
+        const nestedToc = doc.struct("TOC");
+        tocItem.add(nestedToc);
+        writeTocEntries(childUnits, nestedToc, depth + 1);
+        nestedToc.end();
+      }
 
       tocItem.end();
     });
   };
 
-  writeTocEntries(normalizedRootOrganisations, tocSection);
+  writeTocEntries(normalizedRootOrganisations, tocList);
 
+  tocList.end();
   tocSection.end();
 
   // -- Organisation sections ----------------------------------------------
