@@ -24,9 +24,51 @@ const PAGE_MARGIN_TOP = 56;
 const PAGE_MARGIN_BOTTOM = 48;
 const LINE_GAP = 6;
 
+// Registered PDF font aliases. We use Liberation Sans (SIL OFL) embedded as
+// TTF so the resulting PDF satisfies the PDF/UA requirement that every used
+// font must be embedded. Helvetica (the PDFKit default) is NOT embedded
+// because it is a built-in Type-1 font that PDF readers traditionally
+// substitute - which fails PDF/UA validation.
 const FONT_NAMES = {
-  regular: "Helvetica",
-  bold: "Helvetica-Bold",
+  regular: "BodyRegular",
+  bold: "BodyBold",
+};
+
+const FONT_URLS = {
+  [FONT_NAMES.regular]: `${process.env.PUBLIC_URL || ""}/fonts/LiberationSans-Regular.ttf`,
+  [FONT_NAMES.bold]: `${process.env.PUBLIC_URL || ""}/fonts/LiberationSans-Bold.ttf`,
+};
+
+const fontBufferCache = new Map();
+
+const loadFontBuffer = async (url) => {
+  if (fontBufferCache.has(url)) {
+    return fontBufferCache.get(url);
+  }
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(
+      `Schrift konnte nicht geladen werden (${response.status}): ${url}`,
+    );
+  }
+
+  const buffer = await response.arrayBuffer();
+  fontBufferCache.set(url, buffer);
+
+  return buffer;
+};
+
+const loadEmbeddedFonts = async () => {
+  const entries = await Promise.all(
+    Object.entries(FONT_URLS).map(async ([name, url]) => [
+      name,
+      await loadFontBuffer(url),
+    ]),
+  );
+
+  return Object.fromEntries(entries);
 };
 
 const HEADING_FONT_SIZES = {
@@ -522,6 +564,10 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   const { isAvailable: isVocabularyAvailable, data: vocabularyData } =
     await getVocabularyData();
 
+  // Load the embedded fonts before constructing the document so we can
+  // register them before the first text is drawn.
+  const fontBuffers = await loadEmbeddedFonts();
+
   const normalizedRootOrganisations = normalizeOrganisationRoots(
     data?.organisations || [],
   );
@@ -588,6 +634,18 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
   doc.x = PAGE_MARGIN_X;
   doc.y = PAGE_MARGIN_TOP;
+
+  // Register the embedded Liberation Sans faces. From this point on every
+  // setTextStyle() call selects one of these embedded fonts, which means
+  // the resulting PDF contains the font data and satisfies PDF/UA.
+  Object.entries(fontBuffers).forEach(([name, buffer]) => {
+    doc.registerFont(name, buffer);
+  });
+
+  // Set the initial font so any text drawn before the first explicit
+  // setTextStyle call (e.g. from the outline labels) uses the embedded
+  // font, not the PDFKit default (Helvetica, non-embedded).
+  doc.font(FONT_NAMES.regular);
 
   const { outline } = doc;
   const rootBookmark = outline.addItem(title, { expanded: true });
