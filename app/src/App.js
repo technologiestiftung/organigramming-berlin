@@ -275,7 +275,10 @@ const App = () => {
         if (fetchError) {
           setImportError(fetchError);
         } else {
-          setData(fetchedData);
+          // Route through onChange so the data also lands in
+          // localStorage (and undo history), matching the behaviour
+          // after any manual edit.
+          onChange(fetchedData);
         }
       })();
       return;
@@ -345,7 +348,9 @@ const App = () => {
             setImportError(error);
           } else {
             setDataURL(null);
-            setData(data);
+            // Route through onChange so the data also lands in
+            // localStorage (and undo history).
+            onChange(data);
           }
         }}
         title="Externe Daten importieren"
