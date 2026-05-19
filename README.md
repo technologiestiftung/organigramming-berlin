@@ -59,12 +59,21 @@ The app supports the following URL query parameters:
 | ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `dataurl`  | string  | URL to a remote `.json` file (must be `http:` or `https:` and end with `.json`) that will be offered for import on load.                                                                                    |
 | `readonly` | boolean | When set (e.g. `?readonly=true`, `?readonly=1`, or just `?readonly`) the app opens in view-only mode. The chart nodes are not interactive, and the sidebar only exposes the export and the info/help button. Values `false` or `0` keep editing enabled. |
-| `format`   | string  | Reserved for upcoming export/import format selection. The value is read and stored but not yet acted upon.                                                                                                  |
+| `format`   | string  | When set to `html-accessible` (in combination with `dataurl`) the app replaces its interactive UI with a static, screen-reader friendly HTML rendering of the chart. Intended as an alternative view for people who cannot use the visual editor. |
 
 Example URLs:
 
 - Load a remote chart: `https://example.com/?dataurl=https://example.org/chart.json`
 - Open a remote chart in read-only mode: `https://example.com/?dataurl=https://example.org/chart.json&readonly=true`
+- Open the accessible HTML view of a remote chart: `https://example.com/?dataurl=https://example.org/chart.json&format=html-accessible`
+
+### `format=html-accessible` details
+
+- The accessible view requires a valid `dataurl`. Without it, an accessible error page is shown.
+- While the remote data is being fetched a brief loading page is rendered.
+- If the remote file cannot be loaded or fails validation, an accessible error page lists the issues.
+- The accessible page is rendered directly into the current window (no popup), so it is not affected by popup blockers.
+- The interactive React app is intentionally **not** mounted in this mode.
 
 ## Development Notes
 

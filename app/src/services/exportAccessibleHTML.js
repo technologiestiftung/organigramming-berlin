@@ -48,7 +48,8 @@ const formatDateHtml = (dateStr = "") => {
   return `<time datetime="${escapeHtml(clean)}">${formatted}</time>`;
 };
 
-export const exportAccessibleHTML = async (data, exportFilename) => {
+export const exportAccessibleHTML = async (data, exportFilename, options = {}) => {
+  const { replaceCurrentWindow = false } = options;
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
   const documentNote = safe(data?.document?.note);
@@ -522,6 +523,14 @@ export const exportAccessibleHTML = async (data, exportFilename) => {
   </main>
 </body>
 </html>`;
+
+  if (replaceCurrentWindow) {
+    document.open();
+    document.write(html);
+    document.close();
+    document.title = exportFilename || title;
+    return;
+  }
 
   const previewWindow = window.open("", "_blank");
 
