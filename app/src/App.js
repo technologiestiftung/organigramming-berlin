@@ -265,8 +265,23 @@ const App = () => {
       setDataUrlError(error);
       return;
     }
+    if (url && readonly) {
+      // In readonly mode the user has no editing affordances anyway, so
+      // skip the "Externe Daten importieren" confirmation modal and load
+      // the external file directly.
+      (async () => {
+        const { error: fetchError, data: fetchedData } =
+          await getExternalData(url);
+        if (fetchError) {
+          setImportError(fetchError);
+        } else {
+          setData(fetchedData);
+        }
+      })();
+      return;
+    }
     setDataURL(url);
-  }, []);
+  }, [readonly]);
 
   return (
     <div
