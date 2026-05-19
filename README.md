@@ -51,6 +51,21 @@ Your app is ready to be deployed!
 - 12.03.2022 - Fixed: [Use "overflow-wrap: break-word" for organisation units](https://github.com/technologiestiftung/organigramming-berlin/pull/41)
 - 12.03.2022 - Added: [Metadata "about the tool" has been added to the export file](https://github.com/technologiestiftung/organigramming-berlin/pull/37) -->
 
+## URL Parameters
+
+The app supports the following URL query parameters:
+
+| Parameter  | Type    | Description                                                                                                                                                                                                 |
+| ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dataurl`  | string  | URL to a remote `.json` file (must be `http:` or `https:` and end with `.json`) that will be offered for import on load.                                                                                    |
+| `readonly` | boolean | When set (e.g. `?readonly=true`, `?readonly=1`, or just `?readonly`) the app opens in view-only mode. The chart nodes are not interactive, and the sidebar only exposes the export and the info/help button. Values `false` or `0` keep editing enabled. |
+| `format`   | string  | Reserved for upcoming export/import format selection. The value is read and stored but not yet acted upon.                                                                                                  |
+
+Example URLs:
+
+- Load a remote chart: `https://example.com/?dataurl=https://example.org/chart.json`
+- Open a remote chart in read-only mode: `https://example.com/?dataurl=https://example.org/chart.json&readonly=true`
+
 ## Development Notes
 
 ### Schema

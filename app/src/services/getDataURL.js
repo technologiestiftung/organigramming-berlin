@@ -6,6 +6,21 @@ export const getDataURL = () => {
   for (let [key, value] of searchParams.entries()) {
     paramsObj[key] = value;
   }
+
+  // read the readonly parameter (any truthy value enables readonly mode,
+  // except explicit "false"/"0")
+  if (Object.prototype.hasOwnProperty.call(paramsObj, "readonly")) {
+    const value = paramsObj["readonly"];
+    result.readonly = !(value === "false" || value === "0");
+  } else {
+    result.readonly = false;
+  }
+
+  // read the format parameter (for future use)
+  if (Object.prototype.hasOwnProperty.call(paramsObj, "format")) {
+    result.format = paramsObj["format"];
+  }
+
   const dataURL = paramsObj["dataurl"];
   // does the URL contain the parm dataurl?
   if (dataURL) {
@@ -35,5 +50,5 @@ export const getDataURL = () => {
     return result;
   }
 
-  return paramsObj;
+  return result;
 };

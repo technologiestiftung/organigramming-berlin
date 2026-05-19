@@ -11,7 +11,7 @@ import JSONDigger from "../../services/jsonDigger";
 import { v4 as uuidv4 } from "uuid";
 import getURI from "../../services/getURI";
 
-const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
+const Chart = forwardRef(({ data, update, sendDataUp, setSelected, readonly }, ref) => {
   const orgchart = useRef();
 
   useImperativeHandle(ref, () => ({
@@ -168,6 +168,7 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
   };
 
   const handleKeyDown = (e) => {
+    if (readonly) return;
     if (e.code === "Backspace" && selectedNode) {
       removeNode();
     }
@@ -199,8 +200,9 @@ const Chart = forwardRef(({ data, update, sendDataUp, setSelected }, ref) => {
         }}
         pan={true}
         zoom={true}
-        draggable={true}
-        contentEditable={true}
+        draggable={!readonly}
+        contentEditable={!readonly}
+        readonly={readonly}
       />
       {contextMenuStyle && (
         <ul className="dropdown-menu" style={contextMenuStyle}>

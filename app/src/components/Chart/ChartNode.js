@@ -31,12 +31,14 @@ const propTypes = {
   onContextMenu: PropTypes.func,
   onDragNode: PropTypes.func,
   onAddInitNode: PropTypes.func,
+  readonly: PropTypes.bool,
 };
 
 const defaultProps = {
   draggable: false,
   collapsible: true,
   multipleSelect: true,
+  readonly: false,
 };
 
 const ChartNode = forwardRef(
@@ -52,6 +54,7 @@ const ChartNode = forwardRef(
       onDragNode,
       level,
       onAddInitNode,
+      readonly,
     },
     ref
   ) => {
@@ -124,6 +127,7 @@ const ChartNode = forwardRef(
     };
 
     const clickNodeHandler = (event) => {
+      if (readonly) return;
       if (onClickNode) {
         onClickNode(ds);
       }
@@ -164,6 +168,7 @@ const ChartNode = forwardRef(
 
     const contextMenuHandler = (e) => {
       e.preventDefault();
+      if (readonly) return;
       if (onClickNode) {
         onClickNode(ds);
       }
@@ -188,19 +193,35 @@ const ChartNode = forwardRef(
               : " end-node")
           }
           draggable={
-            ds.layout?.style !== "root"
+            ds.layout?.style !== "root" && !readonly
               ? draggable
                 ? "true"
                 : undefined
               : undefined
           }
-          onClick={ds.layout?.style !== "root" ? clickNodeHandler : null}
-          onDragStart={ds.layout?.style !== "root" ? dragStartHandler : null}
-          onDragOver={dragOverHandler}
-          onDragEnd={dragendHandler}
-          onDrop={dropHandler}
+          onClick={
+            readonly
+              ? null
+              : ds.layout?.style !== "root"
+              ? clickNodeHandler
+              : null
+          }
+          onDragStart={
+            readonly
+              ? null
+              : ds.layout?.style !== "root"
+              ? dragStartHandler
+              : null
+          }
+          onDragOver={readonly ? null : dragOverHandler}
+          onDragEnd={readonly ? null : dragendHandler}
+          onDrop={readonly ? null : dropHandler}
           onContextMenu={
-            ds.layout?.style !== "root" ? contextMenuHandler : null
+            readonly
+              ? null
+              : ds.layout?.style !== "root"
+              ? contextMenuHandler
+              : null
           }
         >
           <div
@@ -430,6 +451,7 @@ const ChartNode = forwardRef(
                 onClickNode={onClickNode}
                 onContextMenu={onContextMenu}
                 onDragNode={onDragNode}
+                readonly={readonly}
               />
             ))}
             {/* {provided.placeholder} */}

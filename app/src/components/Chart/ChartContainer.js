@@ -82,6 +82,7 @@ const ChartContainer = forwardRef(
       onCloseContextMenu,
       onOpenDocument,
       onAddInitNode,
+      readonly,
     },
     ref
   ) => {
@@ -255,6 +256,7 @@ const ChartContainer = forwardRef(
     };
 
     const resetViewHandler = () => {
+      if (!chart.current) return;
       const containerWidth = chart.current.clientWidth,
         containerHeight = chart.current.clientHeight,
         chartWidth = chart.current.querySelector("#paper").clientWidth,
@@ -294,6 +296,7 @@ const ChartContainer = forwardRef(
     };
 
     const updateChartHandler = () => {
+      if (!chart.current) return;
       const rootNode = chart.current.querySelector("#n-root");
       let rootNodeHeight = 57;
       if (rootNodeHeight) {
@@ -692,6 +695,7 @@ const ChartContainer = forwardRef(
                     onContextMenu={onContextMenu}
                     onDragNode={onDragNode}
                     onAddInitNode={onAddInitNode}
+                    readonly={readonly}
                   />
                 </ul>
               </div>

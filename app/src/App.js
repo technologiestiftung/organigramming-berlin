@@ -54,6 +54,16 @@ const App = () => {
 
   const [importError, setImportError] = useState(null);
   const [dataUrlError, setDataUrlError] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [readonly, setReadonly] = useState(() => {
+    const { readonly: ro } = getDataURL();
+    return !!ro;
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [format, setFormat] = useState(() => {
+    const { format: fmt } = getDataURL();
+    return fmt || null;
+  });
 
   const [closeNewDocumentModal, setCloseNewDocumentModal] = useState(0);
 
@@ -137,6 +147,7 @@ const App = () => {
   };
 
   useMount(() => {
+    if (readonly) return;
     setState(getJoyrideSettings(controlLayer));
   });
 
@@ -259,7 +270,7 @@ const App = () => {
 
   return (
     <div
-      className="App"
+      className={"App" + (readonly ? " readonly" : "")}
       onKeyDown={handleKeyDown}
       onDrop={(e) => handleDrop(e)}
       onDragOver={(e) => handleDragOver(e)}
@@ -269,12 +280,12 @@ const App = () => {
       <Joyride
         callback={handleJoyrideCallback}
         continuous
-        run={run}
+        run={readonly ? false : run}
         scrollToFirstStep
         showProgress
         showSkipButton
         stepIndex={stepIndex}
-        steps={steps}
+        steps={readonly ? [] : steps}
         locale={{
           back: "Zurück",
           close: "Verlassen",
@@ -402,6 +413,7 @@ const App = () => {
             ref={controlLayer}
             closeNewDocumentModal={closeNewDocumentModal}
             dataURL={dataURL}
+            readonly={readonly}
           />
         </Container>
         <Chart
@@ -412,6 +424,7 @@ const App = () => {
           setSelected={(e) => {
             setSelected(e);
           }}
+          readonly={readonly}
         />
       </DragDropContext>
     </div>
