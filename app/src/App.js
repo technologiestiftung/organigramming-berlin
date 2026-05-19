@@ -284,6 +284,7 @@ const App = () => {
       return;
     }
     setDataURL(url);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readonly]);
 
   return (
