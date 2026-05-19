@@ -19,6 +19,8 @@ import jsPDF from "jspdf";
 import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
 import { exportRDF } from "../../services/exportRDF";
+import { exportAccessibleHTML } from "../../services/exportAccessibleHTML";
+import { exportAccessiblePDF } from "../../services/exportAccessiblePDF";
 
 import "../../services/registerFiles";
 
@@ -496,6 +498,12 @@ const ChartContainer = forwardRef(
           });
         } else if (exportFileExtension === "rdf") {
           exportRDF(data);
+          setExporting(false);
+        } else if (exportFileExtension === "accessible-html") {
+          exportAccessibleHTML(data, exportFilename);
+          setExporting(false);
+        } else if (exportFileExtension === "accessible-pdf") {
+          exportAccessiblePDF(data, exportFilename);
           setExporting(false);
         } else if (exportFileExtension === "pdf") {
           exportPDF(node, exportFilename, userView);
