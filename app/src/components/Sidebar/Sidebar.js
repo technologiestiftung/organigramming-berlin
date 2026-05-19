@@ -52,11 +52,11 @@ const Sidebar = forwardRef(
     };
 
     useEffect(() => {
-      // if dataURL exists, do not show intro modal
+      // if dataURL exists or we are in readonly mode, do not show intro modal
       // check to show info modal
-      setInfoModalShow(data === initDocument && !dataURL);
+      setInfoModalShow(data === initDocument && !dataURL && !readonly);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataURL]);
+    }, [dataURL, readonly]);
 
     useEffect(() => {
       setNewDocumentModalShow(false);
