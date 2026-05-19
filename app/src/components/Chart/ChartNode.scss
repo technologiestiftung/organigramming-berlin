@@ -39,7 +39,7 @@
         margin: 0 4px;
         transition: box-shadow 300ms ease-out, opacity 300ms ease-in-out;
         margin-bottom: 20px;
-        &:hover {
+        .App:not(.readonly) &:hover {
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
         }

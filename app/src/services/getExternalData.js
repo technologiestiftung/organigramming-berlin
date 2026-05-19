@@ -58,8 +58,8 @@ export const getExternalData = async (url) => {
   }
   result.data = data;
 
-  const newUrl = `${window.location.pathname}`;
-  window.history.pushState({}, "", newUrl);
+  // const newUrl = `${window.location.pathname}`;
+  // window.history.pushState({}, "", newUrl);
 
   return result;
 };
