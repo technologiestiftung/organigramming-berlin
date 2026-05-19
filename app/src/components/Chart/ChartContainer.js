@@ -129,6 +129,13 @@ const ChartContainer = forwardRef(
       });
 
       setTimeout(() => {
+        // Reset the view first so the scale matches the new chart
+        // dimensions, then run the post-layout update. Without the
+        // reset, charts loaded asynchronously (e.g. via the `dataurl`
+        // param) keep the scale that was calculated for the initial
+        // empty/local document and the user has to reload to see the
+        // full chart.
+        resetViewHandler();
         updateChartHandler();
       }, 50);
 
