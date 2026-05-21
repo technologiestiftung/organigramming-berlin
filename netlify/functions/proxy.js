@@ -150,15 +150,21 @@ exports.handler = async (event) => {
     );
   }
 
+  // Accept the common JSON content-types plus the generic fallbacks
+  // that some servers use for `.json` downloads (e.g. berlin.de serves
+  // `application/octet-stream` with a `.json` Content-Disposition). We
+  // already restrict the URL path to `.json`, and we still validate by
+  // parsing the body below, so this stays safe.
   const contentType = (response.headers.get("content-type") || "").toLowerCase();
-  const isJsonContentType =
+  const isAcceptableContentType =
+    !contentType ||
     contentType.includes("application/json") ||
     contentType.includes("text/json") ||
-    // Some servers send JSON as text/plain. We still validate by parsing
-    // the body below, so allow this case through.
-    contentType.includes("text/plain");
+    contentType.includes("text/plain") ||
+    contentType.includes("application/octet-stream") ||
+    contentType.includes("binary/octet-stream");
 
-  if (!isJsonContentType) {
+  if (!isAcceptableContentType) {
     return jsonError(415, "Upstream content-type is not JSON");
   }
 

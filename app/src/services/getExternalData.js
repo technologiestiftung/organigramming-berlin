@@ -1,13 +1,19 @@
 import { validateData } from "./service";
 
 // Treat any of these content-types as "JSON-ish" – some servers send
-// JSON as `text/plain`, so we still parse the body to confirm.
+// JSON as `text/plain` or as a generic binary attachment
+// (`application/octet-stream`). The URL is already required to end in
+// `.json` and we parse the body to confirm it actually is JSON, so we
+// can be lenient on the content-type header.
 const isJsonContentType = (contentType = "") => {
   const ct = contentType.toLowerCase();
+  if (!ct) return true;
   return (
     ct.includes("application/json") ||
     ct.includes("text/json") ||
-    ct.includes("text/plain")
+    ct.includes("text/plain") ||
+    ct.includes("application/octet-stream") ||
+    ct.includes("binary/octet-stream")
   );
 };
 
