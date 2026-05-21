@@ -352,6 +352,15 @@ const App = () => {
             // Route through onChange so the data also lands in
             // localStorage (and undo history).
             onChange(data);
+            // For a normal interactive import (no readonly, no
+            // html-accessible format) the URL params have served their
+            // purpose – the data now lives in localStorage. Strip them
+            // so a reload does not re-prompt the import modal.
+            window.history.replaceState(
+              {},
+              "",
+              window.location.pathname,
+            );
           }
         }}
         title="Externe Daten importieren"
