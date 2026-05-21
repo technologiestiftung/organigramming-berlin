@@ -275,7 +275,7 @@ const App = () => {
         if (fetchError) {
           setImportError(fetchError);
         } else {
-          // Route through onChange so the data also lands in
+          // Route through   so the data also lands in
           // localStorage (and undo history), matching the behaviour
           // after any manual edit.
           onChange(fetchedData);
@@ -387,7 +387,7 @@ const App = () => {
         title="Import Fehlgeschlagen"
       >
         <Alert variant="danger">
-          Möchten Sie eine externe URL laden? Sie haben über den Parameter
+          Möchten Sie ein Organigramm über eine externe URL laden? Sie haben über den Parameter
           "dataurl" in der URL eine externe Quelle angegeben. Diese Quelle ist
           fehlerhaft:
           {dataUrlError?.map((error, i) => (

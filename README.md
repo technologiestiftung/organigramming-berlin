@@ -75,6 +75,30 @@ Example URLs:
 - The accessible page is rendered directly into the current window (no popup), so it is not affected by popup blockers.
 - The interactive React app is intentionally **not** mounted in this mode.
 
+### CORS fallback proxy
+
+`dataurl` performs a direct browser fetch of the remote `.json` file. If
+the remote host does not send the required CORS headers (typical for
+files hosted on static servers without explicit configuration), the
+browser will block the request.
+
+To paper over that case the deployed app exposes a lightweight Netlify
+function at `/proxy?url=<encoded-json-url>` which is used as an
+automatic fallback whenever the direct fetch throws. The proxy is
+intentionally narrow:
+
+- Only `GET` is accepted.
+- The target URL must use `http:` / `https:` and end with `.json`.
+- The remote response must declare a JSON-ish content-type and parse as
+  JSON.
+- Downloads are hard-capped at **10 MB** (also enforced on the client).
+- Each client IP is limited to ~10 requests per minute.
+
+The proxy lives in [`netlify/functions/proxy.js`](./netlify/functions/proxy.js)
+and is wired up via [`netlify.toml`](./netlify.toml). On `localhost` (or
+any environment without the Netlify function), the fallback simply
+fails and the original network error message is shown.
+
 ## Development Notes
 
 ### Schema

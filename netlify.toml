@@ -1,0 +1,23 @@
+# Netlify build & functions configuration.
+#
+# The `app/` directory contains the React app (created with CRA), so we
+# build inside that subdirectory and publish its `build/` output.
+
+[build]
+  base = "app"
+  command = "yarn build"
+  publish = "build"
+
+[functions]
+  # `netlify/functions` lives at the repo root, not inside `app/`. We
+  # therefore declare an absolute path so it resolves regardless of the
+  # build `base`.
+  directory = "../netlify/functions"
+
+# Friendly URL for the JSON CORS proxy used as a fallback when a direct
+# fetch of `dataurl` fails because the remote host does not allow CORS.
+[[redirects]]
+  from = "/proxy"
+  to = "/.netlify/functions/proxy"
+  status = 200
+  force = true
