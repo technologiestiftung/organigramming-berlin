@@ -65,7 +65,7 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
     if (options.structParent && !options.Contents) {
       // Same reason as above: PDFKit requires a String wrapper.
       // eslint-disable-next-line no-new-wrappers
-      options.Contents = new String(`Verweis zu ${name}`);
+      options.Contents = new String(`${name}`);
     }
 
     return this.annotate(x, y, w, h, options);
@@ -87,7 +87,7 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
       // because PDFKit's PDF-object serializer uses the JS type to
       // distinguish text strings (wrappers) from PDF names (primitives).
       // eslint-disable-next-line no-new-wrappers
-      options.Contents = new String(`Verweis: ${url}`);
+      options.Contents = new String(`${url}`);
     }
 
     return originalLink.call(this, x, y, w, h, url, options);
