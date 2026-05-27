@@ -84,7 +84,14 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
 
     const href = `#${glossaryLinkFor(vocabTerm)}`;
 
-    return `<a href="${href}">${escapeHtml(rawLabel)}</a>`;
+    // The visible link text is the type name itself. The accessible
+    // name announced by screen readers is overridden via aria-label
+    // so assistive technology says "link zum glossar" instead of just
+    // reading the type name again - which makes it explicit that the
+    // link target is the glossary entry, not another organisation unit.
+    return `<a href="${href}" aria-label="link zum glossar">${escapeHtml(
+      rawLabel,
+    )}</a>`;
   };
 
   const unitsSortedByDepth = [...units];
@@ -219,43 +226,22 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
         .map(renderPositionListItem)
         .filter(Boolean);
 
-      const metaItems = [
-        depth > 0
-          ? `<li><strong>Übergeordnete Einheit:</strong> ${parentMarkup}</li>`
-          : "",
-        unitTypeDisplay
-          ? `<li><strong>Art:</strong> ${unitTypeDisplay}</li>`
-          : "",
-        unitAddress
-          ? `<li><strong>Adresse:</strong> ${escapeHtml(unitAddress)}</li>`
-          : "",
-        positionMetaItems.length
-          ? `<li><strong>Personen und Aufgaben:</strong><ul>${positionMetaItems.join(
-              "",
-            )}</ul></li>`
-          : "",
-      ].filter(Boolean);
-
       const childDescription = describeChildUnits(unit, {
         sectionIdByUnitId,
         sectionIdByUnitName,
       });
 
-      const directChildDescription =
+      const childUnitsMarkup =
         childDescription.count > 0
-          ? (() => {
-              const childLinks = childDescription.children.map((child) => {
+          ? childDescription.children
+              .map((child) => {
                 const childLabel = escapeHtml(child.name);
 
                 return child.sectionId
                   ? `<a href="#${child.sectionId}">${childLabel}</a>`
                   : childLabel;
-              });
-
-              return `<p>Diese Organisationseinheit hat ${childDescription.count} direkt untergeordnete Organisationseinheiten. Die direkt untergeordneten Einheiten sind: ${childLinks.join(
-                ", ",
-              )}</p>`;
-            })()
+              })
+              .join(", ")
           : "";
 
       const orgContactEntries = buildContactEntries(unit?.contact);
@@ -271,13 +257,32 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
         )}" aria-label="${ariaLabel}">${baseLabel}</a>`;
       });
 
-      if (orgContactLinks.length > 0) {
-        metaItems.push(
-          `<li><strong>Kontakt:</strong> ${orgContactLinks.join(
-            " | ",
-          )}</li>`,
-        );
-      }
+      const metaItems = [
+        unitTypeDisplay
+          ? `<li><strong>Typ der Einheit:</strong> ${unitTypeDisplay}</li>`
+          : "",
+        unitAddress
+          ? `<li><strong>Adresse:</strong> ${escapeHtml(unitAddress)}</li>`
+          : "",
+        positionMetaItems.length
+          ? `<li><strong>Personen und Aufgaben:</strong><ul>${positionMetaItems.join(
+              "",
+            )}</ul></li>`
+          : "",
+        depth > 0
+          ? `<li><strong>Übergeordnete Einheit:</strong> ${parentMarkup}</li>`
+          : "",
+        orgContactLinks.length
+          ? `<li><strong>Kontakt:</strong> ${orgContactLinks.join(" | ")}</li>`
+          : "",
+        childUnitsMarkup
+          ? `<li><strong>${
+              childDescription.count > 1
+                ? "Untergeordnete Einheiten:"
+                : "Untergeordnete Einheit:"
+            }</strong> ${childUnitsMarkup}</li>`
+          : "",
+      ].filter(Boolean);
 
       const departments = (unit?.departments || [])
         .map((department) => {
@@ -321,7 +326,6 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
         >
           <h3>${escapeHtml(unitHeading)}</h3>
           ${unitPurpose ? `<p>${escapeHtml(unitPurpose)}</p>` : ""}
-          ${directChildDescription}
           ${metaItems.length ? `<ul>${metaItems.join("")}</ul>` : ""}
           ${
             departments

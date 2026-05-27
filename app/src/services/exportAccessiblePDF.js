@@ -94,7 +94,13 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
   };
 
   // 2) Patch _fragment() to forward `_currentStructureElement` to goTo,
-  //    mirroring what PDFKit already does for `link`.
+  //    mirroring what PDFKit already does for `link`. We also forward
+  //    an optional `altText` from the text options into the goTo
+  //    options' `Contents`. PDF/UA implementations rely on the link
+  //    annotation's `Contents` entry as the spoken accessible name
+  //    (equivalent to HTML `aria-label`), so callers can override the
+  //    default destination-name string by passing `altText` to
+  //    `doc.text(...)`.
   const originalFragment = PdfDoc.prototype._fragment;
   PdfDoc.prototype._fragment = function _fragment(text, x, y, options) {
     if (options && options.goTo != null) {
@@ -104,6 +110,14 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
         this._currentStructureElement.dictionary.data.S === "Link"
       ) {
         goToOptions.structParent = this._currentStructureElement;
+      }
+
+      if (options.altText) {
+        // PDFKit's serializer uses JS String-wrapper objects to denote
+        // PDF text strings (as opposed to PDF names), so we keep the
+        // wrapper here for the same reason as the other patches above.
+        // eslint-disable-next-line no-new-wrappers
+        goToOptions.Contents = new String(options.altText);
       }
 
       // We want our patched goTo to receive the structParent option, but
@@ -494,7 +508,23 @@ const layoutInlineRuns = (
 
   filteredRuns.forEach((run) => {
     const hasLink = Boolean(run.goTo || run.link);
-    const runStruct = doc.struct(hasLink ? "Link" : "Span");
+
+    // For links, an optional `alt` on the run becomes both:
+    //   - the `Alt` attribute on the surrounding `Link` structure
+    //     element (for assistive technology walking the logical
+    //     structure tree)
+    //   - the `Contents` entry on the link annotation (for AT that
+    //     listens to annotations directly, e.g. NVDA/JAWS).
+    // Together these provide the PDF equivalent of HTML's
+    // `aria-label`: the screen reader announces the alt text instead
+    // of the visible run text when the user focuses the link.
+    const linkStructOptions =
+      hasLink && safe(run.alt) ? { alt: safe(run.alt) } : undefined;
+
+    const runStruct = doc.struct(
+      hasLink ? "Link" : "Span",
+      linkStructOptions,
+    );
 
     paragraph.add(runStruct);
 
@@ -606,6 +636,9 @@ const layoutInlineRuns = (
           underline: hasLink,
           goTo: run.goTo || null,
           link: run.link || null,
+          // Forwarded to the patched _fragment() interceptor, which
+          // copies it onto the link annotation's `Contents` entry.
+          altText: hasLink && safe(run.alt) ? safe(run.alt) : undefined,
         });
       });
     });
@@ -617,47 +650,6 @@ const layoutInlineRuns = (
   // after the last laid-out one.
   doc.fillColor(TEXT_COLOR);
   doc.y = cursorY + lineHeight;
-};
-
-/**
- * Renders inline runs (text, link or goto) on a single logical paragraph.
- * Each run is `{ text, goTo?, link?, bold? }`. Falsy/empty texts are
- * dropped.
- */
-const writeInlineRuns = (
-  doc,
-  parent,
-  runs,
-  { indent = 0, fontSize = BODY_FONT_SIZE, before = 0, after = 0 } = {},
-) => {
-  const filtered = runs.filter((run) => run && safe(run.text));
-
-  if (filtered.length === 0) return null;
-
-  if (before > 0) {
-    doc.y += before;
-  }
-
-  setTextStyle(doc, { fontSize });
-
-  ensureSpace(doc, doc.currentLineHeight(true) + LINE_GAP);
-
-  const paragraph = doc.struct("P");
-  parent.add(paragraph);
-
-  layoutInlineRuns(doc, paragraph, filtered, {
-    startX: PAGE_MARGIN_X + indent,
-    maxX: PAGE_MARGIN_X + indent + pageContentWidth(doc, indent),
-    fontSize,
-  });
-
-  if (after > 0) {
-    doc.y += after;
-  }
-
-  paragraph.end();
-
-  return paragraph;
 };
 
 const writeBulletItem = (
@@ -756,6 +748,10 @@ const buildPositionRuns = (
     runs.push({
       text: positionType,
       goTo: goTo || null,
+      // When the position type links into the glossary, expose
+      // "link zum glossar" as the accessible name (PDF equivalent of
+      // an HTML aria-label).
+      alt: goTo ? "link zum glossar" : undefined,
     });
 
     if (positionStatus) {
@@ -1203,44 +1199,94 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       });
     }
 
-    // Direct children description (mirrors HTML's <p>).
+    // Direct children description: a list of links to the unit's
+    // visible direct child sections. Rendered as the final entry of the
+    // meta list below ("Untergeordnete Einheit:").
     const childDescription = describeChildUnits(unit, {
       sectionIdByUnitId,
       sectionIdByUnitName,
     });
 
-    if (childDescription.count > 0) {
-      const runs = [
-        {
-          text: `Diese Organisationseinheit hat ${childDescription.count} direkt untergeordnete Organisationseinheiten. Die direkt untergeordneten Einheiten sind: `,
-        },
-      ];
-
-      childDescription.children.forEach((child, childIndex) => {
-        runs.push({
-          text: child.name,
-          goTo: child.sectionId || null,
-        });
-
-        if (childIndex < childDescription.children.length - 1) {
-          runs.push({ text: ", " });
-        }
-      });
-
-      writeInlineRuns(doc, section, runs, {
-        fontSize: BODY_FONT_SIZE,
-        after: 3,
-      });
-    }
-
-    // Meta block (parent unit, type, positions, contact). Mirrors HTML's
-    // <ul> with <strong> labels.
+    // Meta block (type, address, positions, parent unit, contact,
+    // child units). Mirrors HTML's <ul> with <strong> labels and keeps
+    // every entry - including "Personen und Aufgaben" - inside the
+    // same list, so the structure tree shows a single coherent L
+    // element per organisation unit.
     const metaList = doc.struct("L");
     section.add(metaList);
 
-    const ensureMetaListItem = (runs) => {
-      writeBulletItem(doc, metaList, runs, { indent: 8, fontSize: BODY_FONT_SIZE });
-    };
+    const ensureMetaListItem = (runs, options = {}) =>
+      writeBulletItem(doc, metaList, runs, {
+        indent: 8,
+        fontSize: BODY_FONT_SIZE,
+        ...options,
+      });
+
+    const { raw: unitTypeRaw, vocabTerm: unitTypeVocab } =
+      resolveUnitTypeDisplay(unit);
+
+    if (unitTypeRaw) {
+      // The unit type is rendered as a hyperlink to the matching
+      // glossary entry when one exists. The visible link text is the
+      // type name itself, while the accessible name announced by
+      // screen readers is overridden via `alt` (which becomes both the
+      // Link struct's /Alt attribute and the annotation's /Contents
+      // entry) so users hear "link zum glossar" instead of the type
+      // name being read twice in a row.
+      const goTo = registerGlossaryTerm(unitTypeVocab);
+
+      const typeRuns = [
+        { text: "Typ der Einheit: ", bold: true },
+        goTo
+          ? { text: unitTypeRaw, goTo, alt: "link zum glossar" }
+          : { text: unitTypeRaw },
+      ];
+
+      ensureMetaListItem(typeRuns)?.close();
+    }
+
+    if (unitAddress) {
+      ensureMetaListItem([
+        { text: "Adresse: ", bold: true },
+        { text: unitAddress },
+      ])?.close();
+    }
+
+    // "Personen und Aufgaben" is rendered as a regular meta-list item
+    // whose body contains the bold label followed by a nested L with
+    // one LI per position. Putting the positions inside the meta list
+    // keeps them visually and structurally aligned with the rest of
+    // the unit metadata.
+    const positions = unit?.positions || [];
+
+    if (positions.length > 0) {
+      const personItem = ensureMetaListItem([
+        { text: "Personen und Aufgaben:", bold: true },
+      ]);
+
+      if (personItem) {
+        const positionList = doc.struct("L");
+        personItem.body.add(positionList);
+
+        positions.forEach((position) => {
+          const runs = buildPositionRuns(position, {
+            isVocabularyAvailable,
+            vocabularyData,
+            registerGlossaryTerm,
+          });
+
+          const positionItem = writeBulletItem(doc, positionList, runs, {
+            indent: 24,
+            fontSize: BODY_FONT_SIZE,
+          });
+
+          positionItem?.close();
+        });
+
+        positionList.end();
+        personItem.close();
+      }
+    }
 
     if (depth > 0) {
       const resolvedParentLink =
@@ -1255,26 +1301,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
           : { text: parentName || "keine" },
       ];
 
-      ensureMetaListItem(parentRuns);
-    }
-
-    const { raw: unitTypeRaw, vocabTerm: unitTypeVocab } =
-      resolveUnitTypeDisplay(unit);
-
-    if (unitTypeRaw) {
-      const goTo = registerGlossaryTerm(unitTypeVocab);
-
-      ensureMetaListItem([
-        { text: "Art: ", bold: true },
-        { text: unitTypeRaw, goTo: goTo || null },
-      ]);
-    }
-
-    if (unitAddress) {
-      ensureMetaListItem([
-        { text: "Adresse: ", bold: true },
-        { text: unitAddress },
-      ]);
+      ensureMetaListItem(parentRuns)?.close();
     }
 
     const orgContactEntries = buildContactEntries(unit?.contact);
@@ -1296,47 +1323,34 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
         }
       });
 
-      ensureMetaListItem(runs);
+      ensureMetaListItem(runs)?.close();
+    }
+
+    if (childDescription.count > 0) {
+      // Singular/plural label so the line reads naturally in German
+      // regardless of how many direct child units the organisation has.
+      const childLabel =
+        childDescription.count > 1
+          ? "Untergeordnete Einheiten: "
+          : "Untergeordnete Einheit: ";
+
+      const childRuns = [{ text: childLabel, bold: true }];
+
+      childDescription.children.forEach((child, childIndex) => {
+        childRuns.push({
+          text: child.name,
+          goTo: child.sectionId || null,
+        });
+
+        if (childIndex < childDescription.children.length - 1) {
+          childRuns.push({ text: ", " });
+        }
+      });
+
+      ensureMetaListItem(childRuns)?.close();
     }
 
     metaList.end();
-
-    // Positions are emitted as their own top-level list, separate from
-    // the metadata list above. This keeps the structure tree clean: the
-    // "Personen und Aufgaben:" heading is a regular paragraph and the
-    // positions form a peer `L` element rather than being nested inside
-    // an `LBody`, which avoids PDF/UA validator warnings about mixed
-    // block content in list bodies.
-    const positions = unit?.positions || [];
-
-    if (positions.length > 0) {
-      writeInlineRuns(
-        doc,
-        section,
-        [{ text: "Personen und Aufgaben:", bold: true }],
-        { indent: 8, fontSize: BODY_FONT_SIZE, before: 2, after: 2 },
-      );
-
-      const positionList = doc.struct("L");
-      section.add(positionList);
-
-      positions.forEach((position) => {
-        const runs = buildPositionRuns(position, {
-          isVocabularyAvailable,
-          vocabularyData,
-          registerGlossaryTerm,
-        });
-
-        const positionItem = writeBulletItem(doc, positionList, runs, {
-          indent: 16,
-          fontSize: BODY_FONT_SIZE,
-        });
-
-        positionItem?.close();
-      });
-
-      positionList.end();
-    }
 
     // Departments (Zugehörige Einheiten).
     const departments = unit?.departments || [];
@@ -1368,7 +1382,13 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
           const goTo = registerGlossaryTerm(deptVocabTerm);
 
           headRuns.push({ text: " — " });
-          headRuns.push({ text: deptType, goTo: goTo || null });
+          headRuns.push({
+            text: deptType,
+            goTo: goTo || null,
+            // Same accessible-name override as the unit type and
+            // position type glossary links.
+            alt: goTo ? "link zum glossar" : undefined,
+          });
         }
 
         if (deptPurpose) {
