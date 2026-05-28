@@ -22,6 +22,7 @@ import {
 import { upgradeDataStructure } from "./services/upgradeDataStructure";
 import { getDataURL } from "./services/getDataURL";
 import { getExternalData } from "./services/getExternalData";
+import { isOrganigramData } from "./services/isOrganigramData";
 
 import JSONDigger from "./services/jsonDigger";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
@@ -234,6 +235,11 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
+      const shapeCheck = isOrganigramData(result);
+      if (!shapeCheck.valid) {
+        setImportError(shapeCheck.errors);
+        return;
+      }
       result = upgradeDataStructure(result);
       const [valid, errors] = validateData(result);
 
@@ -274,12 +280,18 @@ const App = () => {
           await getExternalData(url);
         if (fetchError) {
           setImportError(fetchError);
-        } else {
-          // Route through   so the data also lands in
-          // localStorage (and undo history), matching the behaviour
-          // after any manual edit.
-          onChange(fetchedData);
+          return;
         }
+        const shapeCheck = isOrganigramData(fetchedData);
+        if (!shapeCheck.valid) {
+          setImportError(shapeCheck.errors);
+          return;
+        }
+        const upgraded = upgradeDataStructure(fetchedData);
+        // Route through onChange so the data also lands in
+        // localStorage (and undo history), matching the behaviour
+        // after any manual edit.
+        onChange(upgraded);
       })();
       return;
     }
@@ -347,21 +359,27 @@ const App = () => {
           console.log(error, data);
           if (error) {
             setImportError(error);
-          } else {
-            setDataURL(null);
-            // Route through onChange so the data also lands in
-            // localStorage (and undo history).
-            onChange(data);
-            // For a normal interactive import (no readonly, no
-            // html-accessible format) the URL params have served their
-            // purpose – the data now lives in localStorage. Strip them
-            // so a reload does not re-prompt the import modal.
-            window.history.replaceState(
-              {},
-              "",
-              window.location.pathname,
-            );
+            return;
           }
+          const shapeCheck = isOrganigramData(data);
+          if (!shapeCheck.valid) {
+            setImportError(shapeCheck.errors);
+            return;
+          }
+          const upgraded = upgradeDataStructure(data);
+          setDataURL(null);
+          // Route through onChange so the data also lands in
+          // localStorage (and undo history).
+          onChange(upgraded);
+          // For a normal interactive import (no readonly, no
+          // html-accessible format) the URL params have served their
+          // purpose – the data now lives in localStorage. Strip them
+          // so a reload does not re-prompt the import modal.
+          window.history.replaceState(
+            {},
+            "",
+            window.location.pathname,
+          );
         }}
         title="Externe Daten importieren"
       >
