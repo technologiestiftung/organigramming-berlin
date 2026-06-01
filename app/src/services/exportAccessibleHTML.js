@@ -15,6 +15,8 @@ import {
   resolveUnitTypeDisplay,
   describeChildUnits,
   formatAddress,
+  headingInfoForDepth,
+  ORG_HEADING_MAX_LEVEL,
 } from "./exportAccessibleShared";
 
 const escapeHtml = (value = "") =>
@@ -324,14 +326,39 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
           data-org-depth="${depth}"
           style="--depth-border-color: ${getDepthBorderColor(depth)}"
         >
-          <h3>${escapeHtml(unitHeading)}</h3>
+          ${(() => {
+            const { htmlLevel, semanticLevel, needsAria } =
+              headingInfoForDepth(depth);
+            const tag = `h${htmlLevel}`;
+            const ariaAttr = needsAria
+              ? ` aria-level="${semanticLevel}"`
+              : "";
+            // For depths beyond H6 we also surface the level as visible
+            // text so users without aria-level support still understand
+            // the hierarchy.
+            const depthPrefix = needsAria
+              ? `<span class="sr-only">Ebene ${semanticLevel}: </span>`
+              : "";
+
+            return `<${tag}${ariaAttr}>${depthPrefix}${escapeHtml(
+              unitHeading,
+            )}</${tag}>`;
+          })()}
           ${unitPurpose ? `<p>${escapeHtml(unitPurpose)}</p>` : ""}
           ${metaItems.length ? `<ul>${metaItems.join("")}</ul>` : ""}
-          ${
-            departments
-              ? `<h4>Zugehörige Einheiten</h4><ul>${departments}</ul>`
-              : ""
-          }
+          ${(() => {
+            if (!departments) return "";
+
+            // Sub-section headings live one level below the org heading
+            // but never deeper than H6.
+            const { htmlLevel } = headingInfoForDepth(depth);
+            const subLevel = Math.min(
+              htmlLevel + 1,
+              ORG_HEADING_MAX_LEVEL,
+            );
+
+            return `<h${subLevel}>Zugehörige Einheiten</h${subLevel}><ul>${departments}</ul>`;
+          })()}
         </section>
       `;
     })
@@ -418,6 +445,23 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
       margin-top: 1rem;
     }
 
+    /*
+     * h5 and h6 receive explicit sizes because browsers default to
+     * 0.83em / 0.67em which would render below the 12px floor
+     * required by the Berliner Standards. We keep them visually
+     * distinct from body copy by using 1rem (== 16px) with a
+     * slightly lighter weight than h4.
+     */
+    h5 {
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+
+    h6 {
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+
     section {
       border: 1px solid #d9d9d9;
       border-top: 4px solid var(--depth-border-color, #002856);
@@ -483,8 +527,12 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
     <p>
       Dieses Organigramm ist hierarchisch aufgebaut. Nutzen Sie die
       Überschriftennavigation Ihres Screenreaders, um zwischen den
-      Organisationseinheiten zu wechseln. Die hierarchische Struktur
-      finden Sie im Inhaltsverzeichnis.
+      Organisationseinheiten zu wechseln. Die oberste Organisationseinheit
+      ist als Überschrift Ebene 3 ausgezeichnet, untergeordnete Einheiten
+      als Ebene 4, 5 und 6. Sehr tief verschachtelte Einheiten bleiben
+      auf Ebene 6, ihre tatsächliche Tiefe wird zusätzlich über das
+      Attribut aria-level angegeben. Die vollständige hierarchische
+      Struktur finden Sie im Inhaltsverzeichnis.
     </p>
 
     ${version ? `<p>Stand des Organigramms: ${formatDateHtml(version)}</p>` : ""}

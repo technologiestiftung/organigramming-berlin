@@ -15,6 +15,8 @@ import {
   resolveUnitTypeDisplay,
   describeChildUnits,
   formatAddress,
+  headingInfoForDepth,
+  ORG_HEADING_MAX_LEVEL,
 } from "./exportAccessibleShared";
 
 const PDFDocument = window.PDFDocument;
@@ -221,18 +223,23 @@ const SECTION_DEPTH_COLORS = ["#002856", "#004F9F", "#4F90CD", "#AAC9E7"];
 
 const headingFontSize = (level) => HEADING_FONT_SIZES[level] || BODY_FONT_SIZE;
 
-// All organisation units share the same heading level (H3) regardless of
-// their position in the tree. PDF/UA requires headings to follow a strict
-// "no skipping levels" rule. Mapping every org depth to H3 keeps the
-// heading hierarchy clean and meets the Berliner Standard for PDF, which
-// explicitly forbids skipping heading levels. The hierarchy itself is
-// still conveyed via the "Übergeordnete Einheit:" bullet and the
-// "Direkt untergeordnete Einheiten"-Paragraph in each section.
-const headingLevelFromDepth = () => 3;
+// Organisation unit headings start at H3 (H1 is the document title,
+// H2 is reserved for the major document sections such as
+// "Inhaltsverzeichnis", "Organisationseinheiten", "Glossar" and
+// "Fußzeile"). Deeper units get H4, H5 and H6. Units deeper than that
+// stay at H6 because the PDF heading roles only cover H1-H6. The
+// hierarchy itself is still conveyed via the "Übergeordnete Einheit:"
+// bullet, the "Direkt untergeordnete Einheiten"-Paragraph in each
+// section and (for very deep trees) an "Ebene N: " prefix in the
+// heading text so screen reader users can still tell heading H6
+// occurrences apart.
+const headingLevelFromDepth = (depth) => headingInfoForDepth(depth).htmlLevel;
 
-// Sub-section headings inside an organisation (e.g. "Zugehörige Einheiten")
-// are one level deeper than the org heading and therefore H4.
-const SUB_SECTION_HEADING_LEVEL = 4;
+// Sub-section headings inside an organisation (e.g. "Zugehörige
+// Einheiten") sit one level deeper than the org heading but are
+// likewise clamped at H6.
+const subSectionHeadingLevel = (depth) =>
+  Math.min(headingLevelFromDepth(depth) + 1, ORG_HEADING_MAX_LEVEL);
 
 const getDepthBorderColor = (depth = 0) =>
   SECTION_DEPTH_COLORS[
@@ -1019,7 +1026,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   writeStructuredParagraph(
     doc,
     headerSection,
-    "Dieses Organigramm ist hierarchisch aufgebaut. Die hierarchische Struktur finden Sie im Inhaltsverzeichnis.",
+    "Dieses Organigramm ist hierarchisch aufgebaut. Die oberste Organisationseinheit ist als Überschrift Ebene 3 ausgezeichnet, untergeordnete Einheiten als Ebene 4, 5 und 6. Sehr tief verschachtelte Einheiten bleiben auf Ebene 6, ihre tatsächliche Tiefe wird in diesem Fall zusätzlich als Präfix \u201eEbene N:\u201c im Überschriftstext angegeben. Die vollständige hierarchische Struktur finden Sie im Inhaltsverzeichnis.",
     { fontSize: BODY_FONT_SIZE, after: 6 },
   );
 
@@ -1186,8 +1193,18 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     drawDepthRule(doc, depth);
 
-    writeHeading(doc, section, unitHeadingText, {
-      level: headingLevelFromDepth(depth),
+    // For organisation units deeper than H6 we prefix the heading with
+    // "Ebene N: " so screen reader users can still distinguish between
+    // multiple H6 headings while navigating with the "6" key. The
+    // bookmark and the section title remain unprefixed so the
+    // Inhaltsverzeichnis / outline stays uncluttered.
+    const headingInfo = headingInfoForDepth(depth);
+    const headingDisplayText = headingInfo.needsAria
+      ? `Ebene ${headingInfo.semanticLevel}: ${unitHeadingText}`
+      : unitHeadingText;
+
+    writeHeading(doc, section, headingDisplayText, {
+      level: headingInfo.htmlLevel,
       destination: sectionId,
       after: 3,
     });
@@ -1357,7 +1374,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     if (departments.length > 0) {
       writeHeading(doc, section, "Zugehörige Einheiten", {
-        level: SUB_SECTION_HEADING_LEVEL,
+        level: subSectionHeadingLevel(depth),
         before: 4,
         after: 3,
       });

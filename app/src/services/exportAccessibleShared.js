@@ -17,6 +17,52 @@ export const RDFS_LABEL_PREDICATE =
 export const safe = (value) =>
   typeof value === "string" ? value.trim() : "";
 
+/**
+ * Heading level used for the very first (root) organisation unit. H1 is
+ * reserved for the document title, H2 is reserved for the major document
+ * sections ("Inhaltsverzeichnis", "Organisationseinheiten", "Glossar",
+ * "Fußzeile"), so the org tree starts at H3.
+ */
+export const ORG_HEADING_BASE_LEVEL = 3;
+
+/**
+ * HTML/PDF only support headings up to H6. Deeper organisation units
+ * therefore stay at H6 (their semantic level can still be expressed via
+ * aria-level in HTML, see headingInfoForDepth).
+ */
+export const ORG_HEADING_MAX_LEVEL = 6;
+
+/**
+ * Returns heading information for an organisation unit at the given
+ * tree depth.
+ *
+ * - htmlLevel:     The actual H tag to use (clamped to H6 because that
+ *                  is the deepest heading element HTML / PDF support).
+ * - semanticLevel: The true hierarchical level, which may exceed 6 for
+ *                  very deep trees. HTML renderers can surface this via
+ *                  aria-level so screen readers announce the correct
+ *                  depth.
+ * - needsAria:     True when semanticLevel exceeds htmlLevel, i.e.
+ *                  whenever the renderer should emit aria-level so a
+ *                  screen reader can still distinguish nested H6's.
+ *
+ * Why we do NOT cycle back to H3 for deep trees:
+ * Cycling (depth 4 -> H3 again) would create the impression of a new
+ * top-level section, which is misleading for screen reader users. By
+ * staying at H6 we accept a flat tail at the bottom but keep the
+ * upper hierarchy intact.
+ */
+export const headingInfoForDepth = (depth = 0) => {
+  const semanticLevel = ORG_HEADING_BASE_LEVEL + Math.max(0, depth);
+  const htmlLevel = Math.min(semanticLevel, ORG_HEADING_MAX_LEVEL);
+
+  return {
+    htmlLevel,
+    semanticLevel,
+    needsAria: semanticLevel > htmlLevel,
+  };
+};
+
 export const personName = (person = {}) => {
   const parts = [
     safe(person.salutation),
