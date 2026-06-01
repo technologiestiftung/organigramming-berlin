@@ -267,7 +267,7 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
           ? `<li><strong>Adresse:</strong> ${escapeHtml(unitAddress)}</li>`
           : "",
         positionMetaItems.length
-          ? `<li><strong>Personen und Aufgaben:</strong><ul>${positionMetaItems.join(
+          ? `<li><strong>Aufgaben und Personen:</strong><ul>${positionMetaItems.join(
               "",
             )}</ul></li>`
           : "",

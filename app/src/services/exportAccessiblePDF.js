@@ -1269,7 +1269,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       ])?.close();
     }
 
-    // "Personen und Aufgaben" is rendered as a regular meta-list item
+    // "Aufgaben und Personen" is rendered as a regular meta-list item
     // whose body contains the bold label followed by a nested L with
     // one LI per position. Putting the positions inside the meta list
     // keeps them visually and structurally aligned with the rest of
@@ -1278,7 +1278,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
     if (positions.length > 0) {
       const personItem = ensureMetaListItem([
-        { text: "Personen und Aufgaben:", bold: true },
+        { text: "Aufgaben und Personen:", bold: true },
       ]);
 
       if (personItem) {
