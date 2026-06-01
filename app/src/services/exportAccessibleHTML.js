@@ -4,7 +4,6 @@ import {
   normalizeOrganisationRoots,
   flattenUnits,
   getVocabularyData,
-  glossaryLinkFor,
   createUnitLinkFor,
   formatGermanDate,
   summarizeUnits,
@@ -64,36 +63,24 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
   );
 
   const units = flattenUnits(normalizedRootOrganisations);
-  const glossaryTerms = new Map();
 
-  const describeTermInline = (rawLabel, vocabTerm) => {
-    if (!isVocabularyAvailable || !vocabTerm) {
-      return escapeHtml(rawLabel);
-    }
+  /**
+   * Returns the glossary explanation (the rdfs:comment from the
+   * vocabulary) for a vocab term, or an empty string when none exists
+   * or the vocabulary is not available.
+   *
+   * Glossary entries are no longer surfaced via links and a dedicated
+   * "Glossar" section at the bottom of the document. Instead the comment
+   * is inlined under the position type or organisation type as a sub
+   * list item, so screen reader users encounter the explanation in the
+   * same reading flow as the term itself.
+   */
+  const lookupGlossaryComment = (vocabTerm) => {
+    if (!isVocabularyAvailable || !vocabTerm) return "";
 
     const termData = vocabularyData[vocabTerm];
 
-    if (!termData?.comment) {
-      return escapeHtml(rawLabel);
-    }
-
-    if (!glossaryTerms.has(vocabTerm)) {
-      glossaryTerms.set(vocabTerm, {
-        label: termData.label || vocabTerm,
-        comment: termData.comment,
-      });
-    }
-
-    const href = `#${glossaryLinkFor(vocabTerm)}`;
-
-    // The visible link text is the type name itself. The accessible
-    // name announced by screen readers is overridden via aria-label
-    // so assistive technology says "link zum glossar" instead of just
-    // reading the type name again - which makes it explicit that the
-    // link target is the glossary entry, not another organisation unit.
-    return `<a href="${href}" aria-label="link zum glossar">${escapeHtml(
-      rawLabel,
-    )}</a>`;
+    return safe(termData?.comment);
   };
 
   const unitsSortedByDepth = [...units];
@@ -170,9 +157,8 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
       const { raw: unitType, vocabTerm: unitTerm } =
         resolveUnitTypeDisplay(unit);
 
-      const unitTypeDisplay = unitType
-        ? describeTermInline(unitType, unitTerm)
-        : "";
+      const unitTypeComment = lookupGlossaryComment(unitTerm);
+      const unitTypeDisplay = unitType ? escapeHtml(unitType) : "";
 
       const renderPositionContactSuffix = (contacts, pName) => {
         if (contacts.length === 0) return "";
@@ -207,12 +193,11 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
         let displayRole = "";
 
         if (positionType && positionStatus) {
-          displayRole = `${describeTermInline(
-            positionType,
-            positionTerm,
-          )} (${escapeHtml(positionStatus)})`;
+          displayRole = `${escapeHtml(positionType)} (${escapeHtml(
+            positionStatus,
+          )})`;
         } else if (positionType) {
-          displayRole = describeTermInline(positionType, positionTerm);
+          displayRole = escapeHtml(positionType);
         } else if (positionStatus) {
           displayRole = escapeHtml(positionStatus);
         }
@@ -221,7 +206,21 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
         const colon = displayRole && finalName ? ": " : "";
         const contactSuffix = renderPositionContactSuffix(contacts, pName);
 
-        return `<li>${displayRole}${colon}${finalName}${contactSuffix}</li>`;
+        // If the vocabulary contains a definition for the position type,
+        // surface it as a nested list item right below the entry so
+        // screen reader users get the explanation in the same reading
+        // flow without having to follow a link to a separate glossary.
+        const positionComment = positionType
+          ? lookupGlossaryComment(positionTerm)
+          : "";
+
+        const commentSubList = positionComment
+          ? `<ul><li><strong>Erklärung:</strong> ${escapeHtml(
+              positionComment,
+            )}</li></ul>`
+          : "";
+
+        return `<li>${displayRole}${colon}${finalName}${contactSuffix}${commentSubList}</li>`;
       };
 
       const positionMetaItems = (unit?.positions || [])
@@ -261,7 +260,13 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
 
       const metaItems = [
         unitTypeDisplay
-          ? `<li><strong>Typ der Einheit:</strong> ${unitTypeDisplay}</li>`
+          ? `<li><strong>Typ der Einheit:</strong> ${unitTypeDisplay}${
+              unitTypeComment
+                ? `<ul><li><strong>Erklärung:</strong> ${escapeHtml(
+                    unitTypeComment,
+                  )}</li></ul>`
+                : ""
+            }</li>`
           : "",
         unitAddress
           ? `<li><strong>Adresse:</strong> ${escapeHtml(unitAddress)}</li>`
@@ -295,9 +300,8 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
           const { raw: deptType, vocabTerm: deptVocabTerm } =
             resolveUnitTypeDisplay(department);
 
-          const deptTypeDisplay = deptType
-            ? describeTermInline(deptType, deptVocabTerm)
-            : "";
+          const deptTypeDisplay = deptType ? escapeHtml(deptType) : "";
+          const deptTypeComment = lookupGlossaryComment(deptVocabTerm);
 
           const deptPurpose = safe(department?.purpose);
 
@@ -313,9 +317,20 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
             .map(renderPositionListItem)
             .join("");
 
-          return `<li>${deptHead}${
-            deptPositions ? `<ul>${deptPositions}</ul>` : ""
-          }</li>`;
+          // Glossary explanation of the department type, inlined as a
+          // nested list item.
+          const deptTypeCommentItem = deptTypeComment
+            ? `<li><strong>Erklärung der Einheitsart:</strong> ${escapeHtml(
+                deptTypeComment,
+              )}</li>`
+            : "";
+
+          const subList =
+            deptTypeCommentItem || deptPositions
+              ? `<ul>${deptTypeCommentItem}${deptPositions}</ul>`
+              : "";
+
+          return `<li>${deptHead}${subList}</li>`;
         })
         .join("");
 
@@ -363,28 +378,6 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
       `;
     })
     .join("\n");
-
-  const glossarySection =
-    isVocabularyAvailable && glossaryTerms.size > 0
-      ? `
-      <section id="glossary" tabindex="-1">
-        <h2>Glossar</h2>
-        <dl>
-          ${[...glossaryTerms.entries()]
-            .sort(([, a], [, b]) => a.label.localeCompare(b.label, "de"))
-            .map(
-              ([term, { label, comment }]) =>
-                `<dt id="${glossaryLinkFor(
-                  term,
-                )}" tabindex="-1">${escapeHtml(
-                  label,
-                )}</dt><dd>${escapeHtml(comment)}</dd>`,
-            )
-            .join("")}
-        </dl>
-      </section>
-    `
-      : "";
 
   // The footer note (`document.note`) is editor-managed Markdown. We do
   // not render Markdown here - that would require a dependency on a
@@ -547,19 +540,12 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
       ${organisationsWithContactCount} Organisationen und
       ${positionWithContactCount} Positionen.
     </p>
-
-    ${
-      isVocabularyAvailable
-        ? `<p>Begriffserklärungen finden Sie teilweise im Glossar.</p>`
-        : ""
-    }
   </header>
 
   <nav aria-label="Inhaltsverzeichnis">
     <h2>Inhaltsverzeichnis</h2>
     <ul>
       ${nestedTocHtml}
-      ${glossarySection ? '<li><a href="#glossary">Glossar</a></li>' : ""}
       ${noteSection ? '<li><a href="#note">Fußzeile</a></li>' : ""}
     </ul>
   </nav>
@@ -568,8 +554,6 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
     <h2>Organisationseinheiten</h2>
 
     ${unitSections}
-
-    ${glossarySection}
 
     ${noteSection}
   </main>

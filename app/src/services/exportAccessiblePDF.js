@@ -4,7 +4,6 @@ import {
   normalizeOrganisationRoots,
   flattenUnits,
   getVocabularyData,
-  glossaryLinkFor,
   createUnitLinkFor,
   formatGermanDate,
   summarizeUnits,
@@ -225,14 +224,13 @@ const headingFontSize = (level) => HEADING_FONT_SIZES[level] || BODY_FONT_SIZE;
 
 // Organisation unit headings start at H3 (H1 is the document title,
 // H2 is reserved for the major document sections such as
-// "Inhaltsverzeichnis", "Organisationseinheiten", "Glossar" and
-// "Fußzeile"). Deeper units get H4, H5 and H6. Units deeper than that
-// stay at H6 because the PDF heading roles only cover H1-H6. The
-// hierarchy itself is still conveyed via the "Übergeordnete Einheit:"
-// bullet, the "Direkt untergeordnete Einheiten"-Paragraph in each
-// section and (for very deep trees) an "Ebene N: " prefix in the
-// heading text so screen reader users can still tell heading H6
-// occurrences apart.
+// "Inhaltsverzeichnis", "Organisationseinheiten" and "Fußzeile").
+// Deeper units get H4, H5 and H6. Units deeper than that stay at H6
+// because the PDF heading roles only cover H1-H6. The hierarchy itself
+// is still conveyed via the "Übergeordnete Einheit:" bullet, the
+// "Direkt untergeordnete Einheiten"-Paragraph in each section and (for
+// very deep trees) an "Ebene N: " prefix in the heading text so screen
+// reader users can still tell heading H6 occurrences apart.
 const headingLevelFromDepth = (depth) => headingInfoForDepth(depth).htmlLevel;
 
 // Sub-section headings inside an organisation (e.g. "Zugehörige
@@ -732,10 +730,15 @@ const writeBulletItem = (
   return { item, body, close: () => item.end() };
 };
 
-const buildPositionRuns = (
-  position,
-  { isVocabularyAvailable, vocabularyData, registerGlossaryTerm },
-) => {
+/**
+ * Builds the inline runs for a position entry (role, status, person,
+ * contacts) and, separately, returns the glossary explanation of the
+ * position type when one exists. The explanation is no longer emitted
+ * as a link to a "Glossar" section at the bottom of the document.
+ * Instead, callers render it as a nested LI directly below the
+ * position so screen reader users find it in the same reading flow.
+ */
+const buildPositionRuns = (position, { lookupGlossaryComment }) => {
   const {
     positionType,
     positionStatus,
@@ -747,19 +750,7 @@ const buildPositionRuns = (
   const runs = [];
 
   if (positionType) {
-    const goTo = registerGlossaryTerm(vocabTerm, {
-      isVocabularyAvailable,
-      vocabularyData,
-    });
-
-    runs.push({
-      text: positionType,
-      goTo: goTo || null,
-      // When the position type links into the glossary, expose
-      // "link zum glossar" as the accessible name (PDF equivalent of
-      // an HTML aria-label).
-      alt: goTo ? "link zum glossar" : undefined,
-    });
+    runs.push({ text: positionType });
 
     if (positionStatus) {
       runs.push({ text: ` (${positionStatus})` });
@@ -797,7 +788,9 @@ const buildPositionRuns = (
     runs.push({ text: ")" });
   }
 
-  return runs;
+  const comment = positionType ? lookupGlossaryComment(vocabTerm) : "";
+
+  return { runs, comment };
 };
 
 export const exportAccessiblePDF = async (data, exportFilename) => {
@@ -852,26 +845,17 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     organisationsWithContactCount,
   } = summarizeUnits(unitsSortedByDepth);
 
-  // Glossary collection mirrors the HTML behaviour: only register a term
-  // (and only emit a link to it) when the vocabulary actually has a
-  // comment for it.
-  const glossaryTerms = new Map();
-
-  const registerGlossaryTerm = (vocabTerm) => {
-    if (!isVocabularyAvailable || !vocabTerm) return null;
+  // Glossary explanations for position types and organisation types are
+  // no longer collected into a separate "Glossar" section at the end of
+  // the document. Instead, callers inline the explanation as a sub list
+  // item directly below the term, so screen reader users encounter the
+  // definition in the same reading flow as the term itself.
+  const lookupGlossaryComment = (vocabTerm) => {
+    if (!isVocabularyAvailable || !vocabTerm) return "";
 
     const termData = vocabularyData[vocabTerm];
 
-    if (!termData?.comment) return null;
-
-    if (!glossaryTerms.has(vocabTerm)) {
-      glossaryTerms.set(vocabTerm, {
-        label: termData.label || vocabTerm,
-        comment: termData.comment,
-      });
-    }
-
-    return glossaryLinkFor(vocabTerm);
+    return safe(termData?.comment);
   };
 
   const doc = new PDFDocument({
@@ -1055,15 +1039,6 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
     { fontSize: BODY_FONT_SIZE, after: 4 },
   );
 
-  if (isVocabularyAvailable) {
-    writeStructuredParagraph(
-      doc,
-      headerSection,
-      "Begriffserklärungen finden Sie teilweise im Glossar.",
-      { fontSize: BODY_FONT_SIZE, after: 4 },
-    );
-  }
-
   headerSection.end();
 
   // -- Table of contents ---------------------------------------------------
@@ -1243,23 +1218,38 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
       resolveUnitTypeDisplay(unit);
 
     if (unitTypeRaw) {
-      // The unit type is rendered as a hyperlink to the matching
-      // glossary entry when one exists. The visible link text is the
-      // type name itself, while the accessible name announced by
-      // screen readers is overridden via `alt` (which becomes both the
-      // Link struct's /Alt attribute and the annotation's /Contents
-      // entry) so users hear "link zum glossar" instead of the type
-      // name being read twice in a row.
-      const goTo = registerGlossaryTerm(unitTypeVocab);
-
       const typeRuns = [
         { text: "Typ der Einheit: ", bold: true },
-        goTo
-          ? { text: unitTypeRaw, goTo, alt: "link zum glossar" }
-          : { text: unitTypeRaw },
+        { text: unitTypeRaw },
       ];
 
-      ensureMetaListItem(typeRuns)?.close();
+      const typeItem = ensureMetaListItem(typeRuns);
+
+      // When the vocabulary has an explanation for this unit type, emit
+      // it as a nested LI directly underneath the type, so screen reader
+      // users encounter the explanation in the same reading flow without
+      // having to follow a link to a separate "Glossar" section.
+      const unitTypeComment = lookupGlossaryComment(unitTypeVocab);
+
+      if (typeItem && unitTypeComment) {
+        const explanationList = doc.struct("L");
+        typeItem.body.add(explanationList);
+
+        const explanationItem = writeBulletItem(
+          doc,
+          explanationList,
+          [
+            { text: "Erklärung: ", bold: true },
+            { text: unitTypeComment },
+          ],
+          { indent: 24, fontSize: BODY_FONT_SIZE },
+        );
+
+        explanationItem?.close();
+        explanationList.end();
+      }
+
+      typeItem?.close();
     }
 
     if (unitAddress) {
@@ -1286,16 +1276,35 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
         personItem.body.add(positionList);
 
         positions.forEach((position) => {
-          const runs = buildPositionRuns(position, {
-            isVocabularyAvailable,
-            vocabularyData,
-            registerGlossaryTerm,
+          const { runs, comment } = buildPositionRuns(position, {
+            lookupGlossaryComment,
           });
 
           const positionItem = writeBulletItem(doc, positionList, runs, {
             indent: 24,
             fontSize: BODY_FONT_SIZE,
           });
+
+          // Inline glossary explanation for the position type, mirroring
+          // the unit type behaviour (no more "Glossar" section, no more
+          // links - the explanation is right there).
+          if (positionItem && comment) {
+            const explanationList = doc.struct("L");
+            positionItem.body.add(explanationList);
+
+            const explanationItem = writeBulletItem(
+              doc,
+              explanationList,
+              [
+                { text: "Erklärung: ", bold: true },
+                { text: comment },
+              ],
+              { indent: 40, fontSize: BODY_FONT_SIZE },
+            );
+
+            explanationItem?.close();
+            explanationList.end();
+          }
 
           positionItem?.close();
         });
@@ -1391,21 +1400,13 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
         // The bullet body is a single inline paragraph that contains
         // - the (bold) name
-        // - the optional type, linked to the glossary when available
+        // - the optional type as plain text (no longer a glossary link)
         // - the optional purpose ("Beschreibung") set in regular weight
         const headRuns = [{ text: deptName, bold: true }];
 
         if (deptType) {
-          const goTo = registerGlossaryTerm(deptVocabTerm);
-
           headRuns.push({ text: " — " });
-          headRuns.push({
-            text: deptType,
-            goTo: goTo || null,
-            // Same accessible-name override as the unit type and
-            // position type glossary links.
-            alt: goTo ? "link zum glossar" : undefined,
-          });
+          headRuns.push({ text: deptType });
         }
 
         if (deptPurpose) {
@@ -1420,23 +1421,60 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
         if (!deptItem) return;
 
+        // Inline glossary explanation for the department type. We emit
+        // it as the first sub-LI so it sits immediately below the
+        // department head line, before any positions.
+        const deptTypeComment = lookupGlossaryComment(deptVocabTerm);
+
         const deptPositions = department?.positions || [];
 
-        if (deptPositions.length > 0) {
+        if (deptTypeComment || deptPositions.length > 0) {
           const nestedList = doc.struct("L");
           deptItem.body.add(nestedList);
 
+          if (deptTypeComment) {
+            const explanationItem = writeBulletItem(
+              doc,
+              nestedList,
+              [
+                { text: "Erklärung der Einheitsart: ", bold: true },
+                { text: deptTypeComment },
+              ],
+              { indent: 24, fontSize: BODY_FONT_SIZE },
+            );
+
+            explanationItem?.close();
+          }
+
           deptPositions.forEach((position) => {
-            const runs = buildPositionRuns(position, {
-              isVocabularyAvailable,
-              vocabularyData,
-              registerGlossaryTerm,
+            const { runs, comment } = buildPositionRuns(position, {
+              lookupGlossaryComment,
             });
 
             const positionItem = writeBulletItem(doc, nestedList, runs, {
               indent: 24,
               fontSize: BODY_FONT_SIZE,
             });
+
+            // Nested explanation for the position type, mirroring the
+            // unit-level handling.
+            if (positionItem && comment) {
+              const explanationList = doc.struct("L");
+              positionItem.body.add(explanationList);
+
+              const explanationItem = writeBulletItem(
+                doc,
+                explanationList,
+                [
+                  { text: "Erklärung: ", bold: true },
+                  { text: comment },
+                ],
+                { indent: 40, fontSize: BODY_FONT_SIZE },
+              );
+
+              explanationItem?.close();
+              explanationList.end();
+            }
 
             positionItem?.close();
           });
@@ -1454,56 +1492,6 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
   });
 
   orgSection.end();
-
-  // -- Glossary -----------------------------------------------------------
-  //
-  // Each glossary term is rendered as its own H3 heading followed by a P
-  // paragraph with the description. This pattern keeps the structure
-  // tree clean for Acrobat's accessibility checker (which previously
-  // flagged the Lbl/LBody structure of the list-based variant) and lets
-  // screen-reader users navigate the glossary like any other set of
-  // headed sections. Inline links from elsewhere in the document
-  // (`goTo: glossaryLinkFor(term)`) still resolve correctly because
-  // each H3 carries the named destination as its anchor.
-  if (isVocabularyAvailable && glossaryTerms.size > 0) {
-    const glossarySection = doc.struct("Sect", { title: "Glossar" });
-    documentRoot.add(glossarySection);
-
-    rootBookmark.addItem("Glossar");
-
-    doc.addPage();
-    doc.x = PAGE_MARGIN_X;
-    doc.y = PAGE_MARGIN_TOP;
-
-    doc.addNamedDestination("glossary");
-
-    writeHeading(doc, glossarySection, "Glossar", {
-      level: 2,
-      destination: "glossary",
-      after: 4,
-    });
-
-    [...glossaryTerms.entries()]
-      .sort(([, a], [, b]) => a.label.localeCompare(b.label, "de"))
-      .forEach(([vocabTerm, { label, comment }]) => {
-        const glossaryDestination = glossaryLinkFor(vocabTerm);
-        doc.addNamedDestination(glossaryDestination);
-
-        writeHeading(doc, glossarySection, label, {
-          level: 3,
-          destination: glossaryDestination,
-          before: 4,
-          after: 2,
-        });
-
-        writeStructuredParagraph(doc, glossarySection, comment, {
-          fontSize: BODY_FONT_SIZE,
-          after: 3,
-        });
-      });
-
-    glossarySection.end();
-  }
 
   // -- Fußzeile (document.note) ------------------------------------------
   //

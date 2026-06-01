@@ -256,8 +256,6 @@ export const slugify = (value = "") => {
     .replace(/^-+|-+$/g, "");
 };
 
-export const glossaryLinkFor = (term) => `glossar-${slugify(term)}`;
-
 /**
  * Creates a stateful function that returns a stable, unique slug-based id
  * for an organisation unit. Uses the unit's id (or name as fallback) as a
