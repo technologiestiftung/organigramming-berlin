@@ -113,7 +113,14 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
         safe(unit?.name) || "Unbenannte Organisationseinheit",
       );
 
-      const link = `<a href="#${sectionId}">${linkText}</a>`;
+      // The link is wrapped in a <span> so it sits in its own inline
+      // container, separate from the nested <ul> that may follow as a
+      // sibling. Without the wrapper, JAWS' "Smart Navigation" /
+      // "Simple Layout" heuristics sometimes merge the link with the
+      // following nested list and stop announcing the link in the
+      // Inhaltsverzeichnis. Wrapping each link in a <span> reliably
+      // restores the announcement in JAWS, NVDA and VoiceOver alike.
+      const link = `<span><a href="#${sectionId}">${linkText}</a></span>`;
       const childrenHtml = generateNestedToc(unit.organisations || []);
 
       return `<li>${link}${
