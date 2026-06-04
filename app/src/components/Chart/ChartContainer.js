@@ -509,7 +509,7 @@ const ChartContainer = forwardRef(
           exportRDF(data);
           setExporting(false);
         } else if (exportFileExtension === "accessible-html") {
-          exportAccessibleHTML(data, exportFilename);
+          exportAccessibleHTML(data, exportFilename, { download: true });
           setExporting(false);
         } else if (exportFileExtension === "accessible-pdf") {
           import(

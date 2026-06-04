@@ -50,7 +50,7 @@ const formatDateHtml = (dateStr = "") => {
 };
 
 export const exportAccessibleHTML = async (data, exportFilename, options = {}) => {
-  const { replaceCurrentWindow = false } = options;
+  const { replaceCurrentWindow = false, download = false } = options;
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
   const documentNote = safe(data?.document?.note);
@@ -572,6 +572,38 @@ export const exportAccessibleHTML = async (data, exportFilename, options = {}) =
     document.write(html);
     document.close();
     document.title = exportFilename || title;
+    return;
+  }
+
+  if (download) {
+    // Trigger a normal browser download instead of opening a preview
+    // window. We build a Blob with the `text/html` MIME type, point an
+    // off-DOM <a> element at it via an object URL and synthesize a
+    // click. The object URL is revoked on the next tick so the browser
+    // has finished initiating the download by the time it is freed.
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const objectUrl = URL.createObjectURL(blob);
+    const safeFilename = (exportFilename || title || "Organigramm").replace(
+      /[/\\?%*:|"<>]/g,
+      "-",
+    );
+    const anchor = document.createElement("a");
+
+    anchor.href = objectUrl;
+    anchor.download = safeFilename.toLowerCase().endsWith(".html")
+      ? safeFilename
+      : `${safeFilename}.html`;
+    anchor.rel = "noopener";
+    anchor.style.display = "none";
+
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+
+    // setTimeout instead of revoking immediately: some browsers
+    // initiate the download asynchronously and need the URL to remain
+    // valid for a tick.
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
     return;
   }
 
