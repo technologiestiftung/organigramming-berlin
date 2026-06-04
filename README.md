@@ -6,7 +6,7 @@
 
 This repository contains an app for creating and editing administrative organization charts. The online tool was developed to provide a simple yet sufficient way to create organisational charts and export them as both human- and machine-readable files.
 
-Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, they are difficult to process automatically. However, the organigrams contain a lot of valuable information and a machine-readable representation could enable various uses and applications.
+Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, they are difficult to process automatically. However, the organization charts contain a lot of valuable information and a machine-readable representation could enable various uses and applications.
 The json file format allows the data entered to be stored in a simple text format and made available as Open Data. The organizational chart tool also aims to simplify the creation of organizational charts for the Berlin administration and to bring the organizational charts into a more uniform format.
 
 More information and the prototype are accessible through the [ODIS website](https://odis-berlin.de/projekte/organigramme/) (only in German).
