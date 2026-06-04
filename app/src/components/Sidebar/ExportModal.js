@@ -256,7 +256,7 @@ const ExportModal = (props) => {
         {showAccessibleHtmlInfo && (
           <Row>
             <Col className="mb-3">
-              <Alert variant="success">
+              <Alert variant="info">
                 <Alert.Heading as="h6">
                   Hinweis zur barrierefreien HTML-Datei
                 </Alert.Heading>
@@ -275,7 +275,7 @@ const ExportModal = (props) => {
         {showRDFInfo && (
           <Row>
             <Col className="mb-3">
-              <Alert variant="success">
+              <Alert variant="info">
                 <p>
                   Diese Funktion erlaubt es die Daten in verschiedenen
                   RDF-Formaten zu exportieren.{" "}
