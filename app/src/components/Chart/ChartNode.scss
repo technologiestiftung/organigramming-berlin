@@ -39,7 +39,7 @@
         margin: 0 4px;
         transition: box-shadow 300ms ease-out, opacity 300ms ease-in-out;
         margin-bottom: 20px;
-        &:hover {
+        .App:not(.readonly) &:hover {
           // outline: 3px solid rgba($yellow, 0.5);
           cursor: pointer;
         }
@@ -75,7 +75,7 @@
           transition: box-shadow 100ms, transform 100ms, outline-color 100ms;
           box-shadow: rgba($gray-600, 0.2) 0px 1px 2px;
           overflow-wrap: break-word;
-          &:hover {
+          .App:not(.readonly) &:hover {
             transform: translateY(-1px);
             box-shadow: rgba($gray-600, 0.5) 0px 8px 24px;
           }
@@ -558,7 +558,7 @@
       &::before {
         border-color: rgba($green, 0.5);
       }
-      &:hover {
+      .App:not(.readonly) &:hover {
         cursor: pointer;
       }
     }

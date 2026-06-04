@@ -16,6 +16,27 @@ const ExportModal = (props) => {
   const [warningMultiMainOrgs, setWarningMultiMainOrgs] = useState(false);
   const [duplicatePersons, setDuplicatePersons] = useState([]);
 
+  // The accessible HTML/PDF exports include the document footer
+  // (`document.note`) verbatim as plain text - Markdown formatting is
+  // not rendered. We show a small notice on the export modal so the
+  // user is not surprised by the raw `#`, `*`, `[...](...)` characters
+  // appearing in the output.
+  const documentNote =
+    typeof formData?.document?.note === "string"
+      ? formData.document.note.trim()
+      : "";
+  const isAccessibleExport =
+    formData?.export?.exportType === "accessible-html" ||
+    formData?.export?.exportType === "accessible-pdf";
+  const isExporting = formData?.export?.saveExport === "export";
+  const showAccessibleNoteWarning =
+    isExporting && isAccessibleExport && documentNote.length > 0;
+  // Shown when the user is about to export the barrierefreie HTML
+  // view. Lets them know up-front that the file is saved locally and
+  // can be opened in any browser - not a warning, just a heads-up.
+  const showAccessibleHtmlInfo =
+    isExporting && formData?.export?.exportType === "accessible-html";
+
   const properties = {
     properties: {
       export: {
@@ -107,11 +128,20 @@ const ExportModal = (props) => {
         case "png":
           props.onExport("png", formData.export.includeLogo);
           break;
+        case "accessible-html":
+          props.onExport("accessible-html", false);
+          break;
+        case "accessible-pdf":
+          props.onExport("accessible-pdf", false);
+          break;
         case "rdf":
           props.onExport("rdf", false, false, formData.export.rdfType);
           break;
         case "json":
-          props.onSave(formData.export.includeLogo,formData.export?.excludePersonalData);
+          props.onSave(
+            formData.export.includeLogo,
+            formData.export?.excludePersonalData,
+          );
           break;
         default:
           // if (formData.export.pdfType === "print") {
@@ -204,10 +234,48 @@ const ExportModal = (props) => {
             </Col>
           </Row>
         )} */}
+        {showAccessibleNoteWarning && (
+          <Row>
+            <Col className="mb-3">
+              <Alert variant="warning">
+                <Alert.Heading as="h6">
+                  Hinweis zur Fußzeile
+                </Alert.Heading>
+                <p className="mb-0">
+                  Der Text in der <b>Fußzeile</b> (Dokumenteigenschaften) wird
+                  im barrierefreien Export <b>als reiner Text</b> übernommen.
+                  Markdown-Formatierung (Überschriften mit <code>#</code>,
+                  Fettdruck mit <code>**…**</code>, Links wie{" "}
+                  <code>[Text](URL)</code> usw.) wird <b>nicht</b> in
+                  formatierte Inhalte umgewandelt.
+                </p>
+              </Alert>
+            </Col>
+          </Row>
+        )}
+        {showAccessibleHtmlInfo && (
+          <Row>
+            <Col className="mb-3">
+              <Alert variant="info">
+                <Alert.Heading as="h6">
+                  Hinweis zur barrierefreien HTML-Datei
+                </Alert.Heading>
+                <p className="mb-0">
+                  Die barrierefreie HTML-Datei wird auf Ihrem Gerät
+                  gespeichert. Sie können die Datei mit dem Browser
+                  Ihrer Wahl (zum Beispiel Firefox, Chrome, Microsoft
+                  Edge oder Safari) öffnen, indem Sie sie per
+                  Doppelklick starten oder im Browser über das Menü
+                  „Datei öffnen“ auswählen.
+                </p>
+              </Alert>
+            </Col>
+          </Row>
+        )}
         {showRDFInfo && (
           <Row>
             <Col className="mb-3">
-              <Alert variant="success">
+              <Alert variant="info">
                 <p>
                   Diese Funktion erlaubt es die Daten in verschiedenen
                   RDF-Formaten zu exportieren.{" "}

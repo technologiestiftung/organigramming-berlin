@@ -5,6 +5,7 @@ import emptyDocument from "../../data/emptyDocument";
 import AlertModal from "./AlertModal";
 import { validateData } from "../../services/service";
 import { upgradeDataStructure } from "../../services/upgradeDataStructure";
+import { isOrganigramData } from "../../services/isOrganigramData";
 
 const NewDocumetModal = (props) => {
   const [alertModalShow, setAlertModalShow] = useState(false);
@@ -47,7 +48,18 @@ const NewDocumetModal = (props) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
       const text = e.target.result;
-      let data = JSON.parse(text);
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        setImportError(["Keine valide JSON Datei"]);
+        return;
+      }
+      const shapeCheck = isOrganigramData(data);
+      if (!shapeCheck.valid) {
+        setImportError(shapeCheck.errors);
+        return;
+      }
       data = upgradeDataStructure(data);
       const [valid, errors] = validateData(data);
       if (!valid) {
@@ -131,9 +143,9 @@ const NewDocumetModal = (props) => {
                   <Alert variant="danger">
                     Beim öffnen der Datei ist ein Fehler aufgetreten:
                     {importError.map((error) => (
-                      <pre className="mt-2">
+                      <p className="mt-2">
                         {JSON.stringify(error, null, " ")};
-                      </pre>
+                      </p>
                     ))}
                   </Alert>
                 )}

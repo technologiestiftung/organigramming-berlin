@@ -22,6 +22,7 @@ import {
 import { upgradeDataStructure } from "./services/upgradeDataStructure";
 import { getDataURL } from "./services/getDataURL";
 import { getExternalData } from "./services/getExternalData";
+import { isOrganigramData } from "./services/isOrganigramData";
 
 import JSONDigger from "./services/jsonDigger";
 import { getJoyrideSettings } from "./lib/getJoyrideSettings";
@@ -54,6 +55,16 @@ const App = () => {
 
   const [importError, setImportError] = useState(null);
   const [dataUrlError, setDataUrlError] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [readonly, setReadonly] = useState(() => {
+    const { readonly: ro } = getDataURL();
+    return !!ro;
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [format, setFormat] = useState(() => {
+    const { format: fmt } = getDataURL();
+    return fmt || null;
+  });
 
   const [closeNewDocumentModal, setCloseNewDocumentModal] = useState(0);
 
@@ -137,6 +148,7 @@ const App = () => {
   };
 
   useMount(() => {
+    if (readonly) return;
     setState(getJoyrideSettings(controlLayer));
   });
 
@@ -223,6 +235,11 @@ const App = () => {
         return;
       }
       result = JSON.parse(result);
+      const shapeCheck = isOrganigramData(result);
+      if (!shapeCheck.valid) {
+        setImportError(shapeCheck.errors);
+        return;
+      }
       result = upgradeDataStructure(result);
       const [valid, errors] = validateData(result);
 
@@ -254,12 +271,37 @@ const App = () => {
       setDataUrlError(error);
       return;
     }
+    if (url && readonly) {
+      // In readonly mode the user has no editing affordances anyway, so
+      // skip the "Externe Daten importieren" confirmation modal and load
+      // the external file directly.
+      (async () => {
+        const { error: fetchError, data: fetchedData } =
+          await getExternalData(url);
+        if (fetchError) {
+          setImportError(fetchError);
+          return;
+        }
+        const shapeCheck = isOrganigramData(fetchedData);
+        if (!shapeCheck.valid) {
+          setImportError(shapeCheck.errors);
+          return;
+        }
+        const upgraded = upgradeDataStructure(fetchedData);
+        // Route through onChange so the data also lands in
+        // localStorage (and undo history), matching the behaviour
+        // after any manual edit.
+        onChange(upgraded);
+      })();
+      return;
+    }
     setDataURL(url);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readonly]);
 
   return (
     <div
-      className="App"
+      className={"App" + (readonly ? " readonly" : "")}
       onKeyDown={handleKeyDown}
       onDrop={(e) => handleDrop(e)}
       onDragOver={(e) => handleDragOver(e)}
@@ -269,12 +311,12 @@ const App = () => {
       <Joyride
         callback={handleJoyrideCallback}
         continuous
-        run={run}
+        run={readonly ? false : run}
         scrollToFirstStep
         showProgress
         showSkipButton
         stepIndex={stepIndex}
-        steps={steps}
+        steps={readonly ? [] : steps}
         locale={{
           back: "Zurück",
           close: "Verlassen",
@@ -317,10 +359,27 @@ const App = () => {
           console.log(error, data);
           if (error) {
             setImportError(error);
-          } else {
-            setDataURL(null);
-            setData(data);
+            return;
           }
+          const shapeCheck = isOrganigramData(data);
+          if (!shapeCheck.valid) {
+            setImportError(shapeCheck.errors);
+            return;
+          }
+          const upgraded = upgradeDataStructure(data);
+          setDataURL(null);
+          // Route through onChange so the data also lands in
+          // localStorage (and undo history).
+          onChange(upgraded);
+          // For a normal interactive import (no readonly, no
+          // html-accessible format) the URL params have served their
+          // purpose – the data now lives in localStorage. Strip them
+          // so a reload does not re-prompt the import modal.
+          window.history.replaceState(
+            {},
+            "",
+            window.location.pathname,
+          );
         }}
         title="Externe Daten importieren"
       >
@@ -355,7 +414,7 @@ const App = () => {
         title="Import Fehlgeschlagen"
       >
         <Alert variant="danger">
-          Möchten Sie eine externe URL laden? Sie haben über den Parameter
+          Möchten Sie ein Organigramm über eine externe URL laden? Sie haben über den Parameter
           "dataurl" in der URL eine externe Quelle angegeben. Diese Quelle ist
           fehlerhaft:
           {dataUrlError?.map((error, i) => (
@@ -402,6 +461,7 @@ const App = () => {
             ref={controlLayer}
             closeNewDocumentModal={closeNewDocumentModal}
             dataURL={dataURL}
+            readonly={readonly}
           />
         </Container>
         <Chart
@@ -412,6 +472,7 @@ const App = () => {
           setSelected={(e) => {
             setSelected(e);
           }}
+          readonly={readonly}
         />
       </DragDropContext>
     </div>

@@ -19,6 +19,10 @@ import jsPDF from "jspdf";
 import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
 import { exportRDF } from "../../services/exportRDF";
+import { exportAccessibleHTML } from "../../services/exportAccessibleHTML";
+// Note: `exportAccessiblePDF` is loaded lazily where it is invoked
+// below so PDFKit and blob-stream (≈ 1 MB combined) do not end up in
+// the initial bundle for users who never trigger that export.
 
 import "../../services/registerFiles";
 
@@ -82,6 +86,7 @@ const ChartContainer = forwardRef(
       onCloseContextMenu,
       onOpenDocument,
       onAddInitNode,
+      readonly,
     },
     ref
   ) => {
@@ -126,6 +131,13 @@ const ChartContainer = forwardRef(
       });
 
       setTimeout(() => {
+        // Reset the view first so the scale matches the new chart
+        // dimensions, then run the post-layout update. Without the
+        // reset, charts loaded asynchronously (e.g. via the `dataurl`
+        // param) keep the scale that was calculated for the initial
+        // empty/local document and the user has to reload to see the
+        // full chart.
+        resetViewHandler();
         updateChartHandler();
       }, 50);
 
@@ -255,6 +267,7 @@ const ChartContainer = forwardRef(
     };
 
     const resetViewHandler = () => {
+      if (!chart.current) return;
       const containerWidth = chart.current.clientWidth,
         containerHeight = chart.current.clientHeight,
         chartWidth = chart.current.querySelector("#paper").clientWidth,
@@ -294,6 +307,7 @@ const ChartContainer = forwardRef(
     };
 
     const updateChartHandler = () => {
+      if (!chart.current) return;
       const rootNode = chart.current.querySelector("#n-root");
       let rootNodeHeight = 57;
       if (rootNodeHeight) {
@@ -494,6 +508,16 @@ const ChartContainer = forwardRef(
         } else if (exportFileExtension === "rdf") {
           exportRDF(data);
           setExporting(false);
+        } else if (exportFileExtension === "accessible-html") {
+          exportAccessibleHTML(data, exportFilename, { download: true });
+          setExporting(false);
+        } else if (exportFileExtension === "accessible-pdf") {
+          import(
+            /* webpackChunkName: "accessible-pdf" */ "../../services/exportAccessiblePDF"
+          ).then(({ exportAccessiblePDF }) =>
+            exportAccessiblePDF(data, exportFilename),
+          );
+          setExporting(false);
         } else if (exportFileExtension === "pdf") {
           exportPDF(node, exportFilename, userView);
         } else if (exportFileExtension === "png") {
@@ -692,6 +716,7 @@ const ChartContainer = forwardRef(
                     onContextMenu={onContextMenu}
                     onDragNode={onDragNode}
                     onAddInitNode={onAddInitNode}
+                    readonly={readonly}
                   />
                 </ul>
               </div>
