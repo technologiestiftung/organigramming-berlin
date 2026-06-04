@@ -20,7 +20,9 @@ import ChartNode from "./ChartNode";
 import "./ChartContainer.scss";
 import { exportRDF } from "../../services/exportRDF";
 import { exportAccessibleHTML } from "../../services/exportAccessibleHTML";
-import { exportAccessiblePDF } from "../../services/exportAccessiblePDF";
+// Note: `exportAccessiblePDF` is loaded lazily where it is invoked
+// below so PDFKit and blob-stream (≈ 1 MB combined) do not end up in
+// the initial bundle for users who never trigger that export.
 
 import "../../services/registerFiles";
 
@@ -510,7 +512,11 @@ const ChartContainer = forwardRef(
           exportAccessibleHTML(data, exportFilename);
           setExporting(false);
         } else if (exportFileExtension === "accessible-pdf") {
-          exportAccessiblePDF(data, exportFilename);
+          import(
+            /* webpackChunkName: "accessible-pdf" */ "../../services/exportAccessiblePDF"
+          ).then(({ exportAccessiblePDF }) =>
+            exportAccessiblePDF(data, exportFilename),
+          );
           setExporting(false);
         } else if (exportFileExtension === "pdf") {
           exportPDF(node, exportFilename, userView);

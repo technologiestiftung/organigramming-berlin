@@ -1,6 +1,3 @@
-import PDFDocument from "pdfkit";
-import blobStream from "blob-stream";
-
 import {
   safe,
   getVisibleChildUnits,
@@ -20,6 +17,32 @@ import {
   headingInfoForDepth,
   ORG_HEADING_MAX_LEVEL,
 } from "./exportAccessibleShared";
+
+// PDFKit and blob-stream are heavy (≈ 1 MB gzipped combined) and only
+// needed when the user actually triggers the accessible PDF export. We
+// therefore load them with dynamic imports the first time the export
+// runs. The promise is cached so subsequent exports reuse the same
+// modules without paying the network / parsing cost again, and the
+// PDF/UA accessibility patches are applied exactly once.
+let pdfkitLoadPromise = null;
+
+const loadPdfkit = () => {
+  if (!pdfkitLoadPromise) {
+    pdfkitLoadPromise = Promise.all([
+      import(/* webpackChunkName: "pdfkit" */ "pdfkit"),
+      import(/* webpackChunkName: "pdfkit" */ "blob-stream"),
+    ]).then(([pdfkitModule, blobStreamModule]) => {
+      const PDFDocument = pdfkitModule.default || pdfkitModule;
+      const blobStream = blobStreamModule.default || blobStreamModule;
+
+      patchPdfkitForAccessibility(PDFDocument);
+
+      return { PDFDocument, blobStream };
+    });
+  }
+
+  return pdfkitLoadPromise;
+};
 
 // -----------------------------------------------------------------------
 // PDFKit patches to make goTo (internal cross-references) PDF/UA-compliant
@@ -141,8 +164,6 @@ const patchPdfkitForAccessibility = (PdfDoc) => {
     return originalFragment.call(this, text, x, y, options);
   };
 };
-
-patchPdfkitForAccessibility(PDFDocument);
 
 const PAGE_MARGIN_X = 48;
 const PAGE_MARGIN_TOP = 56;
@@ -285,7 +306,7 @@ const withArtifact = (doc, type, draw) => {
   }
 };
 
-const createPdfBlob = (doc) =>
+const createPdfBlob = (doc, blobStream) =>
   new Promise((resolve, reject) => {
     const stream = doc.pipe(blobStream());
 
@@ -807,11 +828,12 @@ export const exportAccessiblePDF = async (data, exportFilename) => {
 };
 
 const runExportAccessiblePDF = async (data, exportFilename) => {
-  if (!PDFDocument || !blobStream) {
-    throw new Error(
-      "PDFKit oder blob-stream sind nicht geladen. Bitte die Browser-Builds in index.html einbinden.",
-    );
-  }
+  // Dynamically load PDFKit + blob-stream on first export. This keeps
+  // the main bundle ~1 MB smaller for users who never trigger the
+  // accessible PDF download. Subsequent calls reuse the cached
+  // promise from loadPdfkit() and the accessibility patches are only
+  // applied once on the prototype.
+  const { PDFDocument, blobStream } = await loadPdfkit();
 
   const title = safe(data?.document?.title) || "Organigramm";
   const version = safe(data?.document?.version);
@@ -1530,7 +1552,7 @@ const runExportAccessiblePDF = async (data, exportFilename) => {
 
   documentRoot.end();
 
-  const blob = await createPdfBlob(doc);
+  const blob = await createPdfBlob(doc, blobStream);
   const fileName = `${exportFilename || title}.pdf`;
 
   const url = URL.createObjectURL(blob);
