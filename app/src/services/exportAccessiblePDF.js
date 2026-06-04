@@ -1,3 +1,6 @@
+import PDFDocument from "pdfkit";
+import blobStream from "blob-stream";
+
 import {
   safe,
   getVisibleChildUnits,
@@ -17,9 +20,6 @@ import {
   headingInfoForDepth,
   ORG_HEADING_MAX_LEVEL,
 } from "./exportAccessibleShared";
-
-const PDFDocument = window.PDFDocument;
-const blobStream = window.blobStream;
 
 // -----------------------------------------------------------------------
 // PDFKit patches to make goTo (internal cross-references) PDF/UA-compliant
