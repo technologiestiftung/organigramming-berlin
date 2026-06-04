@@ -2,16 +2,28 @@
 
 # Organigramm-Tool
 
-**Notice: This application and the documentation is still a work in progress.**
-
 ## A simple organisation chart application for public service of Berlin
 
-This repository contains an app for creating and editing administrative organization charts in machine-readable json format and as a graphical representation in pdf format. The online tool was developed with the aim to provide a simple yet sufficient tool to create organisational charts to export human as well as machine readable files.
+This repository contains an app for creating and editing administrative organization charts. The online tool was developed to provide a simple yet sufficient way to create organisational charts and export them as both human- and machine-readable files.
 
-Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, this means that they cannot be read by machines or code, or can only be read inadequately. However, the organigrams contain a lot of valuable information and a machine-readable preparation could enable various uses and applications.
+Until now, the organization charts of Berlin's administrative units are created with Excel or PowerPoint and published in pdf format. On the one hand, their graphical format makes them easy for people to read. On the other hand, they are difficult to process automatically. However, the organigrams contain a lot of valuable information and a machine-readable representation could enable various uses and applications.
 The json file format allows the data entered to be stored in a simple text format and made available as Open Data. The organizational chart tool also aims to simplify the creation of organizational charts for the Berlin administration and to bring the organizational charts into a more uniform format.
 
-More information and the protoype is accessible through the [ODIS website](https://odis-berlin.de/projekte/organigramme/) (only in German).
+More information and the prototype are accessible through the [ODIS website](https://odis-berlin.de/projekte/organigramme/) (only in German).
+
+## Export Formats
+
+Charts can be exported in the following formats:
+
+- **JSON** – the native, machine-readable source format used by the tool. Suitable as Open Data and for re-importing into the editor. Personal data can optionally be stripped before export.
+- **PDF** – a visual rendering of the chart as a print-ready PDF.
+- **PNG** – a raster image of the chart for embedding in slides, documents or web pages.
+- **SVG** – a vector image of the chart, ideal for further graphical processing.
+- **RDF (Linked Open Data)** – Available as **JSON-LD** (`.jsonld`), **Turtle** (`.ttl`) or **N-Quads** (`.nq`).
+- **Accessible HTML** – a screen-reader friendly, text-based rendering of the chart with a hierarchical heading structure, a table of contents and inline glossary explanations. Downloadable as a `.html` file.
+- **Accessible PDF (PDF/UA)** – a tagged PDF that follows the [Berliner Standards](https://www.berlin.de/lb/digitale-barrierefreiheit/anforderungen/berliner-standards/fuer-pdf-1493292.php) for accessible PDFs and PDF/UA-1 (ISO 14289-1), with embedded fonts, a structure tree and inline glossary explanations.
+
+The accessible HTML view can additionally be served directly in place of the editor by visiting the tool with `?format=html-accessible&dataurl=…` — see [URL Parameters](#url-parameters).
 
 ## Getting Started
 
@@ -44,6 +56,22 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
+
+### Deployment
+
+The repository is set up for deployment on [Netlify](https://www.netlify.com/).
+Netlify uses [`netlify.toml`](./netlify.toml) to wire up the build
+(running `yarn build` against the `app/` directory and publishing
+`app/build`) together with a small serverless function in
+[`netlify/functions/proxy.js`](./netlify/functions/proxy.js). The
+function is mounted at `/proxy` and is used as a **CORS fallback** for
+the `?dataurl=…` parameter: whenever a direct in-browser fetch of the
+remote `.json` file is blocked by the remote host's CORS policy, the
+app retries the request through `/proxy?url=<encoded-json-url>`. The
+proxy enforces method, scheme, content-type, size and rate-limit
+restrictions — see [CORS fallback proxy](#cors-fallback-proxy) below
+for the full ruleset. On a static host that does not run Netlify
+functions the proxy is unavailable and the fallback step simply fails.
 
 <!-- ## Changelog (added, fixed, changed)
 
@@ -115,13 +143,55 @@ The document UI schema is defined in the [DocumentTab.js](./app/src/components/S
 
 If you want to add validation rules you will need to add a new rule to [validationRules.js](./app/src/validation/validationRules.js)
 
-If its a new set of validation rules (e.g. for a specific organisation), you will also need to add the key name of the organisation to the schema in your [organization_chart.json](./app/src/schemas/organization_chart.json)
+If it's a new set of validation rules (e.g. for a specific organisation), you will also need to add the key name of the organisation to the schema in your [organization_chart.json](./app/src/schemas/organization_chart.json)
 
-You can add validation rules to any property from the list of available properties listed in [validationRules.js](./app/src/validation/validationRules.js) by adding a regex and a waring message.
+You can add validation rules to any property from the list of available properties listed in [validationRules.js](./app/src/validation/validationRules.js) by adding a regex and a warning message.
 
 ### Updating RDF vocabulary
 
-New vocabulary should be added to [typeVocabLookup.json](./app/src/services/typeVocabLookup.json)
+The tool uses two distinct vocabulary sources:
+
+1. **The Berlin organisations vocabulary (`berorgs`)** lives in
+   the separate [lod-vocabulary](https://github.com/berlin/lod-vocabulary)
+   repository (the file
+   [`data/berorgs/berorgs.ttl`](https://github.com/berlin/lod-vocabulary/blob/main/data/berorgs/berorgs.ttl)).
+   This Turtle file is the source of truth for all vocabulary **terms,
+   their labels and their `rdfs:comment` definitions**. The accessible
+   HTML and PDF exports fetch this file at runtime from
+   `https://raw.githubusercontent.com/berlin/lod-vocabulary/main/data/berorgs/berorgs.ttl`,
+   parse it and use the German `rdfs:comment` strings as inline
+   glossary explanations. RDF/Linked Open Data exports reference the
+   same vocabulary via the namespace
+   `https://berlin.github.io/lod-vocabulary/berorgs/`.
+   If you need to add or change a term definition, do it in the
+   `lod-vocabulary` repository.
+
+2. **The local lookup table
+   [`typeVocabLookup.json`](./app/src/services/typeVocabLookup.json)**
+   maps the human-friendly German labels users pick in the editor (e.g.
+   `"Abteilung"`, `"Bezirksamt"`, `"Hauptamt"`, `"Leitung"`) to entries
+   in the berorgs vocabulary. Each entry has the shape
+   ```json
+   "Abteilung": {
+     "vocab": "berorgs",
+     "name": "Abteilung",
+     "type": "org"
+   }
+   ```
+   where `name` is the term slug used inside the `berorgs.ttl`,
+   `vocab` is the vocabulary prefix and `type` is either `"org"`
+   (organisation unit type) or `"positionStatus"` (e.g. acting,
+   deputy). When a new type is offered in the editor, add it to this
+   lookup file so the RDF export emits the correct `@id` and the
+   accessible exports can pick up the matching glossary entry.
+
+When introducing a brand-new organisation or position type the typical
+workflow is therefore:
+
+1. Add (or update) the term in `lod-vocabulary/data/berorgs/berorgs.ttl`
+   with German `rdfs:label` and `rdfs:comment`.
+2. Add the matching mapping entry to
+   [`typeVocabLookup.json`](./app/src/services/typeVocabLookup.json).
 
 ## Acknowledgement
 
@@ -133,7 +203,7 @@ The included files of Berlin's coats of arms came from [https://de.wikipedia.org
 
 ## Contributors
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks go to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -170,7 +240,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
       <a href="https://odis-berlin.de">
         <br />
         <br />
-        <img width="200" src="https://logos.citylab-berlin.org/logo-odis-berlin.svg" />
+        <img width="200" src="https://logos.citylab-berlin.org/logo-odis-berlin-black.svg" />
       </a>
     </td>
     <td>
