@@ -462,6 +462,7 @@ const App = () => {
             closeNewDocumentModal={closeNewDocumentModal}
             dataURL={dataURL}
             readonly={readonly}
+            format={format}
           />
         </Container>
         <Chart

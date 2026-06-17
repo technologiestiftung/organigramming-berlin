@@ -34,6 +34,7 @@ const Sidebar = forwardRef(
       closeNewDocumentModal,
       dataURL,
       readonly,
+      format,
     },
     ref
   ) => {
@@ -52,11 +53,17 @@ const Sidebar = forwardRef(
     };
 
     useEffect(() => {
-      // if dataURL exists or we are in readonly mode, do not show intro modal
-      // check to show info modal
-      setInfoModalShow(data === initDocument && !dataURL && !readonly);
+      // Suppress the introductory modal whenever the user arrived via
+      // any of the supported URL parameters (`dataurl`, `readonly` or
+      // `format`). In those cases the user is loading a chart from an
+      // external source, viewing it in read-only mode, or rendering
+      // the accessible HTML view - the intro popup would be confusing
+      // because it talks about creating a new chart.
+      setInfoModalShow(
+        data === initDocument && !dataURL && !readonly && !format,
+      );
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataURL, readonly]);
+    }, [dataURL, readonly, format]);
 
     useEffect(() => {
       setNewDocumentModalShow(false);

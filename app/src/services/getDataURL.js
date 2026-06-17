@@ -39,8 +39,14 @@ export const getDataURL = () => {
       ];
       return result;
     }
-    // does it end with .json?
-    if (!dataURL.endsWith(".json")) {
+    // does the path end with .json?
+    //
+    // We check the URL's pathname rather than the raw query-parameter
+    // value, so that URLs which legitimately carry their own query
+    // string or fragment (e.g. `chart.json?v=2`, `chart.json#anchor`)
+    // are accepted. The Netlify CORS fallback proxy applies the same
+    // rule (see `netlify/functions/proxy.js`).
+    if (!validatedDataURL.pathname.toLowerCase().endsWith(".json")) {
       result.error = [
         "Sie können nur JSON-Dateien laden. Ihre Datei muss mit .json enden.",
       ];
