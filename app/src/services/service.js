@@ -109,7 +109,7 @@ export const validateData = (data) => {
   addFormats(ajv);
   ajv.addFormat(
     "data-url",
-    /^data:([a-z]+\/[a-z0-9-+.]+)?;(?:name=(.*);)?base64,(.*)$/
+    /^$|^data:([a-z]+\/[a-z0-9-+.]+)?;(?:name=(.*);)?base64,(.*)$/
   );
   ajv.addFormat("integer", /([0-9])/);
   ajv.addFormat(
