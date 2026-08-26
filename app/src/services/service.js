@@ -102,7 +102,7 @@ export const handleDropEnd = async (e, dsDigger) => {
   return { ...dsDigger.ds };
 };
 
-export const validateData = (data) => {
+export const validateData = (data, options = {}) => {
   const ajv = new Ajv();
 
   //add custom formats to validate against
@@ -119,7 +119,44 @@ export const validateData = (data) => {
   ajv.addVocabulary(["version", "enumNames"]);
 
   const validate = ajv.compile(definitions);
-  return [validate(data), validate.errors];
+  const ok = validate(data);
+  let errors = validate.errors;
+
+  // On import we tolerate a couple of missing-required errors that would
+  // otherwise block loading legacy/exported files. The editor still enforces
+  // these via the schema when the user makes changes (onChange), but
+  // existing files should still open. See NewDocumetModal.js /
+  // App.js drop handler / getExternalData.js.
+  //
+  // Ignored on import:
+  //   - organisation.name missing  (instancePath ends at an /organisations/<n> element)
+  //   - document.title missing     (instancePath === "/document")
+  //
+  // NB: we key off `instancePath` rather than `schemaPath` because AJV
+  // reports errors on $ref'd subschemas relative to the referenced schema
+  // (e.g. schemaPath `"#/required"` on the inlined organisation subschema),
+  // which makes matching by schemaPath unreliable.
+  if (!ok && options.ignoreRequiredName && Array.isArray(errors)) {
+    const orgInstancePath = /^(\/organisations\/\d+)+$/;
+    const filtered = errors.filter((err) => {
+      if (err.keyword !== "required" || !err.params) return true;
+      const missing = err.params.missingProperty;
+      const path = err.instancePath || "";
+      if (missing === "name" && orgInstancePath.test(path)) {
+        return false;
+      }
+      if (missing === "title" && path === "/document") {
+        return false;
+      }
+      return true;
+    });
+    if (filtered.length === 0) {
+      return [true, null];
+    }
+    return [false, filtered];
+  }
+
+  return [ok, errors];
 };
 
 export const getContrastTextColor = (bgColor) => {

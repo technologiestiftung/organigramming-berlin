@@ -61,7 +61,7 @@ const NewDocumetModal = (props) => {
         return;
       }
       data = upgradeDataStructure(data);
-      const [valid, errors] = validateData(data);
+      const [valid, errors] = validateData(data, { ignoreRequiredName: true });
       if (!valid) {
         setImportError(errors);
       } else {

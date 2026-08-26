@@ -119,7 +119,7 @@ export const getExternalData = async (url) => {
   // Run the schema validator – this is the same check the existing
   // import flow performs.
   try {
-    const [valid, errors] = validateData(data);
+    const [valid, errors] = validateData(data, { ignoreRequiredName: true });
     if (!valid) {
       console.error(errors);
       return { error: errors };

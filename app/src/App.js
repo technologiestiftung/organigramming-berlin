@@ -95,7 +95,7 @@ const App = () => {
 
   const onChange = async (e) => {
     if (isDefiend(e)) {
-      const [valid, errors] = validateData(e);
+      const [valid, errors] = validateData(e, { ignoreRequiredName: true });
       if (valid) {
         const dataSting = JSON.stringify(e);
         setUndoData(JSON.parse(dataSting));
@@ -241,7 +241,7 @@ const App = () => {
         return;
       }
       result = upgradeDataStructure(result);
-      const [valid, errors] = validateData(result);
+      const [valid, errors] = validateData(result, { ignoreRequiredName: true });
 
       if (!valid) {
         setImportError(errors);
